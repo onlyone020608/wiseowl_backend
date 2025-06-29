@@ -1,0 +1,38 @@
+package com.hyewon.wiseowl_backend.domain.requirement;
+
+import com.hyewon.wiseowl_backend.domain.course.College;
+import com.hyewon.wiseowl_backend.domain.course.Major;
+import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class MajorRequirement {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "requirement_id")
+    private Requirement requirement;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "major_id")
+    private Major major;
+
+    @Enumerated(EnumType.STRING)
+    private MajorType majorType;
+
+    private String description;
+
+    private Integer appliesFromYear;
+
+    private Integer appliesToYear;
+
+
+
+
+}
