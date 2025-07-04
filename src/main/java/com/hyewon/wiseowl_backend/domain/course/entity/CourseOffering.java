@@ -1,7 +1,6 @@
-package com.hyewon.wiseowl_backend.domain.course;
+package com.hyewon.wiseowl_backend.domain.course.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

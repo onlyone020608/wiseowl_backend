@@ -1,4 +1,4 @@
-package com.hyewon.wiseowl_backend.domain.course;
+package com.hyewon.wiseowl_backend.domain.course.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

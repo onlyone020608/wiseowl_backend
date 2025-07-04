@@ -1,0 +1,89 @@
+package com.hyewon.wiseowl_backend.domain.course.service;
+
+import com.hyewon.wiseowl_backend.domain.course.dto.CollegeWithMajorsDto;
+import com.hyewon.wiseowl_backend.domain.course.dto.CourseOfferingDto;
+import com.hyewon.wiseowl_backend.domain.course.dto.CourseCategoryDto;
+import com.hyewon.wiseowl_backend.domain.course.dto.MajorDto;
+import com.hyewon.wiseowl_backend.domain.course.entity.College;
+import com.hyewon.wiseowl_backend.domain.course.entity.CourseOffering;
+import com.hyewon.wiseowl_backend.domain.course.entity.LiberalCategory;
+import com.hyewon.wiseowl_backend.domain.course.entity.Major;
+import com.hyewon.wiseowl_backend.domain.course.repository.CourseOfferingRepository;
+import com.hyewon.wiseowl_backend.domain.course.repository.LiberalCategoryRepository;
+import com.hyewon.wiseowl_backend.domain.course.repository.MajorRepository;
+import com.hyewon.wiseowl_backend.global.exception.CourseNotFoundException;
+import com.hyewon.wiseowl_backend.global.exception.LiberalCategoryNotFoundException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+@Transactional
+public class CourseService {
+    private final CourseOfferingRepository courseOfferingRepository;
+    private final LiberalCategoryRepository liberalCategoryRepository;
+    private final MajorRepository majorRepository;
+
+    @Transactional(readOnly = true)
+    public List<CourseCategoryDto> getCourseCategoriesBySemester(Long semesterId){
+        List<Major> majors = courseOfferingRepository.findDistinctMajorsBySemesterId(semesterId);
+        List<LiberalCategory> liberals = courseOfferingRepository.findDistinctLiberalCategoriesBySemester(semesterId);
+
+        if (majors.isEmpty() && liberals.isEmpty()) {
+            throw new CourseNotFoundException("No course categories found for semesterId: " + semesterId);
+        }
+
+        List<CourseCategoryDto> result = new ArrayList<>();
+        result.addAll(majors.stream().map(CourseCategoryDto::fromMajor).toList());
+        result.addAll(liberals.stream().map(CourseCategoryDto::fromLiberal).toList());
+        return result;
+    }
+
+    @Transactional(readOnly = true)
+    public List<CourseOfferingDto> getCourseOfferingsBySemester(Long semesterId){
+        List<CourseOffering> offerings = courseOfferingRepository.findAllBySemesterId(semesterId);
+        if(offerings.isEmpty()){
+            throw new CourseNotFoundException("No course offerings found for semesterId: " + semesterId);
+        }
+        return offerings.stream()
+                .map(offering -> {
+                    Long liberalCategoryId = null;
+                    if(offering.getCourse().getMajor() == null){
+                        liberalCategoryId = liberalCategoryRepository.findByCourse(offering.getCourse())
+                                .map(LiberalCategory::getId)
+                                .orElseThrow(() -> new LiberalCategoryNotFoundException("No liberal category for courseId: " + offering.getCourse().getId()));
+
+                    }
+                    return CourseOfferingDto.from(offering, liberalCategoryId);
+                })
+                .collect(Collectors.toList());
+    }
+
+    public List<CollegeWithMajorsDto> getCollegesWithMajors(){
+        List<Major> majors = majorRepository.findAllWithCollege();
+
+        Map<College, List<Major>> grouped = majors.stream()
+                .collect(Collectors.groupingBy(Major::getCollege));
+
+        return grouped.entrySet().stream()
+                .map(entry -> {
+                    College college = entry.getKey();
+                    List<MajorDto> majorDtos = entry.getValue().stream()
+                            .map(m -> new MajorDto(m.getId(), m.getName()))
+                            .toList();
+
+                    return new CollegeWithMajorsDto(
+                            college.getId(),
+                            college.getName(),
+                            majorDtos
+                    );
+                })
+                .toList();
+    }
+}
