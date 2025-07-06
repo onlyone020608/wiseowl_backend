@@ -10,7 +10,8 @@ public enum ErrorCode {
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error."),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "User not found."),
     PROFILE_NOT_FOUND(HttpStatus.NOT_FOUND, "Profile not found."),
-    MAJOR_NOT_FOUND(HttpStatus.NOT_FOUND, "Major not found.");
+    MAJOR_NOT_FOUND(HttpStatus.NOT_FOUND, "Major not found."),
+    EMAIL_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "Email already registered.");
 
 
     private final HttpStatus status;

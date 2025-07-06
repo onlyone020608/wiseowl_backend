@@ -12,7 +12,8 @@ public class GlobalExceptionHandler {
             LiberalCategoryNotFoundException.class,
             ProfileNotFoundException.class,
             UserNotFoundException.class,
-            MajorNotFoundException.class
+            MajorNotFoundException.class,
+            EmailAlreadyExistsException.class
     })
     public ResponseEntity<CustomErrorResponse> handleDomainExceptions(RuntimeException ex) {
         if (ex instanceof CourseNotFoundException e) {
@@ -24,6 +25,8 @@ public class GlobalExceptionHandler {
         } else if(ex instanceof UserNotFoundException e){
             return buildResponse(e.getErrorCode());
         } else if(ex instanceof MajorNotFoundException e){
+            return buildResponse(e.getErrorCode());
+        } else if(ex instanceof EmailAlreadyExistsException e){
             return buildResponse(e.getErrorCode());
         }
 
