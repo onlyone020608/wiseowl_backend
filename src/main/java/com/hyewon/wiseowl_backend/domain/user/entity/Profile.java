@@ -1,0 +1,40 @@
+package com.hyewon.wiseowl_backend.domain.user.entity;
+
+import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Profile {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    private Integer entranceYear;
+
+    private boolean adConsent;
+
+    private Double JPA;
+
+    public void updateEntranceYear(Integer entranceYear) {
+        this.entranceYear = entranceYear;
+    }
+
+    void assignUser(User user) {
+        this.user = user;
+    }
+
+    public static Profile createDefault() {
+        return new Profile();
+    }
+
+
+
+}
