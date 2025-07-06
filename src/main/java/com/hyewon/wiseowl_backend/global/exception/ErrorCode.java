@@ -11,7 +11,10 @@ public enum ErrorCode {
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "User not found."),
     PROFILE_NOT_FOUND(HttpStatus.NOT_FOUND, "Profile not found."),
     MAJOR_NOT_FOUND(HttpStatus.NOT_FOUND, "Major not found."),
-    EMAIL_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "Email already registered.");
+    EMAIL_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "Email already registered."),
+    COMPLETED_COURSE_ALREADY_EXISTS(HttpStatus.CONFLICT, "Completed courses already exist."),
+    COURSE_OFFERING_NOT_FOUND(HttpStatus.NOT_FOUND, "Course offering not found.");
+
 
 
     private final HttpStatus status;
