@@ -1,20 +1,24 @@
 package com.hyewon.wiseowl_backend.domain;
 
+import com.hyewon.wiseowl_backend.domain.course.entity.CourseOffering;
 import com.hyewon.wiseowl_backend.domain.course.entity.Major;
+import com.hyewon.wiseowl_backend.domain.course.repository.CourseOfferingRepository;
 import com.hyewon.wiseowl_backend.domain.course.repository.MajorRepository;
 import com.hyewon.wiseowl_backend.domain.requirement.MajorType;
+import com.hyewon.wiseowl_backend.domain.user.dto.CompletedCourseUpdateItem;
+import com.hyewon.wiseowl_backend.domain.user.dto.CompletedCourseUpdateRequest;
 import com.hyewon.wiseowl_backend.domain.user.dto.ProfileUpdateRequest;
 import com.hyewon.wiseowl_backend.domain.user.dto.UserMajorRequest;
+import com.hyewon.wiseowl_backend.domain.user.entity.Grade;
 import com.hyewon.wiseowl_backend.domain.user.entity.Profile;
 import com.hyewon.wiseowl_backend.domain.user.entity.User;
 import com.hyewon.wiseowl_backend.domain.user.entity.UserMajor;
 import com.hyewon.wiseowl_backend.domain.user.repository.ProfileRepository;
+import com.hyewon.wiseowl_backend.domain.user.repository.UserCompletedCourseRepository;
 import com.hyewon.wiseowl_backend.domain.user.repository.UserMajorRepository;
 import com.hyewon.wiseowl_backend.domain.user.repository.UserRepository;
 import com.hyewon.wiseowl_backend.domain.user.service.UserService;
-import com.hyewon.wiseowl_backend.global.exception.MajorNotFoundException;
-import com.hyewon.wiseowl_backend.global.exception.ProfileNotFoundException;
-import com.hyewon.wiseowl_backend.global.exception.UserNotFoundException;
+import com.hyewon.wiseowl_backend.global.exception.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,9 +29,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.StreamSupport;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -43,11 +49,15 @@ public class UserServiceTest {
     @Mock private ProfileRepository profileRepository;
     @Mock private MajorRepository majorRepository;
     @Mock private UserMajorRepository userMajorRepository;
+    @Mock private UserCompletedCourseRepository userCompletedCourseRepository;
+    @Mock private CourseOfferingRepository courseOfferingRepository;
 
     private ProfileUpdateRequest request;
     private User user;
     private Profile profile;
     private Major major;
+    private CourseOffering offering;
+    private CompletedCourseUpdateRequest updateRequest;
 
 
     @BeforeEach
@@ -60,6 +70,11 @@ public class UserServiceTest {
         user = mock(User.class);
         profile = mock(Profile.class);
         major = mock(Major.class);
+        offering = mock(CourseOffering.class);
+        CompletedCourseUpdateItem item =
+                new CompletedCourseUpdateItem(1L, Grade.A, false);
+        updateRequest = new CompletedCourseUpdateRequest(List.of(item));
+
     }
 
     @Test
@@ -118,5 +133,49 @@ public class UserServiceTest {
         // when & then
         assertThrows(MajorNotFoundException.class,
                 () -> userService.updateUserProfile(userId, request));
+    }
+
+    @Test
+    @DisplayName("insertCompletedCourses – success")
+    void insertCompletedCourses_success() {
+        // given
+        Long userId = 1L;
+        given(userRepository.findById(userId)).willReturn(Optional.of(user));
+        given(userCompletedCourseRepository.existsByUserId(userId)).willReturn(false);
+        given(courseOfferingRepository.findById(1L)).willReturn(Optional.of(offering));
+
+        // when
+        userService.insertCompletedCourses(userId, updateRequest);
+
+        // then
+        verify(userCompletedCourseRepository).saveAll(any());
+
+    }
+
+    @Test
+    @DisplayName("insertCompletedCourses – already exists")
+    void insertCompletedCourses_alreadyExists() {
+        // given
+        Long userId = 1L;
+        given(userRepository.findById(userId)).willReturn(Optional.of(user));
+        given(userCompletedCourseRepository.existsByUserId(userId)).willReturn(true);
+
+        // when & then
+        assertThrows(CompletedCourseAlreadyExistsException.class,
+                () -> userService.insertCompletedCourses(userId, updateRequest));
+    }
+
+    @Test
+    @DisplayName("insertCompletedCourses – courseOffering not found")
+    void insertCompletedCourses_offeringNotFound() {
+        // given
+        Long userId = 1L;
+        given(userRepository.findById(userId)).willReturn(Optional.of(user));
+        given(userCompletedCourseRepository.existsByUserId(userId)).willReturn(false);
+        given(courseOfferingRepository.findById(1L)).willReturn(Optional.empty());
+
+        // when & then
+        assertThrows(CourseOfferingNotFoundException.class,
+                () -> userService.insertCompletedCourses(userId, updateRequest));
     }
 }
