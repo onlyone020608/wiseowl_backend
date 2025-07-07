@@ -4,7 +4,8 @@ import com.hyewon.wiseowl_backend.domain.course.entity.CourseOffering;
 import com.hyewon.wiseowl_backend.domain.course.entity.Major;
 import com.hyewon.wiseowl_backend.domain.course.repository.CourseOfferingRepository;
 import com.hyewon.wiseowl_backend.domain.course.repository.MajorRepository;
-import com.hyewon.wiseowl_backend.domain.requirement.MajorType;
+import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorType;
+import com.hyewon.wiseowl_backend.domain.requirement.repository.MajorRequirementRepository;
 import com.hyewon.wiseowl_backend.domain.user.dto.CompletedCourseUpdateItem;
 import com.hyewon.wiseowl_backend.domain.user.dto.CompletedCourseUpdateRequest;
 import com.hyewon.wiseowl_backend.domain.user.dto.ProfileUpdateRequest;
@@ -13,10 +14,7 @@ import com.hyewon.wiseowl_backend.domain.user.entity.Grade;
 import com.hyewon.wiseowl_backend.domain.user.entity.Profile;
 import com.hyewon.wiseowl_backend.domain.user.entity.User;
 import com.hyewon.wiseowl_backend.domain.user.entity.UserMajor;
-import com.hyewon.wiseowl_backend.domain.user.repository.ProfileRepository;
-import com.hyewon.wiseowl_backend.domain.user.repository.UserCompletedCourseRepository;
-import com.hyewon.wiseowl_backend.domain.user.repository.UserMajorRepository;
-import com.hyewon.wiseowl_backend.domain.user.repository.UserRepository;
+import com.hyewon.wiseowl_backend.domain.user.repository.*;
 import com.hyewon.wiseowl_backend.domain.user.service.UserService;
 import com.hyewon.wiseowl_backend.global.exception.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,11 +27,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.StreamSupport;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -51,6 +47,8 @@ public class UserServiceTest {
     @Mock private UserMajorRepository userMajorRepository;
     @Mock private UserCompletedCourseRepository userCompletedCourseRepository;
     @Mock private CourseOfferingRepository courseOfferingRepository;
+    @Mock private MajorRequirementRepository majorRequirementRepository;
+    @Mock private UserRequirementStatusRepository userRequirementStatusRepository;
 
     private ProfileUpdateRequest request;
     private User user;
@@ -78,7 +76,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("updateUserProfile - should update user and profile and save userMajor")
+    @DisplayName("updateUserProfile - should update user and profile and save userMajor, userRequirementStatus")
     void updateUserProfile_shouldSucceed() {
         // given
         Long userId = 1L;
@@ -94,6 +92,8 @@ public class UserServiceTest {
         verify(user).updateUsername("test");
         verify(profile).updateEntranceYear(2022);
         verify(userMajorRepository).save(any(UserMajor.class));
+        verify(majorRequirementRepository).findApplicable(anyLong(), any(), any());
+        verify(userRequirementStatusRepository).saveAll(anyList());
     }
 
     @Test
