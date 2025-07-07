@@ -4,16 +4,12 @@ import com.hyewon.wiseowl_backend.domain.course.entity.CourseOffering;
 import com.hyewon.wiseowl_backend.domain.course.entity.Major;
 import com.hyewon.wiseowl_backend.domain.course.repository.CourseOfferingRepository;
 import com.hyewon.wiseowl_backend.domain.course.repository.MajorRepository;
+import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorRequirement;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorType;
+import com.hyewon.wiseowl_backend.domain.requirement.entity.Requirement;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.MajorRequirementRepository;
-import com.hyewon.wiseowl_backend.domain.user.dto.CompletedCourseUpdateItem;
-import com.hyewon.wiseowl_backend.domain.user.dto.CompletedCourseUpdateRequest;
-import com.hyewon.wiseowl_backend.domain.user.dto.ProfileUpdateRequest;
-import com.hyewon.wiseowl_backend.domain.user.dto.UserMajorRequest;
-import com.hyewon.wiseowl_backend.domain.user.entity.Grade;
-import com.hyewon.wiseowl_backend.domain.user.entity.Profile;
-import com.hyewon.wiseowl_backend.domain.user.entity.User;
-import com.hyewon.wiseowl_backend.domain.user.entity.UserMajor;
+import com.hyewon.wiseowl_backend.domain.user.dto.*;
+import com.hyewon.wiseowl_backend.domain.user.entity.*;
 import com.hyewon.wiseowl_backend.domain.user.repository.*;
 import com.hyewon.wiseowl_backend.domain.user.service.UserService;
 import com.hyewon.wiseowl_backend.global.exception.*;
@@ -28,6 +24,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
@@ -54,6 +53,9 @@ public class UserServiceTest {
     private User user;
     private Profile profile;
     private Major major;
+    private MajorRequirement mr1;
+    private UserRequirementStatus urs1;
+    private Requirement requirement;
     private CourseOffering offering;
     private CompletedCourseUpdateRequest updateRequest;
 
@@ -69,6 +71,9 @@ public class UserServiceTest {
         profile = mock(Profile.class);
         major = mock(Major.class);
         offering = mock(CourseOffering.class);
+        mr1 = mock(MajorRequirement.class);
+        urs1 = mock(UserRequirementStatus.class);
+        requirement = mock(Requirement.class);
         CompletedCourseUpdateItem item =
                 new CompletedCourseUpdateItem(1L, Grade.A, false);
         updateRequest = new CompletedCourseUpdateRequest(List.of(item));
@@ -178,4 +183,51 @@ public class UserServiceTest {
         assertThrows(CourseOfferingNotFoundException.class,
                 () -> userService.insertCompletedCourses(userId, updateRequest));
     }
+
+    @Test
+    @DisplayName("getGraduationRequirementsForUser - should group by major and map to response")
+    void getGraduationRequirementsForUser_shouldSucceed(){
+        // given
+        Long userId = 1L;
+        given(major.getId()).willReturn(1L);
+        given(major.getName()).willReturn("컴퓨터공학과");
+
+        given(mr1.getMajor()).willReturn(major);
+        given(mr1.getMajorType()).willReturn(MajorType.PRIMARY);
+        given(urs1.getMajorRequirement()).willReturn(mr1);
+        given(mr1.getRequirement()).willReturn(requirement);
+        List<UserRequirementStatus> mockStatuses = List.of(urs1);
+
+        given(userRequirementStatusRepository.findAllByUserId(userId))
+                .willReturn(mockStatuses);
+
+        // when
+        List<GraduationRequirementGroupByMajorResponse> result =
+                userService.getGraduationRequirementsForUser(userId);
+
+
+        // then
+        assertThat(result).hasSize(1);
+        GraduationRequirementGroupByMajorResponse dto = result.get(0);
+
+        assertThat(dto.majorId()).isEqualTo(1L);
+        assertThat(dto.majorName()).isEqualTo("컴퓨터공학과");
+        assertThat(dto.majorType()).isEqualTo(MajorType.PRIMARY);
+        assertThat(dto.requirements()).hasSize(1);
+
+    }
+
+    @Test
+    @DisplayName("getGraduationRequirementsForUser - should throw when no data found")
+    void getGraduationRequirementsForUser_shouldThrow_whenNoDataFound() {
+        // given
+        Long userId = 999L;
+        given(userRequirementStatusRepository.findAllByUserId(userId))
+                .willReturn(List.of());
+
+        // when & then
+        assertThatThrownBy(() -> userService.getGraduationRequirementsForUser(userId))
+                .isInstanceOf(UserGraduationStatusNotFoundException.class);
+    }
+
 }
