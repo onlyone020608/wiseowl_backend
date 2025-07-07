@@ -1,7 +1,7 @@
-package com.hyewon.wiseowl_backend.domain.requirement;
+package com.hyewon.wiseowl_backend.domain.requirement.entity;
 
-import com.hyewon.wiseowl_backend.domain.course.College;
-import com.hyewon.wiseowl_backend.domain.course.LiberalCategory;
+import com.hyewon.wiseowl_backend.domain.course.entity.College;
+import com.hyewon.wiseowl_backend.domain.course.entity.LiberalCategory;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

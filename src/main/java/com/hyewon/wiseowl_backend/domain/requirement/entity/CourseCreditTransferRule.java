@@ -1,8 +1,8 @@
-package com.hyewon.wiseowl_backend.domain.requirement;
+package com.hyewon.wiseowl_backend.domain.requirement.entity;
 
-import com.hyewon.wiseowl_backend.domain.course.Course;
-import com.hyewon.wiseowl_backend.domain.course.Major;
-import com.hyewon.wiseowl_backend.domain.course.Semester;
+import com.hyewon.wiseowl_backend.domain.course.entity.Course;
+import com.hyewon.wiseowl_backend.domain.course.entity.Major;
+import com.hyewon.wiseowl_backend.domain.course.entity.Semester;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

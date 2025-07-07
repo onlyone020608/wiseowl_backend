@@ -4,27 +4,19 @@ import com.hyewon.wiseowl_backend.domain.course.entity.CourseOffering;
 import com.hyewon.wiseowl_backend.domain.course.entity.Major;
 import com.hyewon.wiseowl_backend.domain.course.repository.CourseOfferingRepository;
 import com.hyewon.wiseowl_backend.domain.course.repository.MajorRepository;
-import com.hyewon.wiseowl_backend.domain.user.dto.CompletedCourseUpdateItem;
+import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorRequirement;
+import com.hyewon.wiseowl_backend.domain.requirement.repository.MajorRequirementRepository;
 import com.hyewon.wiseowl_backend.domain.user.dto.CompletedCourseUpdateRequest;
 import com.hyewon.wiseowl_backend.domain.user.dto.ProfileUpdateRequest;
 import com.hyewon.wiseowl_backend.domain.user.dto.UserMajorRequest;
-import com.hyewon.wiseowl_backend.domain.user.entity.Profile;
-import com.hyewon.wiseowl_backend.domain.user.entity.User;
-import com.hyewon.wiseowl_backend.domain.user.entity.UserCompletedCourse;
-import com.hyewon.wiseowl_backend.domain.user.entity.UserMajor;
-import com.hyewon.wiseowl_backend.domain.user.repository.ProfileRepository;
-import com.hyewon.wiseowl_backend.domain.user.repository.UserCompletedCourseRepository;
-import com.hyewon.wiseowl_backend.domain.user.repository.UserMajorRepository;
-import com.hyewon.wiseowl_backend.domain.user.repository.UserRepository;
+import com.hyewon.wiseowl_backend.domain.user.entity.*;
+import com.hyewon.wiseowl_backend.domain.user.repository.*;
 import com.hyewon.wiseowl_backend.global.exception.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +28,8 @@ public class UserService {
     private final MajorRepository majorRepository;
     private final UserCompletedCourseRepository userCompletedCourseRepository;
     private final CourseOfferingRepository courseOfferingRepository;
+    private final MajorRequirementRepository majorRequirementRepository;
+    private final UserRequirementStatusRepository userRequirementStatusRepository;
 
 
 
@@ -53,6 +47,15 @@ public class UserService {
 
             UserMajor userMajor = UserMajor.of(user, major, majorRequest.majorType());
             userMajorRepository.save(userMajor);
+
+            List<MajorRequirement> applicable = majorRequirementRepository.findApplicable(major.getId(), majorRequest.majorType(), request.entranceYear());
+            List<UserRequirementStatus> toSave = applicable.stream()
+                    .map(req -> UserRequirementStatus.of(user, req))
+                    .toList();
+
+            userRequirementStatusRepository.saveAll(toSave);
+
+
         }
 
     }

@@ -1,7 +1,7 @@
 package com.hyewon.wiseowl_backend.domain.user.entity;
 
 import com.hyewon.wiseowl_backend.domain.course.entity.Major;
-import com.hyewon.wiseowl_backend.domain.requirement.MajorType;
+import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

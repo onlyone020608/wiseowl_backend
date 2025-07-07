@@ -1,6 +1,6 @@
 package com.hyewon.wiseowl_backend.domain.user.entity;
 
-import com.hyewon.wiseowl_backend.domain.requirement.MajorRequirement;
+import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorRequirement;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -23,4 +23,14 @@ public class UserRequirementStatus {
     private MajorRequirement majorRequirement;
 
     private boolean fulfilled;
+
+    private UserRequirementStatus(User user, MajorRequirement majorRequirement) {
+
+        this.user = user;
+        this.majorRequirement = majorRequirement;
+    }
+
+    public static UserRequirementStatus of(User user, MajorRequirement majorRequirement) {
+        return new UserRequirementStatus(user, majorRequirement);
+    }
 }

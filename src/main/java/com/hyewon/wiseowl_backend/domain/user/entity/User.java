@@ -1,7 +1,5 @@
 package com.hyewon.wiseowl_backend.domain.user.entity;
 
-import com.hyewon.wiseowl_backend.domain.course.entity.Major;
-import com.hyewon.wiseowl_backend.domain.requirement.MajorType;
 import com.hyewon.wiseowl_backend.global.common.BaseTimeEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;

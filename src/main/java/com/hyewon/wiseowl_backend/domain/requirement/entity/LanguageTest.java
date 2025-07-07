@@ -1,4 +1,4 @@
-package com.hyewon.wiseowl_backend.domain.requirement;
+package com.hyewon.wiseowl_backend.domain.requirement.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
