@@ -13,7 +13,8 @@ public enum ErrorCode {
     MAJOR_NOT_FOUND(HttpStatus.NOT_FOUND, "Major not found."),
     EMAIL_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "Email already registered."),
     COMPLETED_COURSE_ALREADY_EXISTS(HttpStatus.CONFLICT, "Completed courses already exist."),
-    COURSE_OFFERING_NOT_FOUND(HttpStatus.NOT_FOUND, "Course offering not found.");
+    COURSE_OFFERING_NOT_FOUND(HttpStatus.NOT_FOUND, "Course offering not found."),
+    USER_GRADUATION_STATUS_NOT_FOUND(HttpStatus.NOT_FOUND, "User's graduation status not found.");
 
 
 

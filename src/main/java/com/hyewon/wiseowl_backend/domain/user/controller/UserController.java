@@ -2,6 +2,7 @@ package com.hyewon.wiseowl_backend.domain.user.controller;
 
 import com.hyewon.wiseowl_backend.domain.auth.security.UserPrincipal;
 import com.hyewon.wiseowl_backend.domain.user.dto.CompletedCourseUpdateRequest;
+import com.hyewon.wiseowl_backend.domain.user.dto.GraduationRequirementGroupByMajorResponse;
 import com.hyewon.wiseowl_backend.domain.user.dto.ProfileUpdateRequest;
 import com.hyewon.wiseowl_backend.domain.user.service.UserService;
 import jakarta.validation.Valid;
@@ -9,10 +10,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RequestMapping("/api/users")
@@ -35,5 +35,13 @@ public class UserController {
     ) {
         userService.insertCompletedCourses(principal.getId(), request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @GetMapping("/me/graduation-requirements")
+    public ResponseEntity<List<GraduationRequirementGroupByMajorResponse>> getGraduationRequirements(
+            @AuthenticationPrincipal UserPrincipal principal
+    ){
+        List<GraduationRequirementGroupByMajorResponse> graduationRequirementsForUser = userService.getGraduationRequirementsForUser(principal.getId());
+        return ResponseEntity.ok(graduationRequirementsForUser);
     }
 }

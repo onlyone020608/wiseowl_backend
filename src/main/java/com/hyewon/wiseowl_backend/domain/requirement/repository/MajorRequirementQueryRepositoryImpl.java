@@ -2,7 +2,7 @@ package com.hyewon.wiseowl_backend.domain.requirement.repository;
 
 import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorRequirement;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorType;
-import com.hyewon.wiseowl_backend.domain.requirement.QMajorRequirement;
+import com.hyewon.wiseowl_backend.domain.requirement.entity.QMajorRequirement;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 

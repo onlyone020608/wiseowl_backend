@@ -1,5 +1,6 @@
 package com.hyewon.wiseowl_backend.domain.user.service;
 
+import com.hyewon.wiseowl_backend.domain.user.dto.GraduationRequirementGroupByMajorResponse;
 import com.hyewon.wiseowl_backend.domain.course.entity.CourseOffering;
 import com.hyewon.wiseowl_backend.domain.course.entity.Major;
 import com.hyewon.wiseowl_backend.domain.course.repository.CourseOfferingRepository;
@@ -12,11 +13,14 @@ import com.hyewon.wiseowl_backend.domain.user.dto.UserMajorRequest;
 import com.hyewon.wiseowl_backend.domain.user.entity.*;
 import com.hyewon.wiseowl_backend.domain.user.repository.*;
 import com.hyewon.wiseowl_backend.global.exception.*;
-import jakarta.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -81,4 +85,32 @@ public class UserService {
 
 
     }
+
+    @Transactional(readOnly = true)
+    public List<GraduationRequirementGroupByMajorResponse> getGraduationRequirementsForUser(Long userId){
+        List<UserRequirementStatus> all = userRequirementStatusRepository.findAllByUserId(userId);
+        Map<Long, List<UserRequirementStatus>> grouped = all.stream()
+                .collect(Collectors.groupingBy(urs ->
+                        urs.getMajorRequirement().getMajor().getId())
+                );
+        if(all.isEmpty()){
+            throw new UserGraduationStatusNotFoundException(userId);
+        }
+
+        return grouped.values().stream().map(
+                statuses -> {
+                    MajorRequirement anyMr = statuses.get(0).getMajorRequirement();
+                    Long majorId = anyMr.getMajor().getId();
+                    String majorName = anyMr.getMajor().getName();
+                    return GraduationRequirementGroupByMajorResponse.from(
+                            majorId, majorName, anyMr.getMajorType(), statuses
+                    );
+                }).toList();
+
+
+
+    }
+
+
+
 }

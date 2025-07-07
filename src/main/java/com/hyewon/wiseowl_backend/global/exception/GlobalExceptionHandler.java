@@ -1,7 +1,6 @@
 package com.hyewon.wiseowl_backend.global.exception;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -16,6 +15,7 @@ public class GlobalExceptionHandler {
             EmailAlreadyExistsException.class,
             CompletedCourseAlreadyExistsException.class,
             CourseOfferingNotFoundException.class,
+            UserGraduationStatusNotFoundException.class
     })
     public ResponseEntity<CustomErrorResponse> handleDomainExceptions(RuntimeException ex) {
         if (ex instanceof CourseNotFoundException e) {
@@ -33,6 +33,8 @@ public class GlobalExceptionHandler {
         } else if(ex instanceof CompletedCourseAlreadyExistsException e){
             return buildResponse(e.getErrorCode());
         } else if(ex instanceof CourseOfferingNotFoundException e){
+            return buildResponse(e.getErrorCode());
+        } else if(ex instanceof UserGraduationStatusNotFoundException e){
             return buildResponse(e.getErrorCode());
         }
 
