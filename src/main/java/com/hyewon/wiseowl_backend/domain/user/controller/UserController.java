@@ -28,7 +28,7 @@ public class UserController {
         return ResponseEntity.ok().build();
    }
 
-    @PostMapping("/completed-courses")
+    @PostMapping("/me/completed-courses")
     public ResponseEntity<Void> insertCompletedCourses(
             @AuthenticationPrincipal UserPrincipal principal,
             @RequestBody @Valid  CompletedCourseUpdateRequest request
