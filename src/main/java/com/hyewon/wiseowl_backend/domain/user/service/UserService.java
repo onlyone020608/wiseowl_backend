@@ -110,7 +110,7 @@ public class UserService {
 
     @Transactional
     public void updateUserRequirementStatus(Long userId, UserRequirementFulfillmentRequest request){
-        for(UserRequirementFulfillmentRequest.UserRequirementStatusUpdate update : request.requirements()){
+        for(RequirementStatusSummary update : request.requirements()){
             UserRequirementStatus status = userRequirementStatusRepository.findById(update.userRequirementStatusId())
                     .orElseThrow(() -> new UserGraduationStatusNotFoundException(userId));
 

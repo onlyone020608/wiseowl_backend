@@ -238,7 +238,7 @@ public class UserServiceTest {
         given(userRequirementStatusRepository.findById(0L)).willReturn(Optional.of(urs1));
 
         // when
-        UserRequirementFulfillmentRequest.UserRequirementStatusUpdate update = new UserRequirementFulfillmentRequest.UserRequirementStatusUpdate(urs1.getId(), true);
+        RequirementStatusSummary update = new RequirementStatusSummary(urs1.getId(), true);
         UserRequirementFulfillmentRequest rfRequest = new UserRequirementFulfillmentRequest(major.getId(), List.of(update));
         userService.updateUserRequirementStatus(userId, rfRequest);
 
@@ -257,7 +257,7 @@ public class UserServiceTest {
         given(userRequirementStatusRepository.findById(0L)).willReturn(Optional.empty());
 
         // when & then
-        UserRequirementFulfillmentRequest.UserRequirementStatusUpdate update = new UserRequirementFulfillmentRequest.UserRequirementStatusUpdate(urs1.getId(), true);
+        RequirementStatusSummary update = new RequirementStatusSummary(urs1.getId(), true);
         UserRequirementFulfillmentRequest rfRequest = new UserRequirementFulfillmentRequest(major.getId(), List.of(update));
         assertThrows(UserGraduationStatusNotFoundException.class,
                 () -> userService.updateUserRequirementStatus(userId, rfRequest));
