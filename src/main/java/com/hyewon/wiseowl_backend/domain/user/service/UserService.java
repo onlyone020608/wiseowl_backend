@@ -1,15 +1,12 @@
 package com.hyewon.wiseowl_backend.domain.user.service;
 
-import com.hyewon.wiseowl_backend.domain.user.dto.GraduationRequirementGroupByMajorResponse;
+import com.hyewon.wiseowl_backend.domain.user.dto.*;
 import com.hyewon.wiseowl_backend.domain.course.entity.CourseOffering;
 import com.hyewon.wiseowl_backend.domain.course.entity.Major;
 import com.hyewon.wiseowl_backend.domain.course.repository.CourseOfferingRepository;
 import com.hyewon.wiseowl_backend.domain.course.repository.MajorRepository;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorRequirement;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.MajorRequirementRepository;
-import com.hyewon.wiseowl_backend.domain.user.dto.CompletedCourseUpdateRequest;
-import com.hyewon.wiseowl_backend.domain.user.dto.ProfileUpdateRequest;
-import com.hyewon.wiseowl_backend.domain.user.dto.UserMajorRequest;
 import com.hyewon.wiseowl_backend.domain.user.entity.*;
 import com.hyewon.wiseowl_backend.domain.user.repository.*;
 import com.hyewon.wiseowl_backend.global.exception.*;
@@ -107,6 +104,20 @@ public class UserService {
                     );
                 }).toList();
 
+
+
+    }
+
+    @Transactional
+    public void updateUserRequirementStatus(Long userId, UserRequirementFulfillmentRequest request){
+        for(UserRequirementFulfillmentRequest.UserRequirementStatusUpdate update : request.requirements()){
+            UserRequirementStatus status = userRequirementStatusRepository.findById(update.userRequirementStatusId())
+                    .orElseThrow(() -> new UserGraduationStatusNotFoundException(userId));
+
+            status.updateFulfilled(update.fulfilled());
+
+
+        }
 
 
     }

@@ -33,4 +33,8 @@ public class UserRequirementStatus {
     public static UserRequirementStatus of(User user, MajorRequirement majorRequirement) {
         return new UserRequirementStatus(user, majorRequirement);
     }
+
+    public void updateFulfilled(boolean fulfilled){
+        this.fulfilled = fulfilled;
+    }
 }
