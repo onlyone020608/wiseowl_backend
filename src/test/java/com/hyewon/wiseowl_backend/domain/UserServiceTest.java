@@ -230,4 +230,40 @@ public class UserServiceTest {
                 .isInstanceOf(UserGraduationStatusNotFoundException.class);
     }
 
+    @Test
+    @DisplayName("updateUserRequirementStatus - should update userRequirementStatus")
+    void updateUserRequirementStatus() {
+        // given
+        Long userId = 1L;
+        given(userRequirementStatusRepository.findById(0L)).willReturn(Optional.of(urs1));
+
+        // when
+        UserRequirementFulfillmentRequest.UserRequirementStatusUpdate update = new UserRequirementFulfillmentRequest.UserRequirementStatusUpdate(urs1.getId(), true);
+        UserRequirementFulfillmentRequest rfRequest = new UserRequirementFulfillmentRequest(major.getId(), List.of(update));
+        userService.updateUserRequirementStatus(userId, rfRequest);
+
+        // then
+        verify(urs1).updateFulfilled(true);
+
+
+
+    }
+
+    @Test
+    @DisplayName("updateUserRequirementStatus - should throw when user requirement status not found")
+    void updateUserRequirementStatus_userRequirementStatusNotFound() {
+        // given
+        Long userId = 1L;
+        given(userRequirementStatusRepository.findById(0L)).willReturn(Optional.empty());
+
+        // when & then
+        UserRequirementFulfillmentRequest.UserRequirementStatusUpdate update = new UserRequirementFulfillmentRequest.UserRequirementStatusUpdate(urs1.getId(), true);
+        UserRequirementFulfillmentRequest rfRequest = new UserRequirementFulfillmentRequest(major.getId(), List.of(update));
+        assertThrows(UserGraduationStatusNotFoundException.class,
+                () -> userService.updateUserRequirementStatus(userId, rfRequest));
+
+    }
+
+
+
 }
