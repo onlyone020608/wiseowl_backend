@@ -72,7 +72,7 @@ public class UserServiceTest {
     private UserRequirementStatus urs1;
     private Requirement requirement;
     private CourseOffering offering;
-    private CompletedCourseUpdateRequest updateRequest;
+    private CompletedCourseUpdateRequest completedCourseUpdateRequest;
     private UserMajor userMajor;
     private CreditRequirement creditRequirement;
     private UserCompletedCourse ucc;
@@ -97,21 +97,22 @@ public class UserServiceTest {
                 .major(major)
                 .requirement(requirement)
                 .build();
-        offering = mock(CourseOffering.class);
+        offering = CourseOffering.builder().build();
         urs1 = mock(UserRequirementStatus.class);
         userMajor = mock(UserMajor.class);
         creditRequirement = mock(CreditRequirement.class);
         ucc = mock(UserCompletedCourse.class);
         course = mock(Course.class);
-        CompletedCourseUpdateItem item =
-                new CompletedCourseUpdateItem(1L, Grade.A, false);
+
         profileUpdateRequest = new ProfileUpdateRequest(
                 "test",
                 2022,
                 List.of(new UserMajorRequest(1L, MajorType.PRIMARY))
         );
 
-        updateRequest = new CompletedCourseUpdateRequest(List.of(item));
+        CompletedCourseUpdateItem item =
+                new CompletedCourseUpdateItem(1L, Grade.A, true);
+        completedCourseUpdateRequest = new CompletedCourseUpdateRequest(List.of(item));
 
     }
 
@@ -194,52 +195,62 @@ public class UserServiceTest {
         assertThrows(MajorNotFoundException.class,
                 () -> userService.updateUserProfile(userId, profileUpdateRequest));
     }
+
+    @Test
+    @DisplayName("insertCompletedCourses – success")
+    void insertCompletedCourses_success() {
+        // given
+        Long userId = 1L;
+        given(userRepository.findById(userId)).willReturn(Optional.of(user));
+        given(userCompletedCourseRepository.existsByUserId(userId)).willReturn(false);
+        given(courseOfferingRepository.findById(1L)).willReturn(Optional.of(offering));
+
+        // when
+        userService.insertCompletedCourses(userId, completedCourseUpdateRequest);
+
+        // then
+        verify(userCompletedCourseRepository).saveAll(argThat(iterable -> {
+            List<UserCompletedCourse> list = StreamSupport.stream(iterable.spliterator(), false)
+                    .toList();
+            return list.size() == 1 &&
+                    list.get(0).getUser().equals(user)
+                    && list.get(0).getCourseOffering().equals(offering)
+                    && list.get(0).getGrade().equals(Grade.A)
+                    && list.get(0).isRetake();
+
+        }));
+
+    }
+
+
+    @Test
+    @DisplayName("insertCompletedCourses – already exists")
+    void insertCompletedCourses_alreadyExists() {
+        // given
+        Long userId = 1L;
+        given(userRepository.findById(userId)).willReturn(Optional.of(user));
+        given(userCompletedCourseRepository.existsByUserId(userId)).willReturn(true);
+
+        // when & then
+        assertThrows(CompletedCourseAlreadyExistsException.class,
+                () -> userService.insertCompletedCourses(userId, completedCourseUpdateRequest));
+    }
+
+
+    @Test
+    @DisplayName("insertCompletedCourses – courseOffering not found")
+    void insertCompletedCourses_offeringNotFound() {
+        // given
+        Long userId = 1L;
+        given(userRepository.findById(userId)).willReturn(Optional.of(user));
+        given(userCompletedCourseRepository.existsByUserId(userId)).willReturn(false);
+        given(courseOfferingRepository.findById(1L)).willReturn(Optional.empty());
+
+        // when & then
+        assertThrows(CourseOfferingNotFoundException.class,
+                () -> userService.insertCompletedCourses(userId, completedCourseUpdateRequest));
+    }
 }
-//
-//    @Test
-//    @DisplayName("insertCompletedCourses – success")
-//    void insertCompletedCourses_success() {
-//        // given
-//        Long userId = 1L;
-//        given(userRepository.findById(userId)).willReturn(Optional.of(user));
-//        given(userCompletedCourseRepository.existsByUserId(userId)).willReturn(false);
-//        given(courseOfferingRepository.findById(1L)).willReturn(Optional.of(offering));
-//
-//        // when
-//        userService.insertCompletedCourses(userId, updateRequest);
-//
-//        // then
-//        verify(userCompletedCourseRepository).saveAll(any());
-//
-//    }
-//
-//    @Test
-//    @DisplayName("insertCompletedCourses – already exists")
-//    void insertCompletedCourses_alreadyExists() {
-//        // given
-//        Long userId = 1L;
-//        given(userRepository.findById(userId)).willReturn(Optional.of(user));
-//        given(userCompletedCourseRepository.existsByUserId(userId)).willReturn(true);
-//
-//        // when & then
-//        assertThrows(CompletedCourseAlreadyExistsException.class,
-//                () -> userService.insertCompletedCourses(userId, updateRequest));
-//    }
-//
-//    @Test
-//    @DisplayName("insertCompletedCourses – courseOffering not found")
-//    void insertCompletedCourses_offeringNotFound() {
-//        // given
-//        Long userId = 1L;
-//        given(userRepository.findById(userId)).willReturn(Optional.of(user));
-//        given(userCompletedCourseRepository.existsByUserId(userId)).willReturn(false);
-//        given(courseOfferingRepository.findById(1L)).willReturn(Optional.empty());
-//
-//        // when & then
-//        assertThrows(CourseOfferingNotFoundException.class,
-//                () -> userService.insertCompletedCourses(userId, updateRequest));
-//    }
-//
 //    @Test
 //    @DisplayName("getGraduationRequirementsForUser - should group by major and map to response")
 //    void getGraduationRequirementsForUser_shouldSucceed(){
