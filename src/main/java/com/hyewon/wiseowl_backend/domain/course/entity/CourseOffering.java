@@ -1,13 +1,13 @@
 package com.hyewon.wiseowl_backend.domain.course.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class CourseOffering {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
