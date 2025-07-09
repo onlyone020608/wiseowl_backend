@@ -85,6 +85,7 @@ public class UserServiceTest {
                 .email("test@test.com")
                 .build();
         major = Major.builder()
+                .id(1L)
                 .name("컴퓨터공학과")
                 .build();
         profile = Profile.builder()
@@ -96,9 +97,15 @@ public class UserServiceTest {
         mr1 = MajorRequirement.builder()
                 .major(major)
                 .requirement(requirement)
+                .majorType(MajorType.PRIMARY)
                 .build();
         offering = CourseOffering.builder().build();
-        urs1 = mock(UserRequirementStatus.class);
+        urs1 = UserRequirementStatus.builder()
+                .id(20L)
+                .user(user)
+                .majorRequirement(mr1)
+                .fulfilled(false)
+                .build();
         userMajor = mock(UserMajor.class);
         creditRequirement = mock(CreditRequirement.class);
         ucc = mock(UserCompletedCourse.class);
@@ -250,52 +257,44 @@ public class UserServiceTest {
         assertThrows(CourseOfferingNotFoundException.class,
                 () -> userService.insertCompletedCourses(userId, completedCourseUpdateRequest));
     }
+
+    @Test
+    @DisplayName("getGraduationRequirementsForUser - should group by major and map to response")
+    void getGraduationRequirementsForUser_shouldSucceed() {
+        // given
+        Long userId = 1L;
+        given(userRequirementStatusRepository.findAllByUserId(userId))
+                .willReturn(List.of(urs1));
+
+        // when
+        List<GraduationRequirementGroupByMajorResponse> result =
+                userService.getGraduationRequirementsForUser(userId);
+
+
+        // then
+        assertThat(result.get(0).majorName()).isEqualTo("컴퓨터공학과");
+        assertThat(result.get(0).majorType()).isEqualTo(MajorType.PRIMARY);
+        assertThat(result.get(0).requirements().get(0).userRequirementStatusId()).isEqualTo(20L);
+        assertThat(result.get(0).requirements().get(0).name()).isEqualTo("졸업시험");
+        assertThat(result.get(0).requirements().get(0).fulfilled()).isEqualTo(false);
+
+    }
+
+
+    @Test
+    @DisplayName("getGraduationRequirementsForUser - should throw when no data found")
+    void getGraduationRequirementsForUser_shouldThrow_whenNoDataFound() {
+        // given
+        Long userId = 999L;
+        given(userRequirementStatusRepository.findAllByUserId(userId))
+                .willReturn(List.of());
+
+        // when & then
+        assertThatThrownBy(() -> userService.getGraduationRequirementsForUser(userId))
+                .isInstanceOf(UserGraduationStatusNotFoundException.class);
+    }
 }
-//    @Test
-//    @DisplayName("getGraduationRequirementsForUser - should group by major and map to response")
-//    void getGraduationRequirementsForUser_shouldSucceed(){
-//        // given
-//        Long userId = 1L;
-//        given(major.getId()).willReturn(1L);
-//        given(major.getName()).willReturn("컴퓨터공학과");
-//
-//        given(mr1.getMajor()).willReturn(major);
-//        given(mr1.getMajorType()).willReturn(MajorType.PRIMARY);
-//        given(urs1.getMajorRequirement()).willReturn(mr1);
-//        given(mr1.getRequirement()).willReturn(requirement);
-//        List<UserRequirementStatus> mockStatuses = List.of(urs1);
-//        given(userRequirementStatusRepository.findAllByUserId(userId))
-//                .willReturn(mockStatuses);
-//
-//        // when
-//        List<GraduationRequirementGroupByMajorResponse> result =
-//                userService.getGraduationRequirementsForUser(userId);
-//
-//
-//        // then
-//        assertThat(result).hasSize(1);
-//        GraduationRequirementGroupByMajorResponse dto = result.get(0);
-//
-//        assertThat(dto.majorId()).isEqualTo(1L);
-//        assertThat(dto.majorName()).isEqualTo("컴퓨터공학과");
-//        assertThat(dto.majorType()).isEqualTo(MajorType.PRIMARY);
-//        assertThat(dto.requirements()).hasSize(1);
-//
-//    }
-//
-//    @Test
-//    @DisplayName("getGraduationRequirementsForUser - should throw when no data found")
-//    void getGraduationRequirementsForUser_shouldThrow_whenNoDataFound() {
-//        // given
-//        Long userId = 999L;
-//        given(userRequirementStatusRepository.findAllByUserId(userId))
-//                .willReturn(List.of());
-//
-//        // when & then
-//        assertThatThrownBy(() -> userService.getGraduationRequirementsForUser(userId))
-//                .isInstanceOf(UserGraduationStatusNotFoundException.class);
-//    }
-//
+
 //    @Test
 //    @DisplayName("updateUserRequirementStatus - should update userRequirementStatus")
 //    void updateUserRequirementStatus() {
