@@ -1,5 +1,9 @@
 package com.hyewon.wiseowl_backend.domain.user.service;
 
+import com.hyewon.wiseowl_backend.domain.course.entity.CourseType;
+import com.hyewon.wiseowl_backend.domain.requirement.entity.CreditRequirement;
+import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorType;
+import com.hyewon.wiseowl_backend.domain.requirement.repository.CreditRequirementRepository;
 import com.hyewon.wiseowl_backend.domain.user.dto.*;
 import com.hyewon.wiseowl_backend.domain.course.entity.CourseOffering;
 import com.hyewon.wiseowl_backend.domain.course.entity.Major;
@@ -18,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +36,7 @@ public class UserService {
     private final CourseOfferingRepository courseOfferingRepository;
     private final MajorRequirementRepository majorRequirementRepository;
     private final UserRequirementStatusRepository userRequirementStatusRepository;
+    private final CreditRequirementRepository creditRequirementRepository;
 
 
 
@@ -110,7 +116,7 @@ public class UserService {
 
     @Transactional
     public void updateUserRequirementStatus(Long userId, UserRequirementFulfillmentRequest request){
-        for(RequirementStatusSummary update : request.requirements()){
+        for(RequirementStatusUpdate update : request.requirements()){
             UserRequirementStatus status = userRequirementStatusRepository.findById(update.userRequirementStatusId())
                     .orElseThrow(() -> new UserGraduationStatusNotFoundException(userId));
 
@@ -118,6 +124,60 @@ public class UserService {
 
 
         }
+
+
+    }
+
+    @Transactional(readOnly = true)
+    public MainPageGraduationStatusResponse fetchUserGraduationOverview(Long userId){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+
+        List<UserMajor> userMajors = userMajorRepository.findAllByUserId(userId);
+        if (userMajors.isEmpty()) {
+            throw new UserMajorNotFoundException(userId);
+        }
+        List<RequirementStatusByMajor> requirementStatus = userMajors.stream()
+                .map(userMajor -> {
+                    Major major = userMajor.getMajor();
+                    MajorType majorType = userMajor.getMajorType();
+
+                    List<UserRequirementStatus> statuses = userRequirementStatusRepository.findAllByUserId(userId)
+                            .stream()
+                            .filter(urs -> {
+                                MajorRequirement mr = urs.getMajorRequirement();
+                                return mr.getMajor().equals(major) && mr.getMajorType().equals(majorType);
+                            }).toList();
+
+                    List<RequirementStatusSummary> requirements = statuses.stream()
+                            .map(status -> new RequirementStatusSummary(
+                                    status.getId(), status.getMajorRequirement().getRequirement().getName(),
+                                    status.isFulfilled()
+                            ))
+                            .toList();
+                    List<CreditRequirement> creditRequirements =
+                            creditRequirementRepository.findAllByMajorIdAndMajorType(major.getId(), majorType);
+
+                    if (creditRequirements.isEmpty()) {
+                        throw new CreditRequirementNotFoundException(major.getId(), majorType);
+                    }
+
+                    int requiredCredits = creditRequirements.stream()
+                            .filter(cr -> cr.getCourseType().equals(CourseType.MAJOR))
+                            .mapToInt(CreditRequirement::getRequiredCredits)
+                            .sum();
+
+                    int earnedCredits = userCompletedCourseRepository.findByUserId(userId)
+                            .stream()
+                            .filter(ucc -> ucc.getCourseOffering().getCourse().getCourseType().equals(CourseType.MAJOR))
+                            .mapToInt(ucc -> ucc.getCourseOffering().getCourse().getCredit())
+                            .sum();
+
+                    return new RequirementStatusByMajor(major.getName(), earnedCredits, requiredCredits, requirements);
+
+                }).toList();
+
+        return new MainPageGraduationStatusResponse(user.getUsername(), requirementStatus);
 
 
     }

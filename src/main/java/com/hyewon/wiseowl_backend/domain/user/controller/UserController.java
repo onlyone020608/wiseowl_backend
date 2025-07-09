@@ -1,10 +1,7 @@
 package com.hyewon.wiseowl_backend.domain.user.controller;
 
 import com.hyewon.wiseowl_backend.domain.auth.security.UserPrincipal;
-import com.hyewon.wiseowl_backend.domain.user.dto.CompletedCourseUpdateRequest;
-import com.hyewon.wiseowl_backend.domain.user.dto.GraduationRequirementGroupByMajorResponse;
-import com.hyewon.wiseowl_backend.domain.user.dto.ProfileUpdateRequest;
-import com.hyewon.wiseowl_backend.domain.user.dto.UserRequirementFulfillmentRequest;
+import com.hyewon.wiseowl_backend.domain.user.dto.*;
 import com.hyewon.wiseowl_backend.domain.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -53,5 +50,14 @@ public class UserController {
             ) {
         userService.updateUserRequirementStatus(principal.getId(), request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @GetMapping("me/graduation-info")
+    public ResponseEntity<MainPageGraduationStatusResponse> getMainGraduationInfo(
+            @AuthenticationPrincipal UserPrincipal principal
+    ){
+        MainPageGraduationStatusResponse userGraduationOverview = userService.fetchUserGraduationOverview(principal.getId());
+        return ResponseEntity.ok(userGraduationOverview);
+
     }
 }

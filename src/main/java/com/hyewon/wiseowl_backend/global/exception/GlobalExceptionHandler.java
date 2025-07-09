@@ -15,7 +15,9 @@ public class GlobalExceptionHandler {
             EmailAlreadyExistsException.class,
             CompletedCourseAlreadyExistsException.class,
             CourseOfferingNotFoundException.class,
-            UserGraduationStatusNotFoundException.class
+            UserGraduationStatusNotFoundException.class,
+            UserMajorNotFoundException.class,
+            CreditRequirementNotFoundException.class,
     })
     public ResponseEntity<CustomErrorResponse> handleDomainExceptions(RuntimeException ex) {
         if (ex instanceof CourseNotFoundException e) {
@@ -35,6 +37,10 @@ public class GlobalExceptionHandler {
         } else if(ex instanceof CourseOfferingNotFoundException e){
             return buildResponse(e.getErrorCode());
         } else if(ex instanceof UserGraduationStatusNotFoundException e){
+            return buildResponse(e.getErrorCode());
+        } else if(ex instanceof UserMajorNotFoundException e){
+            return buildResponse(e.getErrorCode());
+        } else if(ex instanceof CreditRequirementNotFoundException e){
             return buildResponse(e.getErrorCode());
         }
 
