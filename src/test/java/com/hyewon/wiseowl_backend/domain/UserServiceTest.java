@@ -82,6 +82,7 @@ public class UserServiceTest {
     @BeforeEach
     void setUp() {
         user = User.builder()
+                .username("Test")
                 .email("test@test.com")
                 .build();
         major = Major.builder()
@@ -99,23 +100,46 @@ public class UserServiceTest {
                 .requirement(requirement)
                 .majorType(MajorType.PRIMARY)
                 .build();
-        offering = CourseOffering.builder().build();
         urs1 = UserRequirementStatus.builder()
                 .id(20L)
                 .user(user)
                 .majorRequirement(mr1)
                 .fulfilled(false)
                 .build();
-        userMajor = mock(UserMajor.class);
+        userMajor = UserMajor.builder()
+                .user(user)
+                .major(major)
+                .majorType(MajorType.PRIMARY)
+                .build();
         creditRequirement = mock(CreditRequirement.class);
-        ucc = mock(UserCompletedCourse.class);
-        course = mock(Course.class);
 
+        course = Course.builder()
+                .major(major)
+                .name("자료구조")
+                .credit(3)
+                .courseType(CourseType.MAJOR)
+                .build();
+        offering = CourseOffering.builder()
+                .course(course)
+                .build();
+
+        ucc = UserCompletedCourse.builder()
+                .user(user)
+                .courseOffering(offering)
+                .grade(Grade.A)
+                .build();
         profileUpdateRequest = new ProfileUpdateRequest(
                 "test",
                 2022,
                 List.of(new UserMajorRequest(1L, MajorType.PRIMARY))
         );
+
+        creditRequirement = CreditRequirement.builder()
+                .major(major)
+                .majorType(MajorType.PRIMARY)
+                .courseType(CourseType.MAJOR)
+                .requiredCredits(130)
+                .build();
 
         CompletedCourseUpdateItem item =
                 new CompletedCourseUpdateItem(1L, Grade.A, true);
@@ -327,5 +351,73 @@ public class UserServiceTest {
                 () -> userService.updateUserRequirementStatus(userId, rfRequest));
 
     }
+
+    @Test
+    @DisplayName("fetchUserGraduationOverview - should return overview for each major")
+    void fetchUserGraduationOverview_success(){
+        //given
+        Long userId = 1L;
+        given(userRepository.findById(userId)).willReturn(Optional.of(user));
+        given(userMajorRepository.findAllByUserId(userId)).willReturn(List.of(userMajor));
+        given(userRequirementStatusRepository.findAllByUserId(userId)).willReturn(List.of(urs1));
+        given(creditRequirementRepository.findAllByMajorIdAndMajorType(major.getId(),MajorType.PRIMARY)).willReturn(List.of(creditRequirement));
+        given(userCompletedCourseRepository.findByUserId(userId)).willReturn(List.of(ucc));
+
+
+        // when
+        MainPageGraduationStatusResponse response = userService.fetchUserGraduationOverview(userId);
+
+        // then
+        RequirementStatusByMajor byMajor = response.requirementStatuses().get(0);
+        assertThat(response.userName()).isEqualTo("Test");
+        assertThat(response.requirementStatuses().size()).isEqualTo(1);
+        assertThat(byMajor.majorName()).isEqualTo("컴퓨터공학과");
+        assertThat(byMajor.requiredCredits()).isEqualTo(130);
+        assertThat(byMajor.earnedCredits()).isEqualTo(3);
+        assertThat(byMajor.requirements().get(0).fulfilled()).isEqualTo(false);
+        assertThat(byMajor.requirements().get(0).requirementName()).isEqualTo("졸업시험");
+
+    }
+
+    @Test
+    @DisplayName("fetchUserGraduationOverview - should throw when user not found")
+    void fetchUserGraduationOverview_shouldThrow_whenUserNotFound() {
+        // given
+        Long userId = 1L;
+        given(userRepository.findById(userId)).willReturn(Optional.empty());
+
+        // when & then
+        assertThrows(UserNotFoundException.class,
+                () -> userService.fetchUserGraduationOverview(userId));
+    }
+
+    @Test
+    @DisplayName("fetchUserGraduationOverview - should throw when user has no majors")
+    void fetchUserGraduationOverview_shouldThrow_whenNoMajors() {
+        // given
+        Long userId = 1L;
+        given(userRepository.findById(userId)).willReturn(Optional.of(user));
+        given(userMajorRepository.findAllByUserId(userId)).willReturn(List.of());
+
+        // when & then
+        assertThrows(UserMajorNotFoundException.class,
+                () -> userService.fetchUserGraduationOverview(userId));
+    }
+
+    @Test
+    @DisplayName("fetchUserGraduationOverview - should throw when credit requirement not found")
+    void fetchUserGraduationOverview_shouldThrow_whenNoCreditRequirement() {
+        // given
+        Long userId = 1L;
+        given(userRepository.findById(userId)).willReturn(Optional.of(user));
+        given(userMajorRepository.findAllByUserId(userId)).willReturn(List.of(userMajor));
+        given(userRequirementStatusRepository.findAllByUserId(userId)).willReturn(List.of(urs1));
+        given(creditRequirementRepository.findAllByMajorIdAndMajorType(major.getId(), MajorType.PRIMARY)).willReturn(List.of()); // 비워둠
+
+        // when & then
+        assertThrows(CreditRequirementNotFoundException.class,
+                () -> userService.fetchUserGraduationOverview(userId));
+    }
+
 
 }
