@@ -4,7 +4,7 @@ import java.util.List;
 
 public record UserRequirementFulfillmentRequest(
         Long majorId,
-        List<RequirementStatusSummary> requirements
+        List<RequirementStatusUpdate> requirements
 ) {
 
 }
