@@ -3,12 +3,12 @@ package com.hyewon.wiseowl_backend.domain.requirement.entity;
 import com.hyewon.wiseowl_backend.domain.course.entity.Course;
 import com.hyewon.wiseowl_backend.domain.course.entity.Major;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MajorRequiredCourse {
     @Id
