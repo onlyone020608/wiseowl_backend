@@ -26,4 +26,14 @@ public class UserRequiredCourseStatus {
 
     private boolean fulfilled;
 
+    private UserRequiredCourseStatus(User user, CourseType courseType,  Long requiredCourseId) {
+        this.user = user;
+        this.courseType = courseType;
+        this.requiredCourseId = requiredCourseId;
+    }
+
+    public static UserRequiredCourseStatus of(User user, CourseType courseType,  Long requiredCourseId) {
+        return new UserRequiredCourseStatus(user, courseType, requiredCourseId);
+    }
+
 }

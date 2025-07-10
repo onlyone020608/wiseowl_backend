@@ -3,7 +3,10 @@ package com.hyewon.wiseowl_backend.domain.user.service;
 import com.hyewon.wiseowl_backend.domain.course.entity.CourseType;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.CreditRequirement;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorType;
+import com.hyewon.wiseowl_backend.domain.requirement.entity.RequiredMajorCourse;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.CreditRequirementRepository;
+import com.hyewon.wiseowl_backend.domain.requirement.repository.RequiredLiberalCategoryByCollegeRepository;
+import com.hyewon.wiseowl_backend.domain.requirement.repository.RequiredMajorCourseRepository;
 import com.hyewon.wiseowl_backend.domain.user.dto.*;
 import com.hyewon.wiseowl_backend.domain.course.entity.CourseOffering;
 import com.hyewon.wiseowl_backend.domain.course.entity.Major;
@@ -22,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +39,10 @@ public class UserService {
     private final MajorRequirementRepository majorRequirementRepository;
     private final UserRequirementStatusRepository userRequirementStatusRepository;
     private final CreditRequirementRepository creditRequirementRepository;
+    private final RequiredMajorCourseRepository requiredMajorCourseRepository;
+    private final RequiredLiberalCategoryByCollegeRepository requiredLiberalCategoryByCollegeRepository;
+    private final UserRequiredCourseStatusRepository userRequiredCourseStatusRepository;
+
 
 
 
@@ -61,6 +67,29 @@ public class UserService {
                     .toList();
 
             userRequirementStatusRepository.saveAll(toSave);
+
+            List<RequiredMajorCourse> majorCourseList= requiredMajorCourseRepository.findApplicableMajorCourses(majorRequest.majorId(), majorRequest.majorType(), request.entranceYear());
+            List<UserRequiredCourseStatus> requiredMajorCourseStatuses = majorCourseList.stream()
+                    .map(requiredMajorCourse -> UserRequiredCourseStatus.of(user, CourseType.MAJOR, requiredMajorCourse.getId()))
+                    .toList();
+
+            userRequiredCourseStatusRepository.saveAll(requiredMajorCourseStatuses);
+
+            // primary major에 해당할 때만
+            if(majorRequest.majorType().equals(MajorType.PRIMARY)){
+                List<UserRequiredCourseStatus> requiredLiberalCourseStatuses = requiredLiberalCategoryByCollegeRepository.findApplicableLiberalCategories(major.getCollege().getId(), request.entranceYear())
+                        .stream()
+                        .map(requiredLiberal -> UserRequiredCourseStatus.of(user, CourseType.GENERAL, requiredLiberal.getId()))
+                        .toList();
+
+                userRequiredCourseStatusRepository.saveAll(requiredLiberalCourseStatuses);
+
+
+            }
+
+
+
+
 
 
         }
