@@ -1,17 +1,13 @@
 package com.hyewon.wiseowl_backend.domain;
 
-import com.hyewon.wiseowl_backend.domain.course.entity.Course;
-import com.hyewon.wiseowl_backend.domain.course.entity.CourseOffering;
-import com.hyewon.wiseowl_backend.domain.course.entity.CourseType;
-import com.hyewon.wiseowl_backend.domain.course.entity.Major;
+import com.hyewon.wiseowl_backend.domain.course.entity.*;
 import com.hyewon.wiseowl_backend.domain.course.repository.CourseOfferingRepository;
 import com.hyewon.wiseowl_backend.domain.course.repository.MajorRepository;
-import com.hyewon.wiseowl_backend.domain.requirement.entity.CreditRequirement;
-import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorRequirement;
-import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorType;
-import com.hyewon.wiseowl_backend.domain.requirement.entity.Requirement;
+import com.hyewon.wiseowl_backend.domain.requirement.entity.*;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.CreditRequirementRepository;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.MajorRequirementRepository;
+import com.hyewon.wiseowl_backend.domain.requirement.repository.RequiredLiberalCategoryByCollegeRepository;
+import com.hyewon.wiseowl_backend.domain.requirement.repository.RequiredMajorCourseRepository;
 import com.hyewon.wiseowl_backend.domain.user.dto.*;
 import com.hyewon.wiseowl_backend.domain.user.entity.*;
 import com.hyewon.wiseowl_backend.domain.user.repository.*;
@@ -36,8 +32,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
@@ -63,6 +58,14 @@ public class UserServiceTest {
     private UserRequirementStatusRepository userRequirementStatusRepository;
     @Mock
     private CreditRequirementRepository creditRequirementRepository;
+    @Mock
+    private RequiredMajorCourseRepository requiredMajorCourseRepository;
+
+    @Mock
+    private RequiredLiberalCategoryByCollegeRepository requiredLiberalCategoryByCollegeRepository;
+
+    @Mock
+    private UserRequiredCourseStatusRepository userRequiredCourseStatusRepository;
 
 
     private User user;
@@ -77,6 +80,9 @@ public class UserServiceTest {
     private CreditRequirement creditRequirement;
     private UserCompletedCourse ucc;
     private Course course;
+    private College college;
+    private RequiredMajorCourse requiredMajorCourse;
+    private RequiredLiberalCategoryByCollege rlc;
     private ProfileUpdateRequest profileUpdateRequest;
 
     @BeforeEach
@@ -85,9 +91,11 @@ public class UserServiceTest {
                 .username("Test")
                 .email("test@test.com")
                 .build();
+        college = College.builder().build();
         major = Major.builder()
                 .id(1L)
                 .name("컴퓨터공학과")
+                .college(college)
                 .build();
         profile = Profile.builder()
                 .user(user)
@@ -141,6 +149,14 @@ public class UserServiceTest {
                 .requiredCredits(130)
                 .build();
 
+        requiredMajorCourse = RequiredMajorCourse.builder()
+                .major(major)
+                .majorType(MajorType.PRIMARY)
+                .build();
+
+        rlc =RequiredLiberalCategoryByCollege.builder()
+                .build();
+
         CompletedCourseUpdateItem item =
                 new CompletedCourseUpdateItem(1L, Grade.A, true);
         completedCourseUpdateRequest = new CompletedCourseUpdateRequest(List.of(item));
@@ -148,7 +164,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("updateUserProfile - should update user and profile and save userMajor, userRequirementStatus")
+    @DisplayName("updateUserProfile - should update user and profile and save userMajor, userRequirementStatus, userRequiredCourseStatus")
     void updateUserProfile_shouldSucceed() {
         // given
         Long userId = 1L;
@@ -158,6 +174,11 @@ public class UserServiceTest {
         given(majorRepository.findById(1L)).willReturn(Optional.of(major));
         given(majorRequirementRepository.findApplicable(major.getId(), MajorType.PRIMARY, profileUpdateRequest.entranceYear()))
                 .willReturn(List.of(mr1));
+        given(requiredMajorCourseRepository.findApplicableMajorCourses(major.getId(), MajorType.PRIMARY, profileUpdateRequest.entranceYear()))
+                .willReturn(List.of(requiredMajorCourse));
+        given(requiredLiberalCategoryByCollegeRepository.findApplicableLiberalCategories(major.getCollege().getId(),  profileUpdateRequest.entranceYear()))
+                .willReturn(List.of(rlc));
+
 
         // when
         userService.updateUserProfile(userId, profileUpdateRequest);
@@ -182,6 +203,22 @@ public class UserServiceTest {
 
             return list.size() == 1 &&
                     list.get(0).getMajorRequirement().equals(mr1) &&
+                    list.get(0).getUser().equals(user);
+        }));
+
+        verify(userRequiredCourseStatusRepository).saveAll(argThat(iterable -> {
+            List<UserRequiredCourseStatus> list = StreamSupport.stream(iterable.spliterator(), false).toList();
+
+            return list.size() == 1 &&
+                    list.get(0).getCourseType() == CourseType.MAJOR &&
+                    list.get(0).getUser().equals(user);
+        }));
+
+        verify(userRequiredCourseStatusRepository).saveAll(argThat(iterable -> {
+            List<UserRequiredCourseStatus> list = StreamSupport.stream(iterable.spliterator(), false).toList();
+
+            return list.size() == 1 &&
+                    list.get(0).getCourseType() == CourseType.GENERAL &&
                     list.get(0).getUser().equals(user);
         }));
     }
