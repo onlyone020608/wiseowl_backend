@@ -23,6 +23,10 @@ public class RequiredMajorCourse {
     @JoinColumn(name = "course_id")
     private Course course;
 
+    @Enumerated(EnumType.STRING)
+    private MajorType majorType;
+
+
     private Integer appliesFromYear;
 
     private Integer appliesToYear;
