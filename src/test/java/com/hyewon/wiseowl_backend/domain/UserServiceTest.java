@@ -81,9 +81,13 @@ public class UserServiceTest {
     private UserCompletedCourse ucc;
     private Course course;
     private College college;
+    private LiberalCategory liberalCategory;
     private RequiredMajorCourse requiredMajorCourse;
     private RequiredLiberalCategoryByCollege rlc;
     private ProfileUpdateRequest profileUpdateRequest;
+    private UserRequiredCourseStatus userRequiredCourseStatus1;
+    private UserRequiredCourseStatus userRequiredCourseStatus2;
+
 
     @BeforeEach
     void setUp() {
@@ -121,9 +125,14 @@ public class UserServiceTest {
                 .build();
         creditRequirement = mock(CreditRequirement.class);
 
+        liberalCategory = LiberalCategory.builder()
+                .name("인간과사회")
+                .build();
+
         course = Course.builder()
                 .major(major)
                 .name("자료구조")
+                .courseCodePrefix("V41006")
                 .credit(3)
                 .courseType(CourseType.MAJOR)
                 .build();
@@ -150,11 +159,30 @@ public class UserServiceTest {
                 .build();
 
         requiredMajorCourse = RequiredMajorCourse.builder()
+                .id(10L)
+                .course(course)
                 .major(major)
                 .majorType(MajorType.PRIMARY)
                 .build();
 
         rlc =RequiredLiberalCategoryByCollege.builder()
+                .id(20L)
+                .liberalCategory(liberalCategory)
+                .requiredCredit(6)
+                .build();
+        userRequiredCourseStatus1 = UserRequiredCourseStatus.builder()
+                .user(user)
+                .courseType(CourseType.MAJOR)
+                .requiredCourseId(10L)
+                .fulfilled(false)
+                .build();
+
+        userRequiredCourseStatus2 = UserRequiredCourseStatus.builder()
+                .id(20L)
+                .user(user)
+                .courseType(CourseType.GENERAL)
+                .requiredCourseId(20L)
+                .fulfilled(false)
                 .build();
 
         CompletedCourseUpdateItem item =
@@ -455,6 +483,83 @@ public class UserServiceTest {
         assertThrows(CreditRequirementNotFoundException.class,
                 () -> userService.fetchUserGraduationOverview(userId));
     }
+
+    @Test
+    @DisplayName("fetchUserRequiredCourseStatus - should return required major and liberal courses status correctly")
+    void fetchUserRequiredCourseStatus_success() {
+        // given
+        Long userId = 1L;
+        given(userRequiredCourseStatusRepository.findAllByUserId(userId))
+                .willReturn(List.of(userRequiredCourseStatus1, userRequiredCourseStatus2));
+        given(requiredMajorCourseRepository.findById(10L))
+                .willReturn(Optional.of(requiredMajorCourse));
+        given(requiredLiberalCategoryByCollegeRepository.findById(20L))
+               .willReturn(Optional.of(rlc));
+
+        // when
+
+        UserRequiredCourseStatusResponse response = userService.fetchUserRequiredCourseStatus(userId, MajorType.PRIMARY);
+
+        // then
+
+        assertThat(response.majorRequiredCourses().get(0).courseCode()).isEqualTo("V41006");
+        assertThat(response.majorRequiredCourses().get(0).courseName()).isEqualTo("자료구조");
+        assertThat(response.majorRequiredCourses().get(0).fulfilled()).isEqualTo(false);;
+
+        assertThat(response.liberalRequiredCourses().get(0).liberalCategoryName()).isEqualTo("인간과사회");
+        assertThat(response.liberalRequiredCourses().get(0).requiredCredit()).isEqualTo(6);
+        assertThat(response.liberalRequiredCourses().get(0).fulfilled()).isEqualTo(false);
+
+    }
+    @Test
+    @DisplayName("fetchUserRequiredCourseStatus - should throw when user required course status not found")
+    void fetchUserRequiredCourseStatus_shouldThrow_whenNoUserRequiredCourseStatus() {
+        // given
+        Long userId = 1L;
+        given(userRequiredCourseStatusRepository.findAllByUserId(userId))
+                .willReturn(List.of());
+
+        // when & then
+        assertThrows(UserRequiredCourseStatusNotFoundException.class,
+                () -> userService.fetchUserRequiredCourseStatus(userId, MajorType.PRIMARY));
+
+    }
+
+    @Test
+    @DisplayName("fetchUserRequiredCourseStatus - should throw when required major course status not found")
+    void fetchUserRequiredCourseStatus_shouldThrow_whenNoRequiredMajorCourse() {
+        // given
+        Long userId = 1L;
+        given(userRequiredCourseStatusRepository.findAllByUserId(userId))
+                .willReturn(List.of(userRequiredCourseStatus1, userRequiredCourseStatus2));
+        given(requiredMajorCourseRepository.findById(10L))
+                .willReturn(Optional.empty());
+
+        // when & then
+        assertThrows(RequiredMajorCourseNotFoundException.class,
+                () -> userService.fetchUserRequiredCourseStatus(userId, MajorType.PRIMARY));
+
+    }
+
+    @Test
+    @DisplayName("fetchUserRequiredCourseStatus - should throw when required liberal category not found")
+    void fetchUserRequiredCourseStatus_shouldThrow_whenNoRequiredLiberalCategory() {
+        // given
+        Long userId = 1L;
+        given(userRequiredCourseStatusRepository.findAllByUserId(userId))
+                .willReturn(List.of(userRequiredCourseStatus1, userRequiredCourseStatus2));
+        given(requiredMajorCourseRepository.findById(10L))
+                .willReturn(Optional.of(requiredMajorCourse));
+        given(requiredLiberalCategoryByCollegeRepository.findById(20L))
+                .willReturn(Optional.empty());
+
+        // when & then
+        assertThrows(RequiredLiberalCategoryNotFoundException.class,
+                () -> userService.fetchUserRequiredCourseStatus(userId, MajorType.PRIMARY));
+
+    }
+
+
 
 
 }
