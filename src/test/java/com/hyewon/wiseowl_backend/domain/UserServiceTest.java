@@ -72,7 +72,9 @@ public class UserServiceTest {
     private Profile profile;
     private Major major;
     private MajorRequirement mr1;
+    private MajorRequirement mr2;
     private UserRequirementStatus urs1;
+    private UserRequirementStatus urs2;
     private Requirement requirement;
     private CourseOffering offering;
     private CompletedCourseUpdateRequest completedCourseUpdateRequest;
@@ -111,11 +113,23 @@ public class UserServiceTest {
                 .major(major)
                 .requirement(requirement)
                 .majorType(MajorType.PRIMARY)
+                .description("다른시험대체가능")
+                .build();
+        mr2 = MajorRequirement.builder()
+                .major(major)
+                .requirement(requirement)
+                .majorType(MajorType.DOUBLE)
                 .build();
         urs1 = UserRequirementStatus.builder()
                 .id(20L)
                 .user(user)
                 .majorRequirement(mr1)
+                .fulfilled(false)
+                .build();
+        urs2 = UserRequirementStatus.builder()
+                .id(20L)
+                .user(user)
+                .majorRequirement(mr2)
                 .fulfilled(false)
                 .build();
         userMajor = UserMajor.builder()
@@ -556,6 +570,41 @@ public class UserServiceTest {
         // when & then
         assertThrows(RequiredLiberalCategoryNotFoundException.class,
                 () -> userService.fetchUserRequiredCourseStatus(userId, MajorType.PRIMARY));
+
+    }
+
+    @Test
+    @DisplayName("fetchUserGraduationRequirementStatus - should return graduation requirement statuses grouped by major type")
+    void fetchUserGraduationRequirementStatus_success(){
+        // given
+        Long userId = 1L;
+        given(userRequirementStatusRepository.findAllByUserId(userId))
+                .willReturn(List.of(urs1, urs2));
+
+        // when
+        List<UserGraduationRequirementStatusResponse> response = userService.fetchUserGraduationRequirementStatus(userId);
+
+        // then
+        assertThat(response.get(0).majorType()).isEqualTo(MajorType.PRIMARY);
+        assertThat(response.get(0).graduationRequirementItems().get(0).requirementName()).isEqualTo("졸업시험");
+        assertThat(response.get(0).graduationRequirementItems().get(0).description()).isEqualTo("다른시험대체가능");
+        assertThat(response.get(0).graduationRequirementItems().get(0).fulfilled()).isEqualTo(false);
+        assertThat(response.get(1).majorType()).isEqualTo(MajorType.DOUBLE);
+
+
+    }
+
+    @Test
+    @DisplayName("fetchUserGraduationRequirementStatus -  should throw when user requirement status not found")
+    void fetchUserGraduationRequirementStatus_shouldThrow_whenNoUserRequirementStatus(){
+        // given
+        Long userId = 1L;
+        given(userRequirementStatusRepository.findAllByUserId(userId))
+                .willReturn(List.of());
+
+        // when & then
+        assertThrows(UserGraduationStatusNotFoundException.class,
+                () -> userService.fetchUserGraduationRequirementStatus(userId));
 
     }
 
