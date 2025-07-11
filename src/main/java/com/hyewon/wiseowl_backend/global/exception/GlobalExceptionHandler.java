@@ -18,6 +18,9 @@ public class GlobalExceptionHandler {
             UserGraduationStatusNotFoundException.class,
             UserMajorNotFoundException.class,
             CreditRequirementNotFoundException.class,
+            RequiredMajorCourseNotFoundException.class,
+            LiberalCategoryNotFoundException.class,
+            UserRequiredCourseStatusNotFoundException.class
     })
     public ResponseEntity<CustomErrorResponse> handleDomainExceptions(RuntimeException ex) {
         if (ex instanceof CourseNotFoundException e) {
@@ -41,6 +44,12 @@ public class GlobalExceptionHandler {
         } else if(ex instanceof UserMajorNotFoundException e){
             return buildResponse(e.getErrorCode());
         } else if(ex instanceof CreditRequirementNotFoundException e){
+            return buildResponse(e.getErrorCode());
+        } else if(ex instanceof RequiredMajorCourseNotFoundException e){
+            return buildResponse(e.getErrorCode());
+        } else if(ex instanceof RequiredLiberalCategoryNotFoundException e){
+            return buildResponse(e.getErrorCode());
+        } else if(ex instanceof UserRequiredCourseStatusNotFoundException e){
             return buildResponse(e.getErrorCode());
         }
 

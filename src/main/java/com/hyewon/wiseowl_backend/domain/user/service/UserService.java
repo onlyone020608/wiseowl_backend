@@ -1,9 +1,8 @@
 package com.hyewon.wiseowl_backend.domain.user.service;
 
+import com.hyewon.wiseowl_backend.domain.course.entity.Course;
 import com.hyewon.wiseowl_backend.domain.course.entity.CourseType;
-import com.hyewon.wiseowl_backend.domain.requirement.entity.CreditRequirement;
-import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorType;
-import com.hyewon.wiseowl_backend.domain.requirement.entity.RequiredMajorCourse;
+import com.hyewon.wiseowl_backend.domain.requirement.entity.*;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.CreditRequirementRepository;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.RequiredLiberalCategoryByCollegeRepository;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.RequiredMajorCourseRepository;
@@ -12,7 +11,6 @@ import com.hyewon.wiseowl_backend.domain.course.entity.CourseOffering;
 import com.hyewon.wiseowl_backend.domain.course.entity.Major;
 import com.hyewon.wiseowl_backend.domain.course.repository.CourseOfferingRepository;
 import com.hyewon.wiseowl_backend.domain.course.repository.MajorRepository;
-import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorRequirement;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.MajorRequirementRepository;
 import com.hyewon.wiseowl_backend.domain.user.entity.*;
 import com.hyewon.wiseowl_backend.domain.user.repository.*;
@@ -24,7 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -207,6 +207,44 @@ public class UserService {
                 }).toList();
 
         return new MainPageGraduationStatusResponse(user.getUsername(), requirementStatus);
+
+
+    }
+    @Transactional(readOnly = true)
+    public UserRequiredCourseStatusResponse fetchUserRequiredCourseStatus(Long userId, MajorType majorType) {
+        List<UserRequiredCourseStatus> userRequiredCourseStatuses = userRequiredCourseStatusRepository.findAllByUserId(userId);
+        if(userRequiredCourseStatuses.isEmpty()) {
+            throw new  UserRequiredCourseStatusNotFoundException(userId);
+        }
+        Map<CourseType, List<UserRequiredCourseStatus>> grouped = userRequiredCourseStatuses.stream()
+                .collect(Collectors.groupingBy(UserRequiredCourseStatus::getCourseType));
+        List<UserRequiredCourseStatus> majorRequiredCourses = grouped.getOrDefault(CourseType.MAJOR, List.of()).stream().filter(
+                status -> {
+                    RequiredMajorCourse requiredMajorCourse = requiredMajorCourseRepository.findById(status.getRequiredCourseId()).orElseThrow(() -> new RequiredMajorCourseNotFoundException(status.getRequiredCourseId()));
+                    return requiredMajorCourse.getMajorType().equals(majorType);
+                }
+        ).toList();
+
+        List<MajorRequiredCourseItemResponse> majorRequired = majorRequiredCourses.stream().map(
+                status -> {
+                    RequiredMajorCourse requiredMajorCourse = requiredMajorCourseRepository.findById(status.getRequiredCourseId()).orElseThrow(() -> new RequiredMajorCourseNotFoundException(status.getRequiredCourseId()));
+                    Course course = requiredMajorCourse.getCourse();
+                    return new MajorRequiredCourseItemResponse(course.getCourseCodePrefix(), course.getName(), status.isFulfilled());
+                }
+        ).toList();
+
+
+        List<UserRequiredCourseStatus> liberalRequiredCourses = grouped.getOrDefault(CourseType.GENERAL, List.of());
+        List<LiberalRequiredCourseItemResponse> liberalRequired = liberalRequiredCourses.stream().map(
+                status -> {
+                    RequiredLiberalCategoryByCollege requiredLiberal = requiredLiberalCategoryByCollegeRepository.findById(status.getRequiredCourseId()).orElseThrow(() -> new RequiredLiberalCategoryNotFoundException(status.getRequiredCourseId()));
+
+                    return new LiberalRequiredCourseItemResponse(requiredLiberal.getLiberalCategory().getName(), status.isFulfilled(), requiredLiberal.getRequiredCredit());
+                }
+        ).toList();
+
+
+        return new UserRequiredCourseStatusResponse(majorRequired, liberalRequired);
 
 
     }

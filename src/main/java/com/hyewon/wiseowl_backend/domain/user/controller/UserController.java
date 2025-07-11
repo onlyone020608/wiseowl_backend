@@ -1,6 +1,7 @@
 package com.hyewon.wiseowl_backend.domain.user.controller;
 
 import com.hyewon.wiseowl_backend.domain.auth.security.UserPrincipal;
+import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorType;
 import com.hyewon.wiseowl_backend.domain.user.dto.*;
 import com.hyewon.wiseowl_backend.domain.user.service.UserService;
 import jakarta.validation.Valid;
@@ -59,5 +60,13 @@ public class UserController {
         MainPageGraduationStatusResponse userGraduationOverview = userService.fetchUserGraduationOverview(principal.getId());
         return ResponseEntity.ok(userGraduationOverview);
 
+    }
+
+    @GetMapping("/users/me/required-courses")
+    public ResponseEntity<UserRequiredCourseStatusResponse> getMyRequiredCourses(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @RequestParam MajorType majorType
+    ) {
+        return ResponseEntity.ok(userService.fetchUserRequiredCourseStatus(principal.getId(), majorType));
     }
 }
