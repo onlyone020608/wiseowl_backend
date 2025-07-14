@@ -318,6 +318,23 @@ public class UserService {
 
     }
 
+    @Transactional
+    public void updateCompletedCourses(List<CompletedCourseUpdateRequest> requests){
+        requests.forEach(request -> {
+            UserCompletedCourse userCompletedCourse = userCompletedCourseRepository.findById(request.userCompletedCourseId()).orElseThrow(() -> new UserCompletedCourseNotFoundException(request.userCompletedCourseId()));
+            if (request.grade() != null) {
+                userCompletedCourse.updateGrade(request.grade());
+            }
+
+            if (request.retake() != null) {
+                userCompletedCourse.updateRetake(request.retake());
+            }
+        });
+
+    }
+
+
+
 
 
 }

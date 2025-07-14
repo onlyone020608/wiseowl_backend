@@ -34,6 +34,14 @@ public class UserCompletedCourse {
         this.retake = retake;
     }
 
+    public void updateGrade(Grade grade) {
+        this.grade = grade;
+    }
+
+    public void updateRetake(boolean retake) {
+        this.retake = retake;
+    }
+
     public static UserCompletedCourse of(User user, CourseOffering courseOffering, Grade grade, boolean retake) {
         return new UserCompletedCourse(user, courseOffering, grade, retake);
     }

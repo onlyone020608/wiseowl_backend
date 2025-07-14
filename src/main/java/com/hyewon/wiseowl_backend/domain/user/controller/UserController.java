@@ -100,5 +100,12 @@ public class UserController {
         userService.updateUserMajorTypes(requests);
         return ResponseEntity.ok().build();
     }
+    @PatchMapping("/me/completed-courses")
+    public ResponseEntity<Void> updateCompletedCourses(
+            @RequestBody @Valid List<CompletedCourseUpdateRequest> requests
+    ) {
+        userService.updateCompletedCourses(requests);
+        return ResponseEntity.ok().build();
+    }
 
 }

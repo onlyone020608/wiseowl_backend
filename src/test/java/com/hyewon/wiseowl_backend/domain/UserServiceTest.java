@@ -183,9 +183,11 @@ public class UserServiceTest {
                 .build();
 
         ucc = UserCompletedCourse.builder()
+                .id(1L)
                 .user(user)
                 .courseOffering(offering)
                 .grade(Grade.A)
+                .retake(true)
                 .build();
         profileUpdateRequest = new ProfileUpdateRequest(
                 "test",
@@ -721,7 +723,6 @@ public class UserServiceTest {
     @DisplayName("updateUserMajorTypes -  should update user major types")
     void updateUserMajorTypes_success(){
         // given
-        Long userId = 1L;
         given(userMajorRepository.findById(userMajor.getId()))
                 .willReturn(Optional.of(userMajor));
         given(userMajorRepository.findById(userMajor2.getId()))
@@ -742,7 +743,6 @@ public class UserServiceTest {
     @DisplayName("updateUserMajorTypes - should throw UserMajorNotFoundException when user major does not exist")
     void updateUserMajorTypes_shouldThrowException_whenUserMajorNotFound(){
         // given
-        Long userId = 1L;
         given(userMajorRepository.findById(userMajor.getId()))
                 .willReturn(Optional.empty());
 
@@ -752,6 +752,37 @@ public class UserServiceTest {
         // when & then
         assertThrows(UserMajorNotFoundException.class,
                 () -> userService.updateUserMajorTypes(List.of(rq1, rq2)));
+
+    }
+
+    @Test
+    @DisplayName("updateCompletedCourses -  should update user completed courses")
+    void updateCompletedCourses_success(){
+        // given
+        given(userCompletedCourseRepository.findById(1L))
+                .willReturn(Optional.of(ucc));
+
+        // when
+        CompletedCourseUpdateRequest rq1 = new CompletedCourseUpdateRequest(1L, Grade.B, false);
+        userService.updateCompletedCourses(List.of(rq1));
+
+        // then
+        assertThat(ucc.getGrade()).isEqualTo(Grade.B);
+        assertThat(ucc.isRetake()).isEqualTo(false);
+
+    }
+
+    @Test
+    @DisplayName("updateCompletedCourses -   should throw UserCompletedCourseNotFoundException when user completed course does not exist")
+    void updateCompletedCourses_shouldThrowException_whenUserCompletedCourseNotFound(){
+        // given
+        given(userCompletedCourseRepository.findById(2L))
+                .willReturn(Optional.empty());
+
+        // when & then
+        CompletedCourseUpdateRequest rq1 = new CompletedCourseUpdateRequest(2L, Grade.B, false);
+        assertThrows(UserCompletedCourseNotFoundException.class,
+                () -> userService.updateCompletedCourses(List.of(rq1)));
 
     }
 
