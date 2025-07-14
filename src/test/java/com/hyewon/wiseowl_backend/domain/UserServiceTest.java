@@ -88,7 +88,7 @@ public class UserServiceTest {
     private UserRequirementStatus urs2;
     private Requirement requirement;
     private CourseOffering offering;
-    private CompletedCourseUpdateRequest completedCourseUpdateRequest;
+    private CompletedCourseInsertRequest completedCourseInsertRequest;
     private UserMajor userMajor;
     private UserMajor userMajor2;
     private CreditRequirement creditRequirement;
@@ -227,9 +227,9 @@ public class UserServiceTest {
                 .fulfilled(false)
                 .build();
 
-        CompletedCourseUpdateItem item =
-                new CompletedCourseUpdateItem(1L, Grade.A, true);
-        completedCourseUpdateRequest = new CompletedCourseUpdateRequest(List.of(item));
+        CompletedCourseInsertItem item =
+                new CompletedCourseInsertItem(1L, Grade.A, true);
+        completedCourseInsertRequest = new CompletedCourseInsertRequest(List.of(item));
 
     }
 
@@ -344,7 +344,7 @@ public class UserServiceTest {
         given(courseOfferingRepository.findById(1L)).willReturn(Optional.of(offering));
 
         // when
-        userService.insertCompletedCourses(userId, completedCourseUpdateRequest);
+        userService.insertCompletedCourses(userId, completedCourseInsertRequest);
 
         // then
         verify(userCompletedCourseRepository).saveAll(argThat(iterable -> {
@@ -372,7 +372,7 @@ public class UserServiceTest {
 
         // when & then
         assertThrows(CompletedCourseAlreadyExistsException.class,
-                () -> userService.insertCompletedCourses(userId, completedCourseUpdateRequest));
+                () -> userService.insertCompletedCourses(userId, completedCourseInsertRequest));
     }
 
 
@@ -387,7 +387,7 @@ public class UserServiceTest {
 
         // when & then
         assertThrows(CourseOfferingNotFoundException.class,
-                () -> userService.insertCompletedCourses(userId, completedCourseUpdateRequest));
+                () -> userService.insertCompletedCourses(userId, completedCourseInsertRequest));
     }
 
     @Test

@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -100,7 +99,7 @@ public class UserService {
     }
 
     @Transactional
-    public void insertCompletedCourses(Long userId, CompletedCourseUpdateRequest request){
+    public void insertCompletedCourses(Long userId, CompletedCourseInsertRequest request){
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 

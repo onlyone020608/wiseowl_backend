@@ -30,7 +30,7 @@ public class UserController {
     @PostMapping("/me/completed-courses")
     public ResponseEntity<Void> insertCompletedCourses(
             @AuthenticationPrincipal UserPrincipal principal,
-            @RequestBody @Valid  CompletedCourseUpdateRequest request
+            @RequestBody @Valid CompletedCourseInsertRequest request
     ) {
         userService.insertCompletedCourses(principal.getId(), request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
