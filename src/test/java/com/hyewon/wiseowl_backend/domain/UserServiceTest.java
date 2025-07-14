@@ -656,8 +656,8 @@ public class UserServiceTest {
 
         // then
         assertThat(response.userName()).isEqualTo("Test");
-        assertThat(response.primaryMajor()).isEqualTo("컴퓨터공학과");
-        assertThat(response.doubleMajor()).isEqualTo("철학과");
+        assertThat(response.primaryMajor().majorName()).isEqualTo("컴퓨터공학과");
+        assertThat(response.doubleMajor().majorName()).isEqualTo("철학과");
         assertThat(response.JPA()).isEqualTo(3.9);
 
 

@@ -1,14 +1,11 @@
 package com.hyewon.wiseowl_backend.domain.user.service;
 
-import com.hyewon.wiseowl_backend.domain.course.entity.Course;
-import com.hyewon.wiseowl_backend.domain.course.entity.CourseType;
+import com.hyewon.wiseowl_backend.domain.course.entity.*;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.*;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.CreditRequirementRepository;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.RequiredLiberalCategoryByCollegeRepository;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.RequiredMajorCourseRepository;
 import com.hyewon.wiseowl_backend.domain.user.dto.*;
-import com.hyewon.wiseowl_backend.domain.course.entity.CourseOffering;
-import com.hyewon.wiseowl_backend.domain.course.entity.Major;
 import com.hyewon.wiseowl_backend.domain.course.repository.CourseOfferingRepository;
 import com.hyewon.wiseowl_backend.domain.course.repository.MajorRepository;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.MajorRequirementRepository;
@@ -284,17 +281,28 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException(userId));
         Profile profile = user.getProfile();
 
-        UserMajor primaryMajor = userMajorRepository.findByUserIdAndMajorType(userId, MajorType.PRIMARY);
-        Optional<UserMajor> secondMajor = userMajorRepository.findByUserIdAndMajorTypeIn(
+        UserMajor primaryUserMajor = userMajorRepository.findByUserIdAndMajorType(userId, MajorType.PRIMARY);
+        Optional<UserMajor> secondUserMajor = userMajorRepository.findByUserIdAndMajorTypeIn(
                 userId, List.of(MajorType.DOUBLE, MajorType.MINOR)
         );
-        String secondMajorName = secondMajor
-                .map(userMajor -> userMajor.getMajor().getName())
+        Major primaryMajor = primaryUserMajor.getMajor();
+        College primaryCollege = primaryMajor.getCollege();
+        UserMajorDetail secondMajorDetail = secondUserMajor
+                .map(UserMajor::getMajor)
+                .map(major -> {
+                    College college = major.getCollege();
+                    return new UserMajorDetail(
+                            college.getId(),
+                            college.getName(),
+                            major.getId(),
+                            major.getName()
+                    );
+                })
                 .orElse(null);
 
         return new UserSummaryResponse(user.getUsername(), user.getStudentId(),profile.getJPA(),
-                primaryMajor.getMajor().getName(),
-                secondMajorName);
+                new UserMajorDetail(primaryCollege.getId(), primaryCollege.getName(), primaryMajor.getId(), primaryMajor.getName())
+                ,secondMajorDetail);
     }
 
     @Transactional
