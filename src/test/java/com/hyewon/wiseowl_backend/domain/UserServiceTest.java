@@ -154,11 +154,13 @@ public class UserServiceTest {
                 .fulfilled(false)
                 .build();
         userMajor = UserMajor.builder()
+                .id(1L)
                 .user(user)
                 .major(major)
                 .majorType(MajorType.PRIMARY)
                 .build();
         userMajor2 = UserMajor.builder()
+                .id(2L)
                 .user(user)
                 .major(major2)
                 .majorType(MajorType.DOUBLE)
@@ -712,6 +714,44 @@ public class UserServiceTest {
         // when & then
         assertThrows(MajorNotFoundException.class,
                 () -> userService.updateUserMajor(userId, List.of(rq1, rq2)));
+
+    }
+
+    @Test
+    @DisplayName("updateUserMajorTypes -  should update user major types")
+    void updateUserMajorTypes_success(){
+        // given
+        Long userId = 1L;
+        given(userMajorRepository.findById(userMajor.getId()))
+                .willReturn(Optional.of(userMajor));
+        given(userMajorRepository.findById(userMajor2.getId()))
+                .willReturn(Optional.of(userMajor2));
+
+        // when
+        UserMajorTypeUpdateRequest rq1 = new UserMajorTypeUpdateRequest(1L, MajorType.DOUBLE);
+        UserMajorTypeUpdateRequest rq2 = new UserMajorTypeUpdateRequest(2L, MajorType.PRIMARY);
+        userService.updateUserMajorTypes(List.of(rq1, rq2));
+
+        // then
+        assertThat(userMajor.getMajorType()).isEqualTo(MajorType.DOUBLE);
+        assertThat(userMajor2.getMajorType()).isEqualTo(MajorType.PRIMARY);
+
+    }
+
+    @Test
+    @DisplayName("updateUserMajorTypes - should throw UserMajorNotFoundException when user major does not exist")
+    void updateUserMajorTypes_shouldThrowException_whenUserMajorNotFound(){
+        // given
+        Long userId = 1L;
+        given(userMajorRepository.findById(userMajor.getId()))
+                .willReturn(Optional.empty());
+
+        UserMajorTypeUpdateRequest rq1 = new UserMajorTypeUpdateRequest(1L, MajorType.DOUBLE);
+        UserMajorTypeUpdateRequest rq2 = new UserMajorTypeUpdateRequest(2L, MajorType.PRIMARY);
+
+        // when & then
+        assertThrows(UserMajorNotFoundException.class,
+                () -> userService.updateUserMajorTypes(List.of(rq1, rq2)));
 
     }
 

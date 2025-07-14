@@ -307,7 +307,15 @@ public class UserService {
                     userMajor.updateMajor(major);
                 }
         );
+    }
 
+    @Transactional
+    public void updateUserMajorTypes(List<UserMajorTypeUpdateRequest> requests) {
+        requests.forEach(request -> {
+            UserMajor userMajor = userMajorRepository.findById(request.userMajorId())
+                    .orElseThrow(() -> new UserMajorNotFoundException(request.userMajorId()));
+            userMajor.updateMajorType(request.majorType());
+        });
 
     }
 

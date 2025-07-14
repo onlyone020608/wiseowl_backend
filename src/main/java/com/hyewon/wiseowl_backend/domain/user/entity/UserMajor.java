@@ -36,6 +36,10 @@ public class UserMajor {
         this.major = major;
     }
 
+    public void updateMajorType(MajorType majorType) {
+        this.majorType = majorType;
+    }
+
     public static UserMajor of(User user, Major major, MajorType majorType) {
         return new UserMajor(user, major, majorType);
     }

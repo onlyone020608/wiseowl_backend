@@ -93,4 +93,12 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+    @PatchMapping("/api/users/me/majors/type")
+    public ResponseEntity<Void> updateUserMajorTypes(
+            @RequestBody @Valid List<UserMajorTypeUpdateRequest> requests
+    ) {
+        userService.updateUserMajorTypes(requests);
+        return ResponseEntity.ok().build();
+    }
+
 }
