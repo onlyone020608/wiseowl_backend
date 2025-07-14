@@ -279,6 +279,25 @@ public class UserService {
 
     }
 
+    @Transactional(readOnly = true)
+    public UserSummaryResponse fetchUserSummary(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+        Profile profile = user.getProfile();
+
+        UserMajor primaryMajor = userMajorRepository.findByUserIdAndMajorType(userId, MajorType.PRIMARY);
+        Optional<UserMajor> secondMajor = userMajorRepository.findByUserIdAndMajorTypeIn(
+                userId, List.of(MajorType.DOUBLE, MajorType.MINOR)
+        );
+        String secondMajorName = secondMajor
+                .map(userMajor -> userMajor.getMajor().getName())
+                .orElse(null);
+
+        return new UserSummaryResponse(user.getUsername(), user.getStudentId(),profile.getJPA(),
+                primaryMajor.getMajor().getName(),
+                secondMajorName);
+    }
+
 
 
 }

@@ -10,7 +10,6 @@ import com.hyewon.wiseowl_backend.domain.requirement.repository.RequiredLiberalC
 import com.hyewon.wiseowl_backend.domain.requirement.repository.RequiredMajorCourseRepository;
 import com.hyewon.wiseowl_backend.domain.user.dto.*;
 import com.hyewon.wiseowl_backend.domain.user.entity.*;
-import com.hyewon.wiseowl_backend.domain.user.event.CompletedCoursesEventListener;
 import com.hyewon.wiseowl_backend.domain.user.event.CompletedCoursesRegisteredEvent;
 import com.hyewon.wiseowl_backend.domain.user.repository.*;
 import com.hyewon.wiseowl_backend.domain.user.service.UserService;
@@ -23,6 +22,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.List;
@@ -40,6 +41,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
 
+    private static final Logger log = LoggerFactory.getLogger(UserServiceTest.class);
     @InjectMocks
     UserService userService;
 
@@ -77,7 +79,9 @@ public class UserServiceTest {
 
     private User user;
     private Profile profile;
+    private Profile profile2;
     private Major major;
+    private Major major2;
     private MajorRequirement mr1;
     private MajorRequirement mr2;
     private UserRequirementStatus urs1;
@@ -86,6 +90,7 @@ public class UserServiceTest {
     private CourseOffering offering;
     private CompletedCourseUpdateRequest completedCourseUpdateRequest;
     private UserMajor userMajor;
+    private UserMajor userMajor2;
     private CreditRequirement creditRequirement;
     private UserCompletedCourse ucc;
     private Course course;
@@ -100,14 +105,23 @@ public class UserServiceTest {
 
     @BeforeEach
     void setUp() {
+        profile2 = Profile.builder()
+                .JPA(3.9)
+                .build();
         user = User.builder()
                 .username("Test")
+                .profile(profile2)
                 .email("test@test.com")
                 .build();
         college = College.builder().build();
         major = Major.builder()
                 .id(1L)
                 .name("컴퓨터공학과")
+                .college(college)
+                .build();
+        major2 = Major.builder()
+                .id(2L)
+                .name("철학과")
                 .college(college)
                 .build();
         profile = Profile.builder()
@@ -143,6 +157,11 @@ public class UserServiceTest {
                 .user(user)
                 .major(major)
                 .majorType(MajorType.PRIMARY)
+                .build();
+        userMajor2 = UserMajor.builder()
+                .user(user)
+                .major(major2)
+                .majorType(MajorType.DOUBLE)
                 .build();
         creditRequirement = mock(CreditRequirement.class);
 
@@ -616,6 +635,43 @@ public class UserServiceTest {
 
     }
 
+
+    @Test
+    @DisplayName("fetchUserSummary -  should return user summary including primary and second major if present")
+    void fetchUserSummary_success(){
+        // given
+        Long userId = 1L;
+        given(userRepository.findById(userId)).willReturn(Optional.of(user));
+        given(userMajorRepository.findByUserIdAndMajorType(userId, MajorType.PRIMARY)).willReturn(userMajor);
+        given(userMajorRepository.findByUserIdAndMajorTypeIn(
+                userId, List.of(MajorType.DOUBLE, MajorType.MINOR)
+        )).willReturn(Optional.of(userMajor2));
+
+        // when
+        UserSummaryResponse response = userService.fetchUserSummary(userId);
+
+        // then
+        assertThat(response.userName()).isEqualTo("Test");
+        assertThat(response.primaryMajor()).isEqualTo("컴퓨터공학과");
+        assertThat(response.doubleMajor()).isEqualTo("철학과");
+        assertThat(response.JPA()).isEqualTo(3.9);
+
+
+    }
+
+    @Test
+    @DisplayName("fetchUserSummary - should throw UserNotFoundException when user does not exist")
+    void fetchUserSummary_shouldThrowException_whenUserNotFound(){
+        // given
+        Long userId = 1L;
+        given(userRepository.findById(userId)).willReturn(Optional.empty());
+
+
+        // when & then
+        assertThrows(UserNotFoundException.class,
+                () -> userService.fetchUserSummary(userId));
+
+    }
 
 
 

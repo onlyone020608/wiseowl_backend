@@ -79,4 +79,9 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/me/summary")
+    public UserSummaryResponse getSummary(@AuthenticationPrincipal UserPrincipal principal) {
+        return userService.fetchUserSummary(principal.getId());
+    }
+
 }
