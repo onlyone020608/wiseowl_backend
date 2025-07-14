@@ -36,4 +36,8 @@ public class UserRequiredCourseStatus {
         return new UserRequiredCourseStatus(user, courseType, requiredCourseId);
     }
 
+    public void markFulfilled() {
+        this.fulfilled = true;
+    }
+
 }

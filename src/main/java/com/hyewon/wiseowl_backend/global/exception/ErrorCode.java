@@ -19,7 +19,8 @@ public enum ErrorCode {
     CREDIT_REQUIREMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "Credit requirement not found."),
     REQUIRED_MAJOR_COURSE_NOT_FOUND(HttpStatus.NOT_FOUND, "Required major course not found."),
     REQUIRED_LIBERAL_CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "Required library category not found."),
-    USER_REQUIRED_COURSE_STATUS_NOT_FOUND(HttpStatus.NOT_FOUND, "User requires courses status not found.");
+    USER_REQUIRED_COURSE_STATUS_NOT_FOUND(HttpStatus.NOT_FOUND, "User requires courses status not found."),
+    USER_COMPLETED_COURSE_NOT_FOUND(HttpStatus.NOT_FOUND, "User completed courses not found.");
 
 
 
