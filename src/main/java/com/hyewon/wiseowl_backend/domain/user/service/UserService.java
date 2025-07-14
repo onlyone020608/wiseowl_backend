@@ -13,10 +13,12 @@ import com.hyewon.wiseowl_backend.domain.course.repository.CourseOfferingReposit
 import com.hyewon.wiseowl_backend.domain.course.repository.MajorRepository;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.MajorRequirementRepository;
 import com.hyewon.wiseowl_backend.domain.user.entity.*;
+import com.hyewon.wiseowl_backend.domain.user.event.CompletedCoursesRegisteredEvent;
 import com.hyewon.wiseowl_backend.domain.user.repository.*;
 import com.hyewon.wiseowl_backend.global.exception.*;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,6 +44,7 @@ public class UserService {
     private final RequiredMajorCourseRepository requiredMajorCourseRepository;
     private final RequiredLiberalCategoryByCollegeRepository requiredLiberalCategoryByCollegeRepository;
     private final UserRequiredCourseStatusRepository userRequiredCourseStatusRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
 
 
@@ -114,6 +117,7 @@ public class UserService {
                 }).toList();
 
         userCompletedCourseRepository.saveAll(toSave);
+        eventPublisher.publishEvent(new CompletedCoursesRegisteredEvent(userId, toSave));
 
 
     }

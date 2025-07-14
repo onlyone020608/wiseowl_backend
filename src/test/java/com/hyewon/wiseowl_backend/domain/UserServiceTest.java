@@ -10,6 +10,8 @@ import com.hyewon.wiseowl_backend.domain.requirement.repository.RequiredLiberalC
 import com.hyewon.wiseowl_backend.domain.requirement.repository.RequiredMajorCourseRepository;
 import com.hyewon.wiseowl_backend.domain.user.dto.*;
 import com.hyewon.wiseowl_backend.domain.user.entity.*;
+import com.hyewon.wiseowl_backend.domain.user.event.CompletedCoursesEventListener;
+import com.hyewon.wiseowl_backend.domain.user.event.CompletedCoursesRegisteredEvent;
 import com.hyewon.wiseowl_backend.domain.user.repository.*;
 import com.hyewon.wiseowl_backend.domain.user.service.UserService;
 import com.hyewon.wiseowl_backend.global.exception.*;
@@ -21,6 +23,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.List;
 import java.util.Optional;
@@ -66,6 +69,10 @@ public class UserServiceTest {
 
     @Mock
     private UserRequiredCourseStatusRepository userRequiredCourseStatusRepository;
+
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
+
 
 
     private User user;
@@ -329,6 +336,7 @@ public class UserServiceTest {
                     && list.get(0).isRetake();
 
         }));
+        verify(eventPublisher).publishEvent(any(CompletedCoursesRegisteredEvent.class));
 
     }
 
