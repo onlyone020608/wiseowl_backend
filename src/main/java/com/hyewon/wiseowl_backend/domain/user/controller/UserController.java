@@ -53,7 +53,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @GetMapping("me/graduation-info")
+    @GetMapping("/me/graduation-info")
     public ResponseEntity<MainPageGraduationStatusResponse> getMainGraduationInfo(
             @AuthenticationPrincipal UserPrincipal principal
     ){
@@ -62,7 +62,7 @@ public class UserController {
 
     }
 
-    @GetMapping("/users/me/required-courses")
+    @GetMapping("/me/required-courses")
     public ResponseEntity<UserRequiredCourseStatusResponse> getMyRequiredCourses(
             @AuthenticationPrincipal UserPrincipal principal,
             @RequestParam MajorType majorType
@@ -70,7 +70,7 @@ public class UserController {
         return ResponseEntity.ok(userService.fetchUserRequiredCourseStatus(principal.getId(), majorType));
     }
 
-    @GetMapping("users/me/graduation-requirements")
+    @GetMapping("/me/graduation-requirements")
     public ResponseEntity<List<UserGraduationRequirementStatusResponse>> getGraduationRequirementStatuses(
             @AuthenticationPrincipal UserPrincipal principal
     ) {
@@ -84,7 +84,7 @@ public class UserController {
         return userService.fetchUserSummary(principal.getId());
     }
 
-    @PatchMapping("/api/users/me/majors")
+    @PatchMapping("/me/majors")
     public ResponseEntity<Void> updateUserMajor(
             @AuthenticationPrincipal UserPrincipal principal,
             @RequestBody @Valid List<UserMajorUpdateRequest> requests
@@ -93,7 +93,7 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("/api/users/me/majors/type")
+    @PatchMapping("/me/majors/type")
     public ResponseEntity<Void> updateUserMajorTypes(
             @RequestBody @Valid List<UserMajorTypeUpdateRequest> requests
     ) {
