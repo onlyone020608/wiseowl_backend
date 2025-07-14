@@ -22,6 +22,7 @@ public class GlobalExceptionHandler {
             LiberalCategoryNotFoundException.class,
             UserRequiredCourseStatusNotFoundException.class,
             UserCompletedCourseNotFoundException.class,
+
     })
     public ResponseEntity<CustomErrorResponse> handleDomainExceptions(RuntimeException ex) {
         if (ex instanceof CourseNotFoundException e) {
@@ -56,6 +57,16 @@ public class GlobalExceptionHandler {
             return buildResponse(e.getErrorCode());
         }
 
+        return buildResponse(ErrorCode.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler({
+            InvalidCurrentPasswordException.class,
+    })
+    public ResponseEntity<CustomErrorResponse> handleBusinessExceptions(RuntimeException ex) {
+        if (ex instanceof InvalidCurrentPasswordException e) {
+            return buildResponse(e.getErrorCode());
+        }
         return buildResponse(ErrorCode.INTERNAL_SERVER_ERROR);
     }
 

@@ -1,5 +1,6 @@
 package com.hyewon.wiseowl_backend.domain.auth.service;
 
+import com.hyewon.wiseowl_backend.domain.auth.dto.ChangePasswordRequest;
 import com.hyewon.wiseowl_backend.domain.auth.dto.LoginRequest;
 import com.hyewon.wiseowl_backend.domain.auth.dto.TokenResponse;
 import com.hyewon.wiseowl_backend.domain.auth.dto.SignUpRequest;
@@ -9,6 +10,8 @@ import com.hyewon.wiseowl_backend.domain.user.entity.Profile;
 import com.hyewon.wiseowl_backend.domain.user.entity.User;
 import com.hyewon.wiseowl_backend.domain.user.repository.UserRepository;
 import com.hyewon.wiseowl_backend.global.exception.EmailAlreadyExistsException;
+import com.hyewon.wiseowl_backend.global.exception.InvalidCurrentPasswordException;
+import com.hyewon.wiseowl_backend.global.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -52,5 +55,18 @@ public class AuthService {
         Profile profile = Profile.createDefault();
         user.assignProfile(profile);
         userRepository.save(user);
+    }
+
+    @Transactional
+    public void changePassword(Long userId, ChangePasswordRequest request) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+
+        if(!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+            throw new InvalidCurrentPasswordException();
+        }
+
+        String encoded = passwordEncoder.encode(request.getNewPassword());
+        user.updatePassword(encoded);
+
     }
 }
