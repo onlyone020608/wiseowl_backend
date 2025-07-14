@@ -298,6 +298,19 @@ public class UserService {
                 secondMajorName);
     }
 
+    @Transactional
+    public void updateUserMajor(Long userId, List<UserMajorUpdateRequest> requests){
+        requests.forEach(
+                request -> {
+                    UserMajor userMajor = userMajorRepository.findByUserIdAndMajorType(userId, request.majorType());
+                    Major major = majorRepository.findById(request.majorId()).orElseThrow(() -> new MajorNotFoundException(request.majorId()));
+                    userMajor.updateMajor(major);
+                }
+        );
+
+
+    }
+
 
 
 }

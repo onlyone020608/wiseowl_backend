@@ -673,6 +673,48 @@ public class UserServiceTest {
 
     }
 
+    @Test
+    @DisplayName("updateUserMajor -  should update user major")
+    void updateUserMajor_success(){
+        // given
+        Long userId = 1L;
+        given(userMajorRepository.findByUserIdAndMajorType(userId, MajorType.PRIMARY))
+                .willReturn(userMajor);
+        given(userMajorRepository.findByUserIdAndMajorType(userId, MajorType.DOUBLE))
+                .willReturn(userMajor2);
+        given(majorRepository.findById(1L)).willReturn(Optional.of(major));
+        given(majorRepository.findById(2L)).willReturn(Optional.of(major2));
+
+        // when
+        UserMajorUpdateRequest rq1 = new UserMajorUpdateRequest(MajorType.PRIMARY, 2L);
+        UserMajorUpdateRequest rq2 = new UserMajorUpdateRequest(MajorType.DOUBLE, 1L);
+        userService.updateUserMajor(userId, List.of(rq1, rq2));
+
+        // then
+        assertThat(userMajor.getMajor()).isEqualTo(major2);
+        assertThat(userMajor2.getMajor()).isEqualTo(major);
+
+    }
+
+    @Test
+    @DisplayName("updateUserMajor -  should throw MajorNotFoundException when user does not exist")
+    void updateUserMajor_shouldThrowException_whenMajorNotFound(){
+        // given
+        Long userId = 1L;
+        given(userMajorRepository.findByUserIdAndMajorType(userId, MajorType.PRIMARY))
+                .willReturn(userMajor);
+        given(majorRepository.findById(2L)).willReturn(Optional.empty());
+        UserMajorUpdateRequest rq1 = new UserMajorUpdateRequest(MajorType.PRIMARY, 2L);
+        UserMajorUpdateRequest rq2 = new UserMajorUpdateRequest(MajorType.DOUBLE, 1L);
+
+
+
+        // when & then
+        assertThrows(MajorNotFoundException.class,
+                () -> userService.updateUserMajor(userId, List.of(rq1, rq2)));
+
+    }
+
 
 
 }

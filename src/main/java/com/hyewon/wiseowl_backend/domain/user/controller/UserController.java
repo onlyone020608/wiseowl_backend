@@ -84,4 +84,13 @@ public class UserController {
         return userService.fetchUserSummary(principal.getId());
     }
 
+    @PatchMapping("/api/users/me/majors")
+    public ResponseEntity<Void> updateUserMajor(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @RequestBody @Valid List<UserMajorUpdateRequest> requests
+    ) {
+        userService.updateUserMajor(principal.getId(), requests);
+        return ResponseEntity.ok().build();
+    }
+
 }
