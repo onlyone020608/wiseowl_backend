@@ -8,14 +8,21 @@ import lombok.*;
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class UserMajorSubscription {
+public class UserSubscription {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_major_id")
-    private UserMajor userMajor;
+    @JoinColumn(name = "user_id")
+    private User user;
+
+
+    @Enumerated(EnumType.STRING)
+    private SubscriptionType type;
+
+    private Long targetId;  // Major ID or Organization ID
+
 
 
 }

@@ -1,6 +1,6 @@
 package com.hyewon.wiseowl_backend.domain.user.entity;
 
-import com.hyewon.wiseowl_backend.domain.notice.Notice;
+import com.hyewon.wiseowl_backend.domain.notice.entity.Notice;
 import jakarta.persistence.*;
 import lombok.*;
 
