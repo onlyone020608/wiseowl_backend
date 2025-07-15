@@ -22,6 +22,7 @@ public class GlobalExceptionHandler {
             LiberalCategoryNotFoundException.class,
             UserRequiredCourseStatusNotFoundException.class,
             UserCompletedCourseNotFoundException.class,
+            FacilityNotFoundException.class
 
     })
     public ResponseEntity<CustomErrorResponse> handleDomainExceptions(RuntimeException ex) {
@@ -54,6 +55,8 @@ public class GlobalExceptionHandler {
         } else if(ex instanceof UserRequiredCourseStatusNotFoundException e){
             return buildResponse(e.getErrorCode());
         } else if(ex instanceof UserCompletedCourseNotFoundException e){
+            return buildResponse(e.getErrorCode());
+        } else if(ex instanceof  FacilityNotFoundException e){
             return buildResponse(e.getErrorCode());
         }
 
