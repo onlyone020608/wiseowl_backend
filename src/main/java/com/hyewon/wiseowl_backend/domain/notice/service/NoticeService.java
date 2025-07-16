@@ -1,0 +1,60 @@
+package com.hyewon.wiseowl_backend.domain.notice.service;
+
+import com.hyewon.wiseowl_backend.domain.course.entity.Major;
+import com.hyewon.wiseowl_backend.domain.course.repository.MajorRepository;
+import com.hyewon.wiseowl_backend.domain.notice.dto.NoticeDetailResponse;
+import com.hyewon.wiseowl_backend.domain.notice.dto.NoticeResponse;
+import com.hyewon.wiseowl_backend.domain.notice.entity.Notice;
+import com.hyewon.wiseowl_backend.domain.notice.entity.Organization;
+import com.hyewon.wiseowl_backend.domain.notice.repository.NoticeRepository;
+import com.hyewon.wiseowl_backend.domain.notice.repository.OrganizationRepository;
+import com.hyewon.wiseowl_backend.domain.user.entity.SubscriptionType;
+import com.hyewon.wiseowl_backend.domain.user.entity.UserSubscription;
+import com.hyewon.wiseowl_backend.domain.user.repository.UserSubscriptionRepository;
+import com.hyewon.wiseowl_backend.global.exception.MajorNotFoundException;
+import com.hyewon.wiseowl_backend.global.exception.OrganizationNotFoundException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+@Transactional
+public class NoticeService {
+    private final NoticeRepository noticeRepository;
+    private final UserSubscriptionRepository userSubscriptionRepository;
+    private final MajorRepository majorRepository;
+    private final OrganizationRepository organizationRepository;
+
+    @Transactional(readOnly = true)
+    public List<NoticeResponse> fetchUserSubscribedNotices(Long userId) {
+        List<UserSubscription> subscriptions = userSubscriptionRepository.findAllByUserId(userId);
+        return subscriptions.stream().map(
+                subscription -> {
+                    String subscriptionName = null;
+                    if(subscription.getType().equals(SubscriptionType.MAJOR)){
+                        Major major = majorRepository.findById(subscription.getTargetId()).orElseThrow(() ->
+                                new MajorNotFoundException(subscription.getTargetId()));
+                        subscriptionName = major.getName();
+
+                    }
+                    if(subscription.getType().equals(SubscriptionType.ORGANIZATION)){
+                        Organization organization = organizationRepository.findById(subscription.getTargetId()).orElseThrow(
+                                () -> new OrganizationNotFoundException(subscription.getTargetId()));
+                        subscriptionName = organization.getName();
+                    }
+                    List<Notice> notices = noticeRepository.findTop6BySourceIdOrderByPostedAtDesc(subscription.getTargetId());
+                    List<NoticeDetailResponse> noticeDetailResponses = notices.stream().map(NoticeDetailResponse::from).toList();
+
+
+                    return new NoticeResponse(
+                            subscriptionName,
+                            noticeDetailResponses
+
+                    );
+                }
+        ).toList();
+    }
+}
