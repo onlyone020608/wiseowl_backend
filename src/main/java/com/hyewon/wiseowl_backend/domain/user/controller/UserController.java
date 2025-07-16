@@ -107,5 +107,13 @@ public class UserController {
         userService.updateCompletedCourses(requests);
         return ResponseEntity.ok().build();
     }
+    @PostMapping("/me/subscriptions")
+    public ResponseEntity<Void> subscribeOrganizations(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @RequestBody @Valid List<UserSubscriptionRequest> requests
+    ){
+        userService.registerUserSubscriptions(principal.getId(), requests);
+        return ResponseEntity.ok().build();
+    }
 
 }

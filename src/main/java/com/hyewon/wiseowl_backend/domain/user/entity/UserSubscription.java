@@ -24,5 +24,17 @@ public class UserSubscription {
     private Long targetId;  // Major ID or Organization ID
 
 
+    private UserSubscription(User user, Long targetId, SubscriptionType type) {
+        this.user = user;
+        this.targetId = targetId;
+        this.type = type;
+
+    }
+    public static UserSubscription of(User user,  Long targetId, SubscriptionType type) {
+        return new UserSubscription(user, targetId, type);
+    }
+
+
+
 
 }

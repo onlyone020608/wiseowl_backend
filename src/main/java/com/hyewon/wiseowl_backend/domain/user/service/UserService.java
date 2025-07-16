@@ -40,6 +40,7 @@ public class UserService {
     private final RequiredMajorCourseRepository requiredMajorCourseRepository;
     private final RequiredLiberalCategoryByCollegeRepository requiredLiberalCategoryByCollegeRepository;
     private final UserRequiredCourseStatusRepository userRequiredCourseStatusRepository;
+    private final UserSubscriptionRepository userSubscriptionRepository;
     private final ApplicationEventPublisher eventPublisher;
 
 
@@ -338,6 +339,18 @@ public class UserService {
                 userCompletedCourse.updateRetake(request.retake());
             }
         });
+
+    }
+
+    @Transactional
+    public void registerUserSubscriptions(Long userId, List<UserSubscriptionRequest> requests){
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        List<UserSubscription> toSave = requests.stream().map(
+                request -> {
+                    return UserSubscription.of(user, request.targetId(), request.type());
+                }
+        ).toList();
+        userSubscriptionRepository.saveAll(toSave);
 
     }
 

@@ -33,6 +33,7 @@ import java.util.stream.StreamSupport;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.AssertionsForClassTypes.tuple;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
@@ -71,6 +72,9 @@ public class UserServiceTest {
 
     @Mock
     private UserRequiredCourseStatusRepository userRequiredCourseStatusRepository;
+
+    @Mock
+    private UserSubscriptionRepository userSubscriptionRepository;
 
     @Mock
     private ApplicationEventPublisher eventPublisher;
@@ -228,6 +232,8 @@ public class UserServiceTest {
                 .requiredCourseId(20L)
                 .fulfilled(false)
                 .build();
+
+
 
         CompletedCourseInsertItem item =
                 new CompletedCourseInsertItem(1L, Grade.A, true);
@@ -783,6 +789,55 @@ public class UserServiceTest {
         CompletedCourseUpdateRequest rq1 = new CompletedCourseUpdateRequest(2L, Grade.B, false);
         assertThrows(UserCompletedCourseNotFoundException.class,
                 () -> userService.updateCompletedCourses(List.of(rq1)));
+
+    }
+
+    @Test
+    @DisplayName("registerUserSubscriptions - should save user subscriptions for majors and organizations" )
+    void registerUserSubscriptions_success(){
+        // given
+        Long userId = 1L;
+        given(userRepository.findById(userId)).willReturn(Optional.of(user));
+        UserSubscriptionRequest request1 = new UserSubscriptionRequest(1L, SubscriptionType.MAJOR);
+        UserSubscriptionRequest request2 = new UserSubscriptionRequest(2L, SubscriptionType.ORGANIZATION);
+        ArgumentCaptor<List<UserSubscription>> captor = ArgumentCaptor.forClass(List.class);
+
+        // when
+
+        userService.registerUserSubscriptions(userId,  List.of(request1, request2));
+
+        // then
+        verify(userSubscriptionRepository).saveAll(captor.capture());
+        List<UserSubscription> saved = captor.getValue();
+        assertThat(saved).hasSize(2);
+        assertThat(saved)
+                .extracting("targetId", "type")
+                .containsExactlyInAnyOrder(
+                        tuple(1L, SubscriptionType.MAJOR),
+                        tuple(2L, SubscriptionType.ORGANIZATION)
+                );
+
+        assertThat(saved).allSatisfy(subscription ->
+                assertThat(subscription.getUser()).isEqualTo(user)
+        );
+
+    }
+
+    @Test
+    @DisplayName("registerUserSubscriptions - should throw UserNotFoundException when user does not exist" )
+    void registerUserSubscriptions_shouldThrowException_whenUserNotFound(){
+        // given
+        Long userId = 999L;
+        given(userRepository.findById(userId)).willReturn(Optional.empty());
+        UserSubscriptionRequest request1 = new UserSubscriptionRequest(1L, SubscriptionType.MAJOR);
+        UserSubscriptionRequest request2 = new UserSubscriptionRequest(2L, SubscriptionType.ORGANIZATION);
+
+        // when & then
+
+        assertThrows(UserNotFoundException.class, () ->
+                userService.registerUserSubscriptions(userId,  List.of(request1, request2)));
+
+
 
     }
 
