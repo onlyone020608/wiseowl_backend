@@ -14,6 +14,7 @@ import com.hyewon.wiseowl_backend.domain.user.event.CompletedCoursesRegisteredEv
 import com.hyewon.wiseowl_backend.domain.user.repository.*;
 import com.hyewon.wiseowl_backend.domain.user.service.UserService;
 import com.hyewon.wiseowl_backend.global.exception.*;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -78,6 +79,9 @@ public class UserServiceTest {
 
     @Mock
     private ApplicationEventPublisher eventPublisher;
+
+    @Mock
+    private EntityManager entityManager;
 
 
 
@@ -232,6 +236,8 @@ public class UserServiceTest {
                 .requiredCourseId(20L)
                 .fulfilled(false)
                 .build();
+
+
 
 
 
@@ -837,6 +843,60 @@ public class UserServiceTest {
         assertThrows(UserNotFoundException.class, () ->
                 userService.registerUserSubscriptions(userId,  List.of(request1, request2)));
 
+
+
+    }
+
+    @Test
+    @DisplayName("replaceAllUserSubscriptions - should update user subscriptions for majors and organizations" )
+    void replaceAllUserSubscriptions_success(){
+        // given
+        Long userId = 1L;
+        given(userRepository.findById(userId)).willReturn(Optional.of(user));
+        UserSubscriptionRequest request1 = new UserSubscriptionRequest(1L, SubscriptionType.MAJOR);
+        UserSubscriptionRequest request2 = new UserSubscriptionRequest(2L, SubscriptionType.ORGANIZATION);
+
+        ArgumentCaptor<List<UserSubscription>> captor = ArgumentCaptor.forClass(List.class);
+
+        // when
+        userService.replaceAllUserSubscriptions(userId, List.of(request1, request2));
+
+        // then
+
+        verify(userSubscriptionRepository).deleteByUserId(userId);
+        verify(userSubscriptionRepository).saveAll(captor.capture());
+
+        List<UserSubscription> saved = captor.getValue();
+
+        assertThat(saved).hasSize(2);
+        assertThat(saved)
+                .extracting("targetId", "type")
+                .containsExactlyInAnyOrder(
+                        tuple(1L, SubscriptionType.MAJOR),
+                        tuple(2L, SubscriptionType.ORGANIZATION)
+                );
+
+        assertThat(saved).allSatisfy(subscription ->
+                assertThat(subscription.getUser()).isEqualTo(user)
+        );
+
+
+    }
+
+    @Test
+    @DisplayName("replaceAllUserSubscriptions - should throw UserNotFoundException when user does not exist" )
+    void replaceAllUserSubscriptions_shouldThrowException_whenUserNotFound(){
+        // given
+        Long userId = 999L;
+        given(userRepository.findById(userId)).willReturn(Optional.empty());
+        UserSubscriptionRequest request1 = new UserSubscriptionRequest(1L, SubscriptionType.MAJOR);
+        UserSubscriptionRequest request2 = new UserSubscriptionRequest(2L, SubscriptionType.ORGANIZATION);
+
+        ArgumentCaptor<List<UserSubscription>> captor = ArgumentCaptor.forClass(List.class);
+
+        // when & then
+        assertThrows(UserNotFoundException.class, () ->
+                userService.replaceAllUserSubscriptions(userId,  List.of(request1, request2)));
 
 
     }

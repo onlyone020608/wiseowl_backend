@@ -14,6 +14,7 @@ import com.hyewon.wiseowl_backend.domain.user.event.CompletedCoursesRegisteredEv
 import com.hyewon.wiseowl_backend.domain.user.repository.*;
 import com.hyewon.wiseowl_backend.global.exception.*;
 
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -42,6 +43,7 @@ public class UserService {
     private final UserRequiredCourseStatusRepository userRequiredCourseStatusRepository;
     private final UserSubscriptionRepository userSubscriptionRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private final EntityManager entityManager;
 
 
 
@@ -351,6 +353,25 @@ public class UserService {
                 }
         ).toList();
         userSubscriptionRepository.saveAll(toSave);
+
+    }
+
+    @Transactional
+    public void replaceAllUserSubscriptions(Long userId,  List<UserSubscriptionRequest> requests){
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+
+        userSubscriptionRepository.deleteByUserId(userId);
+        entityManager.flush();
+
+        List<UserSubscription> toSave = requests.stream().map(
+                request -> {
+                    return UserSubscription.of(user, request.targetId(), request.type());
+                }
+        ).toList();
+
+        userSubscriptionRepository.saveAll(toSave);
+
+
 
     }
 

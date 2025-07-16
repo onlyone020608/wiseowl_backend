@@ -116,4 +116,11 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+    @PutMapping("/me/subscriptions")
+    public ResponseEntity<Void> updateUserSubscriptions(@AuthenticationPrincipal UserPrincipal principal,
+                                                        @RequestBody List<UserSubscriptionRequest> requests) {
+        userService.replaceAllUserSubscriptions(principal.getId(), requests);
+        return ResponseEntity.ok().build();
+    }
+
 }
