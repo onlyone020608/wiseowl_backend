@@ -7,10 +7,9 @@ import com.hyewon.wiseowl_backend.domain.requirement.repository.CourseCreditTran
 import com.hyewon.wiseowl_backend.domain.requirement.repository.RequiredLiberalCategoryByCollegeRepository;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.RequiredMajorCourseRepository;
 import com.hyewon.wiseowl_backend.domain.user.entity.*;
-import com.hyewon.wiseowl_backend.domain.user.event.RequirementStatusUpdater;
-import com.hyewon.wiseowl_backend.domain.user.event.CompletedCoursesRegisteredEvent;
 import com.hyewon.wiseowl_backend.domain.user.repository.UserCompletedCourseRepository;
 import com.hyewon.wiseowl_backend.domain.user.repository.UserRequiredCourseStatusRepository;
+import com.hyewon.wiseowl_backend.domain.user.service.RequirementStatusUpdateService;
 import com.hyewon.wiseowl_backend.global.exception.RequiredLiberalCategoryNotFoundException;
 import com.hyewon.wiseowl_backend.global.exception.RequiredMajorCourseNotFoundException;
 import com.hyewon.wiseowl_backend.global.exception.UserCompletedCourseNotFoundException;
@@ -32,9 +31,9 @@ import static org.mockito.BDDMockito.given;
 
 
 @ExtendWith(MockitoExtension.class)
-public class RequirementStatusUpdaterTest {
+public class RequirementStatusUpdateServiceTest {
     @InjectMocks
-    private RequirementStatusUpdater handler;
+    private RequirementStatusUpdateService requirementStatusUpdateService;
 
     @Mock
     private UserRequiredCourseStatusRepository statusRepository;
@@ -71,7 +70,6 @@ public class RequirementStatusUpdaterTest {
     private CourseOffering offering2;
     private CourseOffering offering3;
     private Semester semester;
-    private CourseCreditTransferRule creditTransferRule;
 
     @BeforeEach
     void setUp() {
@@ -189,17 +187,11 @@ public class RequirementStatusUpdaterTest {
                 .fulfilled(false)
                 .build();
 
-        creditTransferRule = CourseCreditTransferRule.builder()
-                .semester(semester)
-                .toCourse(course3)
-                .fromCourse(course)
-                .entryYearFrom(2019)
-                .build();
 
     }
     @Test
-    @DisplayName("handleCompletedCourses - should fulfill both major and liberal requirements when matching")
-    void handleCompletedCourses_whenCourseIdMatches_thenMarkFulfilled() {
+    @DisplayName("updateRequirementStatus - should fulfill both major and liberal requirements when matching")
+    void updateRequirementStatus_whenCourseIdMatches_thenMarkFulfilled() {
         // given
         Long userId = 1L;
         given(statusRepository.findAllByUserId(userId)).willReturn(List.of(userRequiredCourseStatus1, userRequiredCourseStatus2));
@@ -208,10 +200,8 @@ public class RequirementStatusUpdaterTest {
         given(requiredLiberalCategoryByCollegeRepository.findById(userRequiredCourseStatus2.getRequiredCourseId())).willReturn(Optional.of(rlc));
         given(liberalCategoryCourseRepository.existsByCourseIdAndLiberalCategoryId(course2.getId(), liberalCategory.getId())).willReturn(true);
 
-        CompletedCoursesRegisteredEvent event = new CompletedCoursesRegisteredEvent(userId, List.of(ucc1, ucc2));
-
         // when
-        handler.handle(event);
+        requirementStatusUpdateService.updateRequirementStatus(userId, List.of(ucc1, ucc2));
 
         // then
         assertThat(userRequiredCourseStatus1.isFulfilled()).isEqualTo(true);
@@ -219,8 +209,8 @@ public class RequirementStatusUpdaterTest {
 
     }
     @Test
-    @DisplayName("handleCompletedCourses - should fulfill major requirement using transfer rule when not directly matched")
-    void handleCompletedCourses_whenNotDirectlyMatched_thenFulfillViaTransferRule() {
+    @DisplayName("updateRequirementStatus - should fulfill major requirement using transfer rule when not directly matched")
+    void updateRequirementStatus_whenNotDirectlyMatched_thenFulfillViaTransferRule() {
         // given
         Long userId = 1L;
         given(statusRepository.findAllByUserId(userId)).willReturn(List.of(userRequiredCourseStatus1, userRequiredCourseStatus2));
@@ -232,10 +222,9 @@ public class RequirementStatusUpdaterTest {
         given(requiredLiberalCategoryByCollegeRepository.findById(userRequiredCourseStatus2.getRequiredCourseId())).willReturn(Optional.of(rlc));
         given(liberalCategoryCourseRepository.existsByCourseIdAndLiberalCategoryId(course2.getId(), liberalCategory.getId())).willReturn(true);
 
-        CompletedCoursesRegisteredEvent event = new CompletedCoursesRegisteredEvent(userId, List.of(ucc2, ucc3));
 
         // when
-        handler.handle(event);
+        requirementStatusUpdateService.updateRequirementStatus(userId, List.of(ucc2, ucc3));
 
         // then
         assertThat(userRequiredCourseStatus1.isFulfilled()).isEqualTo(true);
@@ -244,59 +233,55 @@ public class RequirementStatusUpdaterTest {
     }
 
     @Test
-    @DisplayName("handleCompletedCourses - should throw when user required course status not found")
-    void handleCompletedCourses_shouldThrow_whenUserRequiredCourseStatusNotFound() {
+    @DisplayName("updateRequirementStatus - should throw when user required course status not found")
+    void updateRequirementStatus_shouldThrow_whenUserRequiredCourseStatusNotFound() {
         // given
         Long userId = 1L;
         given(statusRepository.findAllByUserId(userId)).willReturn(List.of());
-        CompletedCoursesRegisteredEvent event = new CompletedCoursesRegisteredEvent(userId, List.of(ucc2, ucc3));
         // when & then
         assertThrows(UserRequiredCourseStatusNotFoundException.class,
-                () -> handler.handle(event));
+                () -> requirementStatusUpdateService.updateRequirementStatus(userId, List.of(ucc2, ucc3)));
     }
 
     @Test
-    @DisplayName("handleCompletedCourses - should throw when required major course not found")
-    void handleCompletedCourses_shouldThrow_whenRequiredMajorCourseNotFound() {
+    @DisplayName("updateRequirementStatus - should throw when required major course not found")
+    void updateRequirementStatus_shouldThrow_whenRequiredMajorCourseNotFound() {
         // given
         Long userId = 1L;
         given(statusRepository.findAllByUserId(userId)).willReturn(List.of(userRequiredCourseStatus1, userRequiredCourseStatus2));
         given(requiredMajorCourseRepository.findById(userRequiredCourseStatus1.getRequiredCourseId())).willReturn(Optional.empty());
 
-        CompletedCoursesRegisteredEvent event = new CompletedCoursesRegisteredEvent(userId, List.of(ucc2, ucc3));
         // when & then
         assertThrows(RequiredMajorCourseNotFoundException.class,
-                () -> handler.handle(event));
+                () -> requirementStatusUpdateService.updateRequirementStatus(userId, List.of(ucc2, ucc3)));
     }
 
     @Test
-    @DisplayName("handleCompletedCourses - should throw when user completed course not found")
-    void handleCompletedCourses_shouldThrow_whenUserCompletedCourseNotFound() {
+    @DisplayName("updateRequirementStatus - should throw when user completed course not found")
+    void updateRequirementStatus_shouldThrow_whenUserCompletedCourseNotFound() {
         // given
         Long userId = 1L;
         given(statusRepository.findAllByUserId(userId)).willReturn(List.of(userRequiredCourseStatus1, userRequiredCourseStatus2));
         given(requiredMajorCourseRepository.findById(userRequiredCourseStatus1.getRequiredCourseId())).willReturn(Optional.of(requiredMajorCourse));
         given(userCompletedCourseRepository.findByUserId(userId)).willReturn(List.of());
 
-        CompletedCoursesRegisteredEvent event = new CompletedCoursesRegisteredEvent(userId, List.of(ucc2, ucc3));
         // when & then
         assertThrows(UserCompletedCourseNotFoundException.class,
-                () -> handler.handle(event));
+                () -> requirementStatusUpdateService.updateRequirementStatus(userId, List.of(ucc2, ucc3)));
     }
 
     @Test
-    @DisplayName("handleCompletedCourses - should throw when user completed course not found")
-    void handleCompletedCourses_shouldThrow_whenRequiredLiberalCategoryNotFound() {
+    @DisplayName("updateRequirementStatus - should throw when user completed course not found")
+    void updateRequirementStatus_shouldThrow_whenRequiredLiberalCategoryNotFound() {
         // given
         Long userId = 1L;
         given(statusRepository.findAllByUserId(userId)).willReturn(List.of(userRequiredCourseStatus1, userRequiredCourseStatus2));
         given(requiredMajorCourseRepository.findById(userRequiredCourseStatus1.getRequiredCourseId())).willReturn(Optional.of(requiredMajorCourse));
         given(userCompletedCourseRepository.findByUserId(userId)).willReturn(List.of(ucc1, ucc2));
         given(requiredLiberalCategoryByCollegeRepository.findById(userRequiredCourseStatus2.getRequiredCourseId())).willReturn(Optional.empty());
-        CompletedCoursesRegisteredEvent event = new CompletedCoursesRegisteredEvent(userId, List.of(ucc2, ucc3));
         // when & then
         assertThrows(RequiredLiberalCategoryNotFoundException.class,
-                () -> handler.handle(event));
+                () -> requirementStatusUpdateService.updateRequirementStatus(userId, List.of(ucc2, ucc3)));
     }
 
 
