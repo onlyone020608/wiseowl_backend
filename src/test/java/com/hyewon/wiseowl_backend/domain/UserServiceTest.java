@@ -114,7 +114,7 @@ public class UserServiceTest {
     @BeforeEach
     void setUp() {
         profile2 = Profile.builder()
-                .JPA(3.9)
+                .GPA(3.9)
                 .build();
         user = User.builder()
                 .username("Test")
@@ -670,7 +670,7 @@ public class UserServiceTest {
         assertThat(response.userName()).isEqualTo("Test");
         assertThat(response.primaryMajor().majorName()).isEqualTo("컴퓨터공학과");
         assertThat(response.doubleMajor().majorName()).isEqualTo("철학과");
-        assertThat(response.JPA()).isEqualTo(3.9);
+        assertThat(response.GPA()).isEqualTo(3.9);
 
 
     }

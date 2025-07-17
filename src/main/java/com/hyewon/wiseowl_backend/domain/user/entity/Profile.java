@@ -21,7 +21,7 @@ public class Profile {
 
     private boolean adConsent;
 
-    private Double JPA;
+    private Double GPA;
 
     public void updateEntranceYear(Integer entranceYear) {
         this.entranceYear = entranceYear;

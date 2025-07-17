@@ -2,6 +2,6 @@ package com.hyewon.wiseowl_backend.domain.user.dto;
 
 
 
-public record UserSummaryResponse(String userName, String studentId, double JPA, UserMajorDetail primaryMajor, UserMajorDetail doubleMajor) {
+public record UserSummaryResponse(String userName, String studentId, double GPA, UserMajorDetail primaryMajor, UserMajorDetail doubleMajor) {
 
 }

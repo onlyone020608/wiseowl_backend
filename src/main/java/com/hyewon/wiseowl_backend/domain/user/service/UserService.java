@@ -303,7 +303,7 @@ public class UserService {
                 })
                 .orElse(null);
 
-        return new UserSummaryResponse(user.getUsername(), user.getStudentId(),profile.getJPA(),
+        return new UserSummaryResponse(user.getUsername(), user.getStudentId(),profile.getGPA(),
                 new UserMajorDetail(primaryCollege.getId(), primaryCollege.getName(), primaryMajor.getId(), primaryMajor.getName())
                 ,secondMajorDetail);
     }
