@@ -35,6 +35,10 @@ public class Profile {
         return new Profile();
     }
 
+    public void updateGPA(double GPA){
+        this.GPA = GPA;
+    }
+
 
 
 }

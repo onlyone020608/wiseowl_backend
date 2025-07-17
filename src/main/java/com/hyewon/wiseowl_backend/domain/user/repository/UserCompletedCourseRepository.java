@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface UserCompletedCourseRepository extends JpaRepository<UserCompletedCourse, Long> {
+public interface UserCompletedCourseRepository extends JpaRepository<UserCompletedCourse, Long>, UserCompletedCourseQueryRepository{
     List<UserCompletedCourse> findByUserId(Long userId);
     boolean existsByUserId(Long userId);
 }
