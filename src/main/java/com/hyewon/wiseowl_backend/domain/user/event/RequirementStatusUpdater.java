@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
-public class CompletedCoursesEventListener {
+public class RequirementStatusUpdater {
     private final UserRequiredCourseStatusRepository statusRepository;
     private final CourseCreditTransferRuleRepository ruleRepository;
     private final RequiredMajorCourseRepository requiredMajorCourseRepository;

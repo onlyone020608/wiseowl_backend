@@ -7,7 +7,7 @@ import com.hyewon.wiseowl_backend.domain.requirement.repository.CourseCreditTran
 import com.hyewon.wiseowl_backend.domain.requirement.repository.RequiredLiberalCategoryByCollegeRepository;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.RequiredMajorCourseRepository;
 import com.hyewon.wiseowl_backend.domain.user.entity.*;
-import com.hyewon.wiseowl_backend.domain.user.event.CompletedCoursesEventListener;
+import com.hyewon.wiseowl_backend.domain.user.event.RequirementStatusUpdater;
 import com.hyewon.wiseowl_backend.domain.user.event.CompletedCoursesRegisteredEvent;
 import com.hyewon.wiseowl_backend.domain.user.repository.UserCompletedCourseRepository;
 import com.hyewon.wiseowl_backend.domain.user.repository.UserRequiredCourseStatusRepository;
@@ -32,9 +32,9 @@ import static org.mockito.BDDMockito.given;
 
 
 @ExtendWith(MockitoExtension.class)
-public class CompletedCoursesEventListenerTest {
+public class RequirementStatusUpdaterTest {
     @InjectMocks
-    private CompletedCoursesEventListener handler;
+    private RequirementStatusUpdater handler;
 
     @Mock
     private UserRequiredCourseStatusRepository statusRepository;
