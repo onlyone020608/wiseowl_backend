@@ -70,7 +70,7 @@ public class UserController {
         return ResponseEntity.ok(userService.fetchUserRequiredCourseStatus(principal.getId(), majorType));
     }
 
-    @GetMapping("/me/graduation-requirements")
+    @GetMapping("/me/graduation-requirements/statuses")
     public ResponseEntity<List<UserGraduationRequirementStatusResponse>> getGraduationRequirementStatuses(
             @AuthenticationPrincipal UserPrincipal principal
     ) {
