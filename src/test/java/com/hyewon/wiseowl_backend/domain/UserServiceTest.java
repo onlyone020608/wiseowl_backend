@@ -11,6 +11,7 @@ import com.hyewon.wiseowl_backend.domain.requirement.repository.RequiredMajorCou
 import com.hyewon.wiseowl_backend.domain.user.dto.*;
 import com.hyewon.wiseowl_backend.domain.user.entity.*;
 import com.hyewon.wiseowl_backend.domain.user.event.CompletedCoursesRegisteredEvent;
+import com.hyewon.wiseowl_backend.domain.user.event.CompletedCoursesUpdateEvent;
 import com.hyewon.wiseowl_backend.domain.user.repository.*;
 import com.hyewon.wiseowl_backend.domain.user.service.UserService;
 import com.hyewon.wiseowl_backend.global.exception.*;
@@ -771,16 +772,18 @@ public class UserServiceTest {
     @DisplayName("updateCompletedCourses -  should update user completed courses")
     void updateCompletedCourses_success(){
         // given
+        Long userId = 1L;
         given(userCompletedCourseRepository.findById(1L))
                 .willReturn(Optional.of(ucc));
 
         // when
         CompletedCourseUpdateRequest rq1 = new CompletedCourseUpdateRequest(1L, Grade.B, false);
-        userService.updateCompletedCourses(List.of(rq1));
+        userService.updateCompletedCourses(userId, List.of(rq1));
 
         // then
         assertThat(ucc.getGrade()).isEqualTo(Grade.B);
         assertThat(ucc.isRetake()).isEqualTo(false);
+        verify(eventPublisher).publishEvent(any(CompletedCoursesUpdateEvent.class));
 
     }
 
@@ -788,13 +791,14 @@ public class UserServiceTest {
     @DisplayName("updateCompletedCourses -   should throw UserCompletedCourseNotFoundException when user completed course does not exist")
     void updateCompletedCourses_shouldThrowException_whenUserCompletedCourseNotFound(){
         // given
+        Long userId = 1L;
         given(userCompletedCourseRepository.findById(2L))
                 .willReturn(Optional.empty());
 
         // when & then
         CompletedCourseUpdateRequest rq1 = new CompletedCourseUpdateRequest(2L, Grade.B, false);
         assertThrows(UserCompletedCourseNotFoundException.class,
-                () -> userService.updateCompletedCourses(List.of(rq1)));
+                () -> userService.updateCompletedCourses(userId, List.of(rq1)));
 
     }
 

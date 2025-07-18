@@ -20,5 +20,11 @@ public class GpaRecalculationHandler {
         gpaRecalculationService.recalculateGpa(event.getUserId());
 
     }
+
+    @TransactionalEventListener
+    public void onUpdated(CompletedCoursesUpdateEvent event){
+        gpaRecalculationService.recalculateGpa(event.getUserId());
+
+    }
 }
 

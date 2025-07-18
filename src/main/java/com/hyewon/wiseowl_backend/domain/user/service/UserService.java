@@ -11,6 +11,7 @@ import com.hyewon.wiseowl_backend.domain.course.repository.MajorRepository;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.MajorRequirementRepository;
 import com.hyewon.wiseowl_backend.domain.user.entity.*;
 import com.hyewon.wiseowl_backend.domain.user.event.CompletedCoursesRegisteredEvent;
+import com.hyewon.wiseowl_backend.domain.user.event.CompletedCoursesUpdateEvent;
 import com.hyewon.wiseowl_backend.domain.user.repository.*;
 import com.hyewon.wiseowl_backend.global.exception.*;
 
@@ -330,7 +331,7 @@ public class UserService {
     }
 
     @Transactional
-    public void updateCompletedCourses(List<CompletedCourseUpdateRequest> requests){
+    public void updateCompletedCourses(Long userId, List<CompletedCourseUpdateRequest> requests){
         requests.forEach(request -> {
             UserCompletedCourse userCompletedCourse = userCompletedCourseRepository.findById(request.userCompletedCourseId()).orElseThrow(() -> new UserCompletedCourseNotFoundException(request.userCompletedCourseId()));
             if (request.grade() != null) {
@@ -341,6 +342,7 @@ public class UserService {
                 userCompletedCourse.updateRetake(request.retake());
             }
         });
+        eventPublisher.publishEvent(new CompletedCoursesUpdateEvent(userId));
 
     }
 

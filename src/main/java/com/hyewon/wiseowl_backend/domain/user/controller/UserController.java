@@ -102,9 +102,10 @@ public class UserController {
     }
     @PatchMapping("/me/completed-courses")
     public ResponseEntity<Void> updateCompletedCourses(
+            @AuthenticationPrincipal UserPrincipal principal,
             @RequestBody @Valid List<CompletedCourseUpdateRequest> requests
     ) {
-        userService.updateCompletedCourses(requests);
+        userService.updateCompletedCourses(principal.getId(), requests);
         return ResponseEntity.ok().build();
     }
     @PostMapping("/me/subscriptions")
