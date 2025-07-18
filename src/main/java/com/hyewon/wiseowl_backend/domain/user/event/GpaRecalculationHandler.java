@@ -15,7 +15,7 @@ public class GpaRecalculationHandler {
     private final GpaRecalculationService gpaRecalculationService;
 
     @TransactionalEventListener
-    public void handle(CompletedCoursesRegisteredEvent event){
+    public void onRegistered(CompletedCoursesRegisteredEvent event){
 
         gpaRecalculationService.recalculateGpa(event.getUserId());
 
