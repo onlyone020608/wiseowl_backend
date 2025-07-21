@@ -12,6 +12,7 @@ import com.hyewon.wiseowl_backend.domain.course.repository.CourseOfferingReposit
 import com.hyewon.wiseowl_backend.domain.course.repository.LiberalCategoryRepository;
 import com.hyewon.wiseowl_backend.domain.course.repository.MajorRepository;
 import com.hyewon.wiseowl_backend.global.exception.CourseNotFoundException;
+import com.hyewon.wiseowl_backend.global.exception.CourseOfferingNotFoundException;
 import com.hyewon.wiseowl_backend.global.exception.LiberalCategoryNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -49,7 +50,7 @@ public class CourseService {
     public List<CourseOfferingDto> getCourseOfferingsBySemester(Long semesterId){
         List<CourseOffering> offerings = courseOfferingRepository.findAllBySemesterId(semesterId);
         if(offerings.isEmpty()){
-            throw new CourseNotFoundException("No course offerings found for semesterId: " + semesterId);
+            throw new CourseOfferingNotFoundException("No course offerings found for semesterId: " + semesterId);
         }
         return offerings.stream()
                 .map(offering -> {

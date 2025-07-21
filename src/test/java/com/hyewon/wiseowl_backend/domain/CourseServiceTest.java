@@ -9,6 +9,7 @@ import com.hyewon.wiseowl_backend.domain.course.entity.*;
 import com.hyewon.wiseowl_backend.domain.course.repository.CourseOfferingRepository;
 import com.hyewon.wiseowl_backend.domain.course.repository.LiberalCategoryRepository;
 import com.hyewon.wiseowl_backend.global.exception.CourseNotFoundException;
+import com.hyewon.wiseowl_backend.global.exception.CourseOfferingNotFoundException;
 import com.hyewon.wiseowl_backend.global.exception.LiberalCategoryNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -200,7 +201,7 @@ public class CourseServiceTest {
                 .willReturn(List.of());
 
         // when & then
-        assertThrows(CourseNotFoundException.class, () -> {
+        assertThrows(CourseOfferingNotFoundException.class, () -> {
             courseService.getCourseOfferingsBySemester(1L);
         });
     }
