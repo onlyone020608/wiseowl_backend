@@ -3,7 +3,7 @@ package com.hyewon.wiseowl_backend.domain.course.dto;
 
 import com.hyewon.wiseowl_backend.domain.course.entity.CourseOffering;
 
-public record CourseOfferingDto(Long Id, Long majorId, Long liberalCategoryId, String courseName, String professor,
+public record CourseOfferingDto(Long id, Long majorId, Long liberalCategoryId, String courseName, String professor,
                                 String classTime, String courseCode, RoomDto room) {
     public static CourseOfferingDto from(CourseOffering offering, Long liberalCategoryId) {
         return new CourseOfferingDto(
