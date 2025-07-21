@@ -2,6 +2,8 @@ package com.hyewon.wiseowl_backend.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hyewon.wiseowl_backend.domain.auth.security.JwtProvider;
+import com.hyewon.wiseowl_backend.domain.user.repository.UserRepository;
+import com.hyewon.wiseowl_backend.domain.user.repository.UserSubscriptionRepository;
 import com.hyewon.wiseowl_backend.global.common.TestDataLoader;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +47,12 @@ public abstract class AbstractIntegrationTest {
     protected JwtProvider jwtProvider;
 
     @Autowired protected TestDataLoader testDataLoader;
+
+    @Autowired
+    protected UserRepository userRepository;
+
+    @Autowired
+    protected UserSubscriptionRepository userSubscriptionRepository;
 
 
 }
