@@ -22,7 +22,7 @@ public enum ErrorCode {
     USER_REQUIRED_COURSE_STATUS_NOT_FOUND(HttpStatus.NOT_FOUND, "User requires courses status not found."),
     USER_COMPLETED_COURSE_NOT_FOUND(HttpStatus.NOT_FOUND, "User completed courses not found."),
     INVALID_CURRENT_PASSWORD(HttpStatus.BAD_REQUEST, "Current password is incorrect."),
-    FACILITIES_NOT_FOUND(HttpStatus.NOT_FOUND, "No facilities are registered in the system."),
+    FACILITY_NOT_FOUND(HttpStatus.NOT_FOUND, "No facilities are registered in the system."),
     ORGANIZATION_NOT_FOUND(HttpStatus.NOT_FOUND, "Organization not found.");
 
 

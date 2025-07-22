@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public class FacilityNotFoundException extends RuntimeException {
-    private final ErrorCode errorCode = ErrorCode.FACILITIES_NOT_FOUND;
+    private final ErrorCode errorCode = ErrorCode.FACILITY_NOT_FOUND;
     public FacilityNotFoundException(String message) {
         super(message);
     }
