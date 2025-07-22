@@ -2,6 +2,8 @@ package com.hyewon.wiseowl_backend.global.common;
 
 import com.hyewon.wiseowl_backend.domain.course.entity.*;
 import com.hyewon.wiseowl_backend.domain.course.repository.*;
+import com.hyewon.wiseowl_backend.domain.facility.entity.Facility;
+import com.hyewon.wiseowl_backend.domain.facility.repository.FacilityRepository;
 import com.hyewon.wiseowl_backend.domain.notice.entity.Notice;
 import com.hyewon.wiseowl_backend.domain.notice.entity.Organization;
 import com.hyewon.wiseowl_backend.domain.notice.repository.NoticeRepository;
@@ -39,6 +41,7 @@ public class TestDataLoader {
     private final RoomRepository roomRepository;
     private final BuildingRepository buildingRepository;
     private final CollegeRepository collegeRepository;
+    private final FacilityRepository facilityRepository;
     private User testUser;
     private Semester testSemester;
 
@@ -129,13 +132,36 @@ public class TestDataLoader {
                 .year(2023)
                 .build());
 
-        Building building = buildingRepository.save(Building.builder()
+        Building building1 = buildingRepository.save(Building.builder()
                         .name("백년관")
                 .build());
 
+        Building building2 = buildingRepository.save(Building.builder()
+                .name("공학관")
+                .build());
+
+        facilityRepository.saveAll(List.of(Facility.builder()
+                        .name("편의점")
+                        .building(building1)
+                        .build()
+                , Facility.builder()
+                        .name("복사실")
+                        .building(building1)
+                        .build())
+        );
+
+        facilityRepository.saveAll(List.of(Facility.builder()
+                        .name("편의점")
+                        .building(building2)
+                        .build()
+                , Facility.builder()
+                        .name("열람실")
+                        .building(building2)
+                        .build())
+        );
         Room room = roomRepository.save(Room.builder()
                         .roomNumber("301")
-                        .building(building)
+                        .building(building1)
                 .build());
 
 
