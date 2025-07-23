@@ -90,7 +90,7 @@ public class UserController {
             @RequestBody @Valid List<UserMajorUpdateRequest> requests
     ) {
         userService.updateUserMajor(principal.getId(), requests);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/me/majors/type")
@@ -98,7 +98,7 @@ public class UserController {
             @RequestBody @Valid List<UserMajorTypeUpdateRequest> requests
     ) {
         userService.updateUserMajorTypes(requests);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
     @PatchMapping("/me/completed-courses")
     public ResponseEntity<Void> updateCompletedCourses(
@@ -106,7 +106,7 @@ public class UserController {
             @RequestBody @Valid List<CompletedCourseUpdateRequest> requests
     ) {
         userService.updateCompletedCourses(principal.getId(), requests);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
     @PostMapping("/me/subscriptions")
     public ResponseEntity<Void> subscribeOrganizations(
@@ -121,7 +121,7 @@ public class UserController {
     public ResponseEntity<Void> updateUserSubscriptions(@AuthenticationPrincipal UserPrincipal principal,
                                                         @RequestBody List<UserSubscriptionRequest> requests) {
         userService.replaceAllUserSubscriptions(principal.getId(), requests);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
 }
