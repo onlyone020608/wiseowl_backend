@@ -75,6 +75,7 @@ public class TestDataLoader {
         );
 
         com.hyewon.wiseowl_backend.domain.user.entity.Profile profile = com.hyewon.wiseowl_backend.domain.user.entity.Profile.builder()
+                .GPA(4.1)
                 .build();
 
         testUser =User.builder()
@@ -82,6 +83,7 @@ public class TestDataLoader {
                 .password("encoded-password")
                 .username("Tester")
                         .profile(profile)
+                .studentId("2021")
                 .build();
 
         profile.assignUser(testUser);
