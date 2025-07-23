@@ -114,7 +114,7 @@ public class UserController {
             @RequestBody @Valid List<UserSubscriptionRequest> requests
     ){
         userService.registerUserSubscriptions(principal.getId(), requests);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PutMapping("/me/subscriptions")
