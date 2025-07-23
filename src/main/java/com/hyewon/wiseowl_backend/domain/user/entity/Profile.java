@@ -27,7 +27,7 @@ public class Profile {
         this.entranceYear = entranceYear;
     }
 
-    void assignUser(User user) {
+    public void assignUser(User user) {
         this.user = user;
     }
 

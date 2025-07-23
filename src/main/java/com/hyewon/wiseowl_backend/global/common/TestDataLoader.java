@@ -8,10 +8,17 @@ import com.hyewon.wiseowl_backend.domain.notice.entity.Notice;
 import com.hyewon.wiseowl_backend.domain.notice.entity.Organization;
 import com.hyewon.wiseowl_backend.domain.notice.repository.NoticeRepository;
 import com.hyewon.wiseowl_backend.domain.notice.repository.OrganizationRepository;
+import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorRequirement;
+import com.hyewon.wiseowl_backend.domain.requirement.entity.Requirement;
+import com.hyewon.wiseowl_backend.domain.requirement.repository.MajorRequirementRepository;
+import com.hyewon.wiseowl_backend.domain.requirement.repository.RequirementRepository;
 import com.hyewon.wiseowl_backend.domain.user.entity.SubscriptionType;
 import com.hyewon.wiseowl_backend.domain.user.entity.User;
+import com.hyewon.wiseowl_backend.domain.user.entity.UserRequirementStatus;
 import com.hyewon.wiseowl_backend.domain.user.entity.UserSubscription;
+import com.hyewon.wiseowl_backend.domain.user.repository.ProfileRepository;
 import com.hyewon.wiseowl_backend.domain.user.repository.UserRepository;
+import com.hyewon.wiseowl_backend.domain.user.repository.UserRequirementStatusRepository;
 import com.hyewon.wiseowl_backend.domain.user.repository.UserSubscriptionRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +49,10 @@ public class TestDataLoader {
     private final BuildingRepository buildingRepository;
     private final CollegeRepository collegeRepository;
     private final FacilityRepository facilityRepository;
+    private final ProfileRepository profileRepository;
+    private final UserRequirementStatusRepository userRequirementStatusRepository;
+    private final MajorRequirementRepository majorRequirementRepository;
+    private final RequirementRepository requirementRepository;
     private User testUser;
     private Semester testSemester;
 
@@ -66,11 +77,19 @@ public class TestDataLoader {
 
         );
 
-        testUser = userRepository.save(User.builder()
+        com.hyewon.wiseowl_backend.domain.user.entity.Profile profile = com.hyewon.wiseowl_backend.domain.user.entity.Profile.builder()
+                .build();
+
+        testUser =User.builder()
                 .email("test@example.com")
                 .password("encoded-password")
                 .username("Tester")
-                .build());
+                        .profile(profile)
+                .build();
+
+        profile.assignUser(testUser);
+
+        userRepository.save(testUser);
 
         userSubscriptionRepository.saveAll(List.of(
                 UserSubscription.builder()
@@ -181,6 +200,29 @@ public class TestDataLoader {
                         .classTime("월금23")
                         .build()
         ));
+
+
+        Requirement requirement = requirementRepository.save(
+                Requirement.builder()
+                        .name("졸업시험")
+                        .build()
+        );
+
+        MajorRequirement majorReq = majorRequirementRepository.save(
+                MajorRequirement.builder()
+                        .major(major)
+                        .requirement(requirement)
+                        .description("레포트대체가능")
+                        .build()
+        );
+
+        userRequirementStatusRepository.saveAll(List.of(
+                UserRequirementStatus.builder()
+                        .user(testUser)
+                        .majorRequirement(majorReq)
+                        .build()
+        ));
+
 
     }
 

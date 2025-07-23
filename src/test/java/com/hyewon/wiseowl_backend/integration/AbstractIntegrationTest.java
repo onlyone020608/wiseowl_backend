@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hyewon.wiseowl_backend.domain.auth.security.JwtProvider;
 import com.hyewon.wiseowl_backend.domain.course.repository.CourseOfferingRepository;
 import com.hyewon.wiseowl_backend.domain.course.repository.CourseRepository;
+import com.hyewon.wiseowl_backend.domain.user.repository.UserCompletedCourseRepository;
 import com.hyewon.wiseowl_backend.domain.user.repository.UserRepository;
 import com.hyewon.wiseowl_backend.domain.user.repository.UserSubscriptionRepository;
 import com.hyewon.wiseowl_backend.global.common.TestDataLoader;
@@ -62,6 +63,9 @@ public abstract class AbstractIntegrationTest {
 
     @Autowired
     protected CourseOfferingRepository courseOfferingRepository;
+
+    @Autowired
+    protected UserCompletedCourseRepository userCompletedCourseRepository;
 
 
 }
