@@ -19,7 +19,7 @@ public class GlobalExceptionHandler {
             UserMajorNotFoundException.class,
             CreditRequirementNotFoundException.class,
             RequiredMajorCourseNotFoundException.class,
-            LiberalCategoryNotFoundException.class,
+            RequiredLiberalCategoryNotFoundException.class,
             UserRequiredCourseStatusNotFoundException.class,
             UserCompletedCourseNotFoundException.class,
             FacilityNotFoundException.class,
