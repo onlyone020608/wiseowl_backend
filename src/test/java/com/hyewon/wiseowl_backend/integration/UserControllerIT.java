@@ -208,4 +208,169 @@ public class UserControllerIT extends AbstractIntegrationTest{
 ;
 
     }
+
+    @Test
+    @DisplayName("PUT /api/users/me/graduation-requirements - should update user requirement status")
+    void updateRequirements_success() throws Exception {
+        User user = testDataLoader.getTestUser();
+        String token = jwtProvider.generateAccessToken(user.getId());
+
+
+        UserRequirementFulfillmentRequest request = new UserRequirementFulfillmentRequest(
+                1L,
+                List.of( new RequirementStatusUpdate(1L,true))
+        );
+
+
+        mockMvc.perform(put("/api/users/me/graduation-requirements")
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+
+
+    }
+
+    @Test
+    @DisplayName("PUT /api/users/me/graduation-requirements - should return 404 when no user requirement status exists")
+    void updateRequirements_userRequirementStatusNotFound() throws Exception {
+        User user = testDataLoader.getTestUser();
+        String token = jwtProvider.generateAccessToken(user.getId());
+
+
+        UserRequirementFulfillmentRequest request = new UserRequirementFulfillmentRequest(
+                1L,
+                List.of( new RequirementStatusUpdate(999L,true))
+        );
+
+
+        mockMvc.perform(put("/api/users/me/graduation-requirements")
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error").value("USER_GRADUATION_STATUS_NOT_FOUND"))
+                .andExpect(jsonPath("$.message").exists());
+
+
+    }
+
+    @Test
+    @DisplayName("GET /api/users/me/graduation-info - should returns user graduation info")
+    void getMainGraduationInfo_success() throws Exception {
+        User user = testDataLoader.getTestUser();
+        String token = jwtProvider.generateAccessToken(user.getId());
+
+
+        mockMvc.perform(get("/api/users/me/graduation-info")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.userName").value("Tester"));
+
+
+    }
+
+    @Test
+    @DisplayName("GET /api/users/me/graduation-info - should return 404 when no user major exists")
+    @Sql(statements = "DELETE FROM user_major", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    void getMainGraduationInfo_userMajorNotFound() throws Exception {
+        User user = testDataLoader.getTestUser();
+        String token = jwtProvider.generateAccessToken(user.getId());
+
+
+        mockMvc.perform(get("/api/users/me/graduation-info")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error").value("USER_MAJOR_NOT_FOUND"))
+                .andExpect(jsonPath("$.message").exists());
+
+
+    }
+
+    @Test
+    @DisplayName("GET /api/users/me/graduation-info - should return 404 when no credit requirement exists")
+    @Sql(statements = "DELETE FROM credit_requirement", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    void getMainGraduationInfo_creditRequirementNotFound() throws Exception {
+        User user = testDataLoader.getTestUser();
+        String token = jwtProvider.generateAccessToken(user.getId());
+
+
+        mockMvc.perform(get("/api/users/me/graduation-info")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error").value("CREDIT_REQUIREMENT_NOT_FOUND"))
+                .andExpect(jsonPath("$.message").exists());
+
+
+    }
+
+    @Test
+    @DisplayName("GET /api/users/me/required-courses -returns user required courses")
+    void getMyRequiredCourses_success() throws Exception {
+        User user = testDataLoader.getTestUser();
+        String token = jwtProvider.generateAccessToken(user.getId());
+
+
+        mockMvc.perform(get("/api/users/me/required-courses")
+                        .header("Authorization", "Bearer " + token)
+                .param("majorType", "PRIMARY"))
+                .andExpect(status().isOk());
+
+
+    }
+
+    @Test
+    @DisplayName("GET /api/users/me/required-courses -should return 404 when no user required course status exists")
+    @Sql(statements = "DELETE FROM user_required_course_status", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    void getMyRequiredCourses_userRequiredCourseStatusNotFound() throws Exception {
+        User user = testDataLoader.getTestUser();
+        String token = jwtProvider.generateAccessToken(user.getId());
+
+
+        mockMvc.perform(get("/api/users/me/required-courses")
+                        .header("Authorization", "Bearer " + token)
+                        .param("majorType", "PRIMARY"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error").value("USER_REQUIRED_COURSE_STATUS_NOT_FOUND"))
+                .andExpect(jsonPath("$.message").exists());
+
+
+    }
+
+    @Test
+    @DisplayName("GET /api/users/me/required-courses -should return 404 when no required major course exists")
+    @Sql(statements = "DELETE FROM required_major_course", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    void getMyRequiredCourses_requiredMajorCourseNotFound() throws Exception {
+        User user = testDataLoader.getTestUser();
+        String token = jwtProvider.generateAccessToken(user.getId());
+
+
+        mockMvc.perform(get("/api/users/me/required-courses")
+                        .header("Authorization", "Bearer " + token)
+                        .param("majorType", "PRIMARY"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error").value("REQUIRED_MAJOR_COURSE_NOT_FOUND"))
+                .andExpect(jsonPath("$.message").exists());
+
+
+    }
+
+    @Test
+    @DisplayName("GET /api/users/me/required-courses -should return 404 when no required liberal category exists")
+    @Sql(statements = "DELETE FROM required_liberal_category_by_college", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    void getMyRequiredCourses_requiredLiberalCategoryNotFound() throws Exception {
+        User user = testDataLoader.getTestUser();
+        String token = jwtProvider.generateAccessToken(user.getId());
+
+
+        mockMvc.perform(get("/api/users/me/required-courses")
+                        .header("Authorization", "Bearer " + token)
+                        .param("majorType", "PRIMARY"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error").value("REQUIRED_LIBERAL_CATEGORY_NOT_FOUND"))
+                .andExpect(jsonPath("$.message").exists());
+
+
+    }
+
 }

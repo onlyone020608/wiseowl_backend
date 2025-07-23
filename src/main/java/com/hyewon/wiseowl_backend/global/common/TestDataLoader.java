@@ -8,18 +8,10 @@ import com.hyewon.wiseowl_backend.domain.notice.entity.Notice;
 import com.hyewon.wiseowl_backend.domain.notice.entity.Organization;
 import com.hyewon.wiseowl_backend.domain.notice.repository.NoticeRepository;
 import com.hyewon.wiseowl_backend.domain.notice.repository.OrganizationRepository;
-import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorRequirement;
-import com.hyewon.wiseowl_backend.domain.requirement.entity.Requirement;
-import com.hyewon.wiseowl_backend.domain.requirement.repository.MajorRequirementRepository;
-import com.hyewon.wiseowl_backend.domain.requirement.repository.RequirementRepository;
-import com.hyewon.wiseowl_backend.domain.user.entity.SubscriptionType;
-import com.hyewon.wiseowl_backend.domain.user.entity.User;
-import com.hyewon.wiseowl_backend.domain.user.entity.UserRequirementStatus;
-import com.hyewon.wiseowl_backend.domain.user.entity.UserSubscription;
-import com.hyewon.wiseowl_backend.domain.user.repository.ProfileRepository;
-import com.hyewon.wiseowl_backend.domain.user.repository.UserRepository;
-import com.hyewon.wiseowl_backend.domain.user.repository.UserRequirementStatusRepository;
-import com.hyewon.wiseowl_backend.domain.user.repository.UserSubscriptionRepository;
+import com.hyewon.wiseowl_backend.domain.requirement.entity.*;
+import com.hyewon.wiseowl_backend.domain.requirement.repository.*;
+import com.hyewon.wiseowl_backend.domain.user.entity.*;
+import com.hyewon.wiseowl_backend.domain.user.repository.*;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
@@ -53,6 +45,11 @@ public class TestDataLoader {
     private final UserRequirementStatusRepository userRequirementStatusRepository;
     private final MajorRequirementRepository majorRequirementRepository;
     private final RequirementRepository requirementRepository;
+    private final CreditRequirementRepository creditRequirementRepository;
+    private final UserMajorRepository userMajorRepository;
+    private final UserRequiredCourseStatusRepository userRequiredCourseStatusRepository;
+    private final RequiredMajorCourseRepository requiredMajorCourseRepository;
+    private final RequiredLiberalCategoryByCollegeRepository requiredLiberalCategoryByCollegeRepository;
     private User testUser;
     private Semester testSemester;
 
@@ -208,9 +205,16 @@ public class TestDataLoader {
                         .build()
         );
 
+        userMajorRepository.save(UserMajor.builder()
+                        .user(testUser)
+                .majorType(MajorType.PRIMARY)
+                        .major(major)
+                .build());
+
         MajorRequirement majorReq = majorRequirementRepository.save(
                 MajorRequirement.builder()
                         .major(major)
+                        .majorType(MajorType.PRIMARY)
                         .requirement(requirement)
                         .description("레포트대체가능")
                         .build()
@@ -220,8 +224,50 @@ public class TestDataLoader {
                 UserRequirementStatus.builder()
                         .user(testUser)
                         .majorRequirement(majorReq)
+                        .fulfilled(false)
                         .build()
         ));
+
+        creditRequirementRepository.save(
+                CreditRequirement.builder()
+                        .major(major)
+                        .courseType(CourseType.MAJOR)
+                        .majorType(MajorType.PRIMARY)
+                        .requiredCredits(130)
+                        .build()
+        );
+
+        RequiredMajorCourse requiredMajorCourse = requiredMajorCourseRepository.save(
+                RequiredMajorCourse.builder()
+                        .major(major)
+                        .course(majorCourse)
+                        .majorType(MajorType.PRIMARY)
+                        .build()
+        );
+
+        RequiredLiberalCategoryByCollege liberalCategoryByCollege = requiredLiberalCategoryByCollegeRepository.save(
+                RequiredLiberalCategoryByCollege.builder()
+                        .college(college)
+                        .requiredCredit(3)
+                        .liberalCategory(liberalCategory)
+                        .build()
+        );
+
+        userRequiredCourseStatusRepository.saveAll(List.of(
+                UserRequiredCourseStatus.builder()
+                        .user(testUser)
+                        .courseType(CourseType.MAJOR)
+                        .requiredCourseId(requiredMajorCourse.getId())
+                        .build()
+                ,
+                UserRequiredCourseStatus.builder()
+                        .user(testUser)
+                        .courseType(CourseType.GENERAL)
+                        .requiredCourseId(liberalCategoryByCollege.getId())
+                        .build()
+        ));
+
+
 
 
     }
