@@ -44,13 +44,13 @@ public class UserController {
         return ResponseEntity.ok(graduationRequirementsForUser);
     }
 
-    @PostMapping("/me/graduation-requirements")
+    @PutMapping("/me/graduation-requirements")
     public ResponseEntity<Void> updateRequirements(
             @AuthenticationPrincipal UserPrincipal principal,
             @RequestBody @Valid UserRequirementFulfillmentRequest request
             ) {
         userService.updateUserRequirementStatus(principal.getId(), request);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/me/graduation-info")
