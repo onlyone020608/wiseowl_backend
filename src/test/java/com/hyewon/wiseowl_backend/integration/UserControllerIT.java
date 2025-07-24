@@ -4,6 +4,7 @@ import com.hyewon.wiseowl_backend.domain.course.entity.CourseOffering;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorType;
 import com.hyewon.wiseowl_backend.domain.user.dto.*;
 import com.hyewon.wiseowl_backend.domain.user.entity.Grade;
+import com.hyewon.wiseowl_backend.domain.user.entity.SubscriptionType;
 import com.hyewon.wiseowl_backend.domain.user.entity.User;
 import com.hyewon.wiseowl_backend.domain.user.entity.UserCompletedCourse;
 import org.junit.jupiter.api.DisplayName;
@@ -462,6 +463,132 @@ public class UserControllerIT extends AbstractIntegrationTest{
 
 
     }
+
+    @Test
+    @DisplayName("PATCH /api/users/me/majors/type - should update user major's type")
+    void updateUserMajorTypes_success() throws Exception {
+        User user = testDataLoader.getTestUser();
+        String token = jwtProvider.generateAccessToken(user.getId());
+
+
+        List<UserMajorTypeUpdateRequest> requests = List.of(
+                new UserMajorTypeUpdateRequest(1L, MajorType.DOUBLE)
+        );
+
+
+        mockMvc.perform(patch("/api/users/me/majors/type")
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.writeValueAsString(requests))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+
+    }
+
+    @Test
+    @DisplayName("PATCH /api/users/me/majors/type - should return 404 when no user major exists")
+    void updateUserMajorTypes_userMajorNotFound() throws Exception {
+        User user = testDataLoader.getTestUser();
+        String token = jwtProvider.generateAccessToken(user.getId());
+
+
+        List<UserMajorTypeUpdateRequest> requests = List.of(
+                new UserMajorTypeUpdateRequest(999L, MajorType.DOUBLE)
+        );
+
+
+        mockMvc.perform(patch("/api/users/me/majors/type")
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.writeValueAsString(requests))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error").value("USER_MAJOR_NOT_FOUND"))
+                .andExpect(jsonPath("$.message").exists());
+
+    }
+
+    @Test
+    @DisplayName("PATCH /api/users/me/completed-courses - should update user major's type")
+    void updateCompletedCourses_success() throws Exception {
+        User user = testDataLoader.getTestUser();
+        String token = jwtProvider.generateAccessToken(user.getId());
+
+
+        List<CompletedCourseUpdateRequest> requests = List.of(
+                new CompletedCourseUpdateRequest(1L, Grade.A_PLUS, true)
+        );
+
+
+        mockMvc.perform(patch("/api/users/me/completed-courses")
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.writeValueAsString(requests))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+
+    }
+
+    @Test
+    @DisplayName("PATCH /api/users/me/completed-courses - should return 404 when no user completed course exists")
+    void updateCompletedCourses_userCompletedCourseNotFound() throws Exception {
+        User user = testDataLoader.getTestUser();
+        String token = jwtProvider.generateAccessToken(user.getId());
+
+
+        List<CompletedCourseUpdateRequest> requests = List.of(
+                new CompletedCourseUpdateRequest(999L, Grade.A_PLUS, true)
+        );
+
+
+        mockMvc.perform(patch("/api/users/me/completed-courses")
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.writeValueAsString(requests))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error").value("USER_COMPLETED_COURSE_NOT_FOUND"))
+                .andExpect(jsonPath("$.message").exists());
+
+    }
+
+    @Test
+    @DisplayName("POST /api/users/me/subscriptions - insert subscriptions for user")
+    void subscribeOrganizations_success() throws Exception {
+        User user = testDataLoader.getTestUser();
+        String token = jwtProvider.generateAccessToken(user.getId());
+
+
+        List<UserSubscriptionRequest> requests = List.of(
+                new UserSubscriptionRequest(1L, SubscriptionType.MAJOR)
+        );
+
+
+        mockMvc.perform(post("/api/users/me/subscriptions")
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.writeValueAsString(requests))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated());
+
+    }
+
+    @Test
+    @DisplayName("PUT /api/users/me/subscriptions - should update user subscriptions")
+    void updateUserSubscriptions_success() throws Exception {
+        User user = testDataLoader.getTestUser();
+        String token = jwtProvider.generateAccessToken(user.getId());
+
+
+        List<UserSubscriptionRequest> requests = List.of(
+                new UserSubscriptionRequest(1L, SubscriptionType.MAJOR)
+        );
+
+
+        mockMvc.perform(put("/api/users/me/subscriptions")
+                        .header("Authorization", "Bearer " + token)
+                        .content(objectMapper.writeValueAsString(requests))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+
+
+    }
+
 
 
 }

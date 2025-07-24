@@ -50,6 +50,7 @@ public class TestDataLoader {
     private final UserRequiredCourseStatusRepository userRequiredCourseStatusRepository;
     private final RequiredMajorCourseRepository requiredMajorCourseRepository;
     private final RequiredLiberalCategoryByCollegeRepository requiredLiberalCategoryByCollegeRepository;
+    private final UserCompletedCourseRepository userCompletedCourseRepository;
     private User testUser;
     private Semester testSemester;
 
@@ -266,6 +267,13 @@ public class TestDataLoader {
                         .user(testUser)
                         .courseType(CourseType.GENERAL)
                         .requiredCourseId(liberalCategoryByCollege.getId())
+                        .build()
+        ));
+
+        userCompletedCourseRepository.saveAll(List.of(
+                UserCompletedCourse.builder()
+                        .grade(Grade.B_PLUS)
+                        .retake(false)
                         .build()
         ));
 
