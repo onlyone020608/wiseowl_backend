@@ -4,6 +4,8 @@ import com.hyewon.wiseowl_backend.domain.auth.dto.ChangePasswordRequest;
 import com.hyewon.wiseowl_backend.domain.auth.dto.LoginRequest;
 import com.hyewon.wiseowl_backend.domain.auth.dto.SignUpRequest;
 import com.hyewon.wiseowl_backend.domain.auth.dto.TokenResponse;
+import com.hyewon.wiseowl_backend.domain.auth.entity.RefreshToken;
+import com.hyewon.wiseowl_backend.domain.auth.repository.RefreshTokenRepository;
 import com.hyewon.wiseowl_backend.domain.auth.security.JwtProvider;
 import com.hyewon.wiseowl_backend.domain.auth.security.UserPrincipal;
 import com.hyewon.wiseowl_backend.domain.auth.service.AuthService;
@@ -42,6 +44,7 @@ public class AuthServiceTest {
     @Mock private  UserRepository userRepository;
     @Mock private PasswordEncoder passwordEncoder;
     @Mock private Authentication authentication;
+    @Mock private RefreshTokenRepository refreshTokenRepository;
 
     @InjectMocks
     private AuthService authService;
@@ -172,6 +175,67 @@ public class AuthServiceTest {
                 .isInstanceOf(InvalidCurrentPasswordException.class)
                 .hasMessage("Current password is incorrect.");
     }
+
+    @Test
+    @DisplayName("refresh - returns new access token when refresh token is valid")
+    void refresh_shouldReturnNewAccessToken_whenValid() {
+        // given
+        String refreshToken = "validRefreshToken";
+        Long userId = 1L;
+        String newAccessToken = "newAccessToken";
+
+        RefreshToken storedToken = new RefreshToken(userId, refreshToken);
+
+        given(jwtProvider.validateToken(refreshToken)).willReturn(true);
+        given(jwtProvider.getUserIdFromToken(refreshToken)).willReturn(userId);
+        given(refreshTokenRepository.findByUserId(userId)).willReturn(Optional.of(storedToken));
+        given(jwtProvider.generateAccessToken(userId)).willReturn(newAccessToken);
+
+        // when
+        TokenResponse response = authService.refresh(refreshToken);
+
+        // then
+        assertThat(response.getAccessToken()).isEqualTo(newAccessToken);
+        assertThat(response.getRefreshToken()).isEqualTo(refreshToken);
+    }
+
+    @Test
+    @DisplayName("refresh - throws exception when token is invalid")
+    void refresh_shouldThrowException_whenTokenInvalid() {
+        // given
+        String refreshToken = "invalidToken";
+        given(jwtProvider.validateToken(refreshToken)).willReturn(false);
+
+        // when & then
+        assertThatThrownBy(() -> authService.refresh(refreshToken))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Invalid refresh token");
+    }
+
+    @Test
+    @DisplayName("refresh - throws exception when token does not match stored token")
+    void refresh_shouldThrowException_whenTokenMismatch() {
+        // given
+        String refreshToken = "validToken";
+        String savedToken = "differentToken";
+        Long userId = 1L;
+
+        RefreshToken stored = new RefreshToken(userId, savedToken);
+
+        given(jwtProvider.validateToken(refreshToken)).willReturn(true);
+        given(jwtProvider.getUserIdFromToken(refreshToken)).willReturn(userId);
+        given(refreshTokenRepository.findByUserId(userId)).willReturn(Optional.of(stored));
+
+        // when & then
+        assertThatThrownBy(() -> authService.refresh(refreshToken))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Refresh token mismatch");
+    }
+
+
+
+
+
 
 
 

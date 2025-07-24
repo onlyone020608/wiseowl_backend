@@ -1,9 +1,8 @@
 package com.hyewon.wiseowl_backend.domain.auth.service;
 
-import com.hyewon.wiseowl_backend.domain.auth.dto.ChangePasswordRequest;
-import com.hyewon.wiseowl_backend.domain.auth.dto.LoginRequest;
-import com.hyewon.wiseowl_backend.domain.auth.dto.TokenResponse;
-import com.hyewon.wiseowl_backend.domain.auth.dto.SignUpRequest;
+import com.hyewon.wiseowl_backend.domain.auth.dto.*;
+import com.hyewon.wiseowl_backend.domain.auth.entity.RefreshToken;
+import com.hyewon.wiseowl_backend.domain.auth.repository.RefreshTokenRepository;
 import com.hyewon.wiseowl_backend.domain.auth.security.JwtProvider;
 import com.hyewon.wiseowl_backend.domain.auth.security.UserPrincipal;
 import com.hyewon.wiseowl_backend.domain.user.entity.Profile;
@@ -20,6 +19,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -28,6 +30,7 @@ public class AuthService {
     private final JwtProvider jwtProvider;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Transactional
     public TokenResponse login(LoginRequest request) {
@@ -68,5 +71,24 @@ public class AuthService {
         String encoded = passwordEncoder.encode(request.getNewPassword());
         user.updatePassword(encoded);
 
+    }
+
+    @Transactional
+    public TokenResponse refresh(String refreshToken) {
+        if (!jwtProvider.validateToken(refreshToken)) {
+            throw new IllegalArgumentException("Invalid refresh token");
+        }
+
+        Long userId = jwtProvider.getUserIdFromToken(refreshToken);
+
+        RefreshToken storedToken = refreshTokenRepository.findByUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("No refresh token found for user"));
+
+        if (!storedToken.getToken().equals(refreshToken)) {
+            throw new IllegalArgumentException("Refresh token mismatch");
+        }
+
+        String newAccessToken = jwtProvider.generateAccessToken(userId);
+        return new TokenResponse(newAccessToken, refreshToken);
     }
 }
