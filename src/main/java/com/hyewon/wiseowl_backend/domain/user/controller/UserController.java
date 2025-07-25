@@ -124,4 +124,10 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    @DeleteMapping("/me")
+    public ResponseEntity<Void> deleteUser(@AuthenticationPrincipal UserPrincipal principal) {
+        userService.deleteUser(principal.getId());
+        return ResponseEntity.noContent().build();
+    }
+
 }

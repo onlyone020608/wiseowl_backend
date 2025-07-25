@@ -905,6 +905,33 @@ public class UserServiceTest {
 
     }
 
+    @DisplayName("deleteUser - marks user as deleted when user exists")
+    @Test
+    void deleteUser_shouldMarkUserAsDeleted() {
+        // given
+        Long userId = 1L;
+        given(userRepository.findById(userId)).willReturn(Optional.of(user));
+
+        // when
+        userService.deleteUser(userId);
+
+        // then
+        assertThat(user.isDeleted()).isTrue();
+    }
+
+    @DisplayName("deleteUser - should throw UserNotFoundException when user does not exist")
+    @Test
+    void deleteUser_shouldThrowException_whenUserNotFound() {
+        // given
+        Long userId = 999L;
+        given(userRepository.findById(userId)).willReturn(Optional.empty());
+
+
+        // when & then
+        assertThrows(UserNotFoundException.class, () ->
+                userService.deleteUser(userId));
+    }
+
 
 
 }
