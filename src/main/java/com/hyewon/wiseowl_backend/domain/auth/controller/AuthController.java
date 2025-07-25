@@ -8,6 +8,7 @@ import com.hyewon.wiseowl_backend.domain.auth.security.UserPrincipal;
 import com.hyewon.wiseowl_backend.domain.auth.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +23,7 @@ public class AuthController {
     @PostMapping
     public ResponseEntity<Void> signUp(@RequestBody SignUpRequest request) {
         authService.signup(request);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PostMapping("/login")
@@ -35,7 +36,7 @@ public class AuthController {
     public ResponseEntity<Void> changePassword(
             @AuthenticationPrincipal UserPrincipal principal, ChangePasswordRequest request){
         authService.changePassword(principal.getId(), request);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/refresh")
