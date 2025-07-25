@@ -101,9 +101,9 @@ public class AuthServiceTest {
         // given
         given(authentication.getPrincipal()).willReturn(userPrincipal);
         given(authenticationManager.authenticate(any())).willReturn(authentication);
-        given(jwtProvider.generateAccessToken(user.getId()))
+        given(jwtProvider.generateAccessToken(user.getEmail()))
                 .willReturn("access-token");
-        given(jwtProvider.generateRefreshToken(user.getId()))
+        given(jwtProvider.generateRefreshToken(user.getEmail()))
                 .willReturn("refresh-token");
 
         // when
@@ -181,15 +181,15 @@ public class AuthServiceTest {
     void refresh_shouldReturnNewAccessToken_whenValid() {
         // given
         String refreshToken = "validRefreshToken";
-        Long userId = 1L;
+        String email = "test@test.com";
         String newAccessToken = "newAccessToken";
 
-        RefreshToken storedToken = new RefreshToken(userId, refreshToken);
+        RefreshToken storedToken = new RefreshToken(email, refreshToken);
 
         given(jwtProvider.validateToken(refreshToken)).willReturn(true);
-        given(jwtProvider.getUserIdFromToken(refreshToken)).willReturn(userId);
-        given(refreshTokenRepository.findByUserId(userId)).willReturn(Optional.of(storedToken));
-        given(jwtProvider.generateAccessToken(userId)).willReturn(newAccessToken);
+        given(jwtProvider.getEmailFromToken(refreshToken)).willReturn(email);
+        given(refreshTokenRepository.findByEmail(email)).willReturn(Optional.of(storedToken));
+        given(jwtProvider.generateAccessToken(email)).willReturn(newAccessToken);
 
         // when
         TokenResponse response = authService.refresh(refreshToken);
@@ -218,13 +218,13 @@ public class AuthServiceTest {
         // given
         String refreshToken = "validToken";
         String savedToken = "differentToken";
-        Long userId = 1L;
+        String email = "test@test.com";
 
-        RefreshToken stored = new RefreshToken(userId, savedToken);
+        RefreshToken stored = new RefreshToken(email, savedToken);
 
         given(jwtProvider.validateToken(refreshToken)).willReturn(true);
-        given(jwtProvider.getUserIdFromToken(refreshToken)).willReturn(userId);
-        given(refreshTokenRepository.findByUserId(userId)).willReturn(Optional.of(stored));
+        given(jwtProvider.getEmailFromToken(refreshToken)).willReturn(email);
+        given(refreshTokenRepository.findByEmail(email)).willReturn(Optional.of(stored));
 
         // when & then
         assertThatThrownBy(() -> authService.refresh(refreshToken))

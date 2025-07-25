@@ -16,7 +16,7 @@ public class CourseControllerIT extends AbstractIntegrationTest{
     @DisplayName("GET /api/courses/course-categories- returns course categories grouped by semester")
     void getCourseCategories_success() throws Exception {
         User user = testDataLoader.getTestUser();
-        String token = jwtProvider.generateAccessToken(user.getId());
+        String token = jwtProvider.generateAccessToken(user.getEmail());
 
         Semester semester = testDataLoader.getTestSemester();
 
@@ -32,7 +32,7 @@ public class CourseControllerIT extends AbstractIntegrationTest{
     @DisplayName("GET /api/courses/course-categories - should return 404 if course does not exist")
     void getCourseCategories_courseNotFound() throws Exception {
         User user = testDataLoader.getTestUser();
-        String token = jwtProvider.generateAccessToken(user.getId());
+        String token = jwtProvider.generateAccessToken(user.getEmail());
 
 
         mockMvc.perform(get("/api/courses/course-categories")
@@ -48,7 +48,7 @@ public class CourseControllerIT extends AbstractIntegrationTest{
     @DisplayName("GET /api/courses/offerings - returns course offerings grouped by semester")
     void getOfferings_success() throws Exception {
         User user = testDataLoader.getTestUser();
-        String token = jwtProvider.generateAccessToken(user.getId());
+        String token = jwtProvider.generateAccessToken(user.getEmail());
 
         Semester semester = testDataLoader.getTestSemester();
 
@@ -67,7 +67,7 @@ public class CourseControllerIT extends AbstractIntegrationTest{
     @DisplayName("GET /api/courses/offerings - should return 404 if course does not exist")
     void getOfferings_courseNotFound() throws Exception {
         User user = testDataLoader.getTestUser();
-        String token = jwtProvider.generateAccessToken(user.getId());
+        String token = jwtProvider.generateAccessToken(user.getEmail());
 
 
         mockMvc.perform(get("/api/courses/offerings")
@@ -83,7 +83,7 @@ public class CourseControllerIT extends AbstractIntegrationTest{
     @DisplayName("GET /api/courses/offerings - should return 404 if liberal category does not exist")
     void getOfferings_liberalCategoryNotFound() throws Exception {
         User user = testDataLoader.getTestUser();
-        String token = jwtProvider.generateAccessToken(user.getId());
+        String token = jwtProvider.generateAccessToken(user.getEmail());
         Semester semester = testDataLoader.getTestSemester();
 
         Course liberalCourse = Course.builder()
@@ -114,7 +114,7 @@ public class CourseControllerIT extends AbstractIntegrationTest{
     @DisplayName("GET /api/courses/colleges-with-majors - returns majors grouped by college ")
     void getCollegesWithMajors_success() throws Exception {
         User user = testDataLoader.getTestUser();
-        String token = jwtProvider.generateAccessToken(user.getId());
+        String token = jwtProvider.generateAccessToken(user.getEmail());
 
 
         mockMvc.perform(get("/api/courses/colleges-with-majors")

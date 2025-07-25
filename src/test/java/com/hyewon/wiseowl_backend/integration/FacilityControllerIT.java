@@ -14,7 +14,7 @@ public class FacilityControllerIT extends AbstractIntegrationTest{
     @DisplayName("GET /api/facilities - returns facilities grouped by building")
     void getFacilities_success() throws Exception {
         User user = testDataLoader.getTestUser();
-        String token = jwtProvider.generateAccessToken(user.getId());
+        String token = jwtProvider.generateAccessToken(user.getEmail());
 
         mockMvc.perform(get("/api/facilities")
                         .header("Authorization", "Bearer " + token))
@@ -28,7 +28,7 @@ public class FacilityControllerIT extends AbstractIntegrationTest{
     @Sql(statements = "DELETE FROM facility", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void getFacilities_facilityNotFound() throws Exception {
         User user = testDataLoader.getTestUser();
-        String token = jwtProvider.generateAccessToken(user.getId());
+        String token = jwtProvider.generateAccessToken(user.getEmail());
 
         mockMvc.perform(get("/api/facilities")
                         .header("Authorization", "Bearer " + token))

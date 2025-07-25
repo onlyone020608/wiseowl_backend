@@ -39,11 +39,11 @@ public class AuthService {
         );
 
         UserPrincipal userDetails = (UserPrincipal) authentication.getPrincipal();
-        Long userId = userDetails.getId();
+        String email = userDetails.getEmail();
 
 
-        String accessToken = jwtProvider.generateAccessToken(userId);
-        String refreshToken = jwtProvider.generateRefreshToken(userId);
+        String accessToken = jwtProvider.generateAccessToken(email);
+        String refreshToken = jwtProvider.generateRefreshToken(email);
 
         return new TokenResponse(accessToken, refreshToken);
     }
@@ -79,16 +79,16 @@ public class AuthService {
             throw new IllegalArgumentException("Invalid refresh token");
         }
 
-        Long userId = jwtProvider.getUserIdFromToken(refreshToken);
+        String email = jwtProvider.getEmailFromToken(refreshToken);
 
-        RefreshToken storedToken = refreshTokenRepository.findByUserId(userId)
+        RefreshToken storedToken = refreshTokenRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("No refresh token found for user"));
 
         if (!storedToken.getToken().equals(refreshToken)) {
             throw new IllegalArgumentException("Refresh token mismatch");
         }
 
-        String newAccessToken = jwtProvider.generateAccessToken(userId);
+        String newAccessToken = jwtProvider.generateAccessToken(email);
         return new TokenResponse(newAccessToken, refreshToken);
     }
 }

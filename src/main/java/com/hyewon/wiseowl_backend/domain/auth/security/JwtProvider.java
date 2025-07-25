@@ -29,35 +29,33 @@ public class JwtProvider {
         this.refreshTokenExpirationMs = refreshTokenExpirationMs;
     }
 
-    public String generateAccessToken(Long userId) {
-        return generateToken(userId, accessTokenExpirationMs);
+    public String generateAccessToken(String email) {
+        return generateToken(email, accessTokenExpirationMs);
     }
 
-    public String generateRefreshToken(Long userId) {
-        return generateToken(userId, refreshTokenExpirationMs);
+    public String generateRefreshToken(String email) {
+        return generateToken(email, refreshTokenExpirationMs);
     }
 
-    private String generateToken(Long userId, long expirationMs) {
+    private String generateToken(String email, long expirationMs) {
         Date now = new Date();
         Date expiry = new Date(now.getTime() + expirationMs);
 
         return Jwts.builder()
-                .setSubject(userId.toString())
+                .setSubject(email)
                 .setIssuedAt(now)
                 .setExpiration(expiry)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    public Long getUserIdFromToken(String token) {
-        return Long.parseLong(
-                Jwts.parserBuilder()
-                        .setSigningKey(key)
-                        .build()
-                        .parseClaimsJws(token)
-                        .getBody()
-                        .getSubject()
-        );
+    public String getEmailFromToken(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
     }
 
     public boolean validateToken(String token) {

@@ -15,13 +15,13 @@ import lombok.NoArgsConstructor;
 public class RefreshToken {
 
     @Id
-    private Long userId;
+    private String email;
 
     @Column(nullable = false, length = 500)
     private String token;
 
-    public RefreshToken(Long userId, String token) {
-        this.userId = userId;
+    public RefreshToken(String email, String token) {
+        this.email = email;
         this.token = token;
     }
 

@@ -26,7 +26,7 @@ public class UserControllerIT extends AbstractIntegrationTest{
     @DisplayName("POST /api/users/me/profile - should update user profile")
     void updateProfile_success() throws Exception {
         User user = testDataLoader.getTestUser();
-        String token = jwtProvider.generateAccessToken(user.getId());
+        String token = jwtProvider.generateAccessToken(user.getEmail());
 
 
         ProfileUpdateRequest request = new ProfileUpdateRequest(
@@ -55,7 +55,7 @@ public class UserControllerIT extends AbstractIntegrationTest{
                 .password("encoded-password")
                 .username("Tester")
                 .build());
-        String token = jwtProvider.generateAccessToken(user.getId());
+        String token = jwtProvider.generateAccessToken(user.getEmail());
 
 
         ProfileUpdateRequest request = new ProfileUpdateRequest(
@@ -82,7 +82,7 @@ public class UserControllerIT extends AbstractIntegrationTest{
     @DisplayName("POST /api/users/me/profile -  should return 404 when no major exists")
     void updateProfile_majorNotFound() throws Exception {
         User user = testDataLoader.getTestUser();
-        String token = jwtProvider.generateAccessToken(user.getId());
+        String token = jwtProvider.generateAccessToken(user.getEmail());
 
 
         ProfileUpdateRequest request = new ProfileUpdateRequest(
@@ -109,7 +109,7 @@ public class UserControllerIT extends AbstractIntegrationTest{
     @DisplayName("POST /api/users/me/completed-courses - insert completed courses for the users")
     void insertCompletedCourses_success() throws Exception {
         User user = testDataLoader.getTestUser();
-        String token = jwtProvider.generateAccessToken(user.getId());
+        String token = jwtProvider.generateAccessToken(user.getEmail());
 
 
         CompletedCourseInsertRequest request = new CompletedCourseInsertRequest(
@@ -130,7 +130,7 @@ public class UserControllerIT extends AbstractIntegrationTest{
     @DisplayName("POST /api/users/me/completed-courses - should return 409 when user completed course already exists")
     void insertCompletedCourses_userCompletedCourseAlreadyExists() throws Exception {
         User user = testDataLoader.getTestUser();
-        String token = jwtProvider.generateAccessToken(user.getId());
+        String token = jwtProvider.generateAccessToken(user.getEmail());
         CourseOffering offering = courseOfferingRepository.findById(1L).orElseThrow(() -> new IllegalStateException("Test setup failed: courseOffering not found"));
 
         userCompletedCourseRepository.save(UserCompletedCourse.builder()
@@ -160,7 +160,7 @@ public class UserControllerIT extends AbstractIntegrationTest{
     @DisplayName("POST /api/users/me/completed-courses - should return 404 when no course offering exists")
     void insertCompletedCourses_courseOfferingNotfound() throws Exception {
         User user = testDataLoader.getTestUser();
-        String token = jwtProvider.generateAccessToken(user.getId());
+        String token = jwtProvider.generateAccessToken(user.getEmail());
 
         CompletedCourseInsertRequest request = new CompletedCourseInsertRequest(
                 List.of( new CompletedCourseInsertItem(999L, Grade.A, false))
@@ -182,7 +182,7 @@ public class UserControllerIT extends AbstractIntegrationTest{
     @DisplayName("GET /api/users/me/graduation-requirements - returns graduation requirements for user")
     void getGraduationRequirements_success() throws Exception {
         User user = testDataLoader.getTestUser();
-        String token = jwtProvider.generateAccessToken(user.getId());
+        String token = jwtProvider.generateAccessToken(user.getEmail());
 
 
         mockMvc.perform(get("/api/users/me/graduation-requirements")
@@ -198,7 +198,7 @@ public class UserControllerIT extends AbstractIntegrationTest{
     @Sql(statements = "DELETE FROM user_requirement_status", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void getGraduationRequirements_userRequirementStatusNotFound() throws Exception {
         User user = testDataLoader.getTestUser();
-        String token = jwtProvider.generateAccessToken(user.getId());
+        String token = jwtProvider.generateAccessToken(user.getEmail());
 
 
         mockMvc.perform(get("/api/users/me/graduation-requirements")
@@ -214,7 +214,7 @@ public class UserControllerIT extends AbstractIntegrationTest{
     @DisplayName("PUT /api/users/me/graduation-requirements - should update user requirement status")
     void updateRequirements_success() throws Exception {
         User user = testDataLoader.getTestUser();
-        String token = jwtProvider.generateAccessToken(user.getId());
+        String token = jwtProvider.generateAccessToken(user.getEmail());
 
 
         UserRequirementFulfillmentRequest request = new UserRequirementFulfillmentRequest(
@@ -236,7 +236,7 @@ public class UserControllerIT extends AbstractIntegrationTest{
     @DisplayName("PUT /api/users/me/graduation-requirements - should return 404 when no user requirement status exists")
     void updateRequirements_userRequirementStatusNotFound() throws Exception {
         User user = testDataLoader.getTestUser();
-        String token = jwtProvider.generateAccessToken(user.getId());
+        String token = jwtProvider.generateAccessToken(user.getEmail());
 
 
         UserRequirementFulfillmentRequest request = new UserRequirementFulfillmentRequest(
@@ -260,7 +260,7 @@ public class UserControllerIT extends AbstractIntegrationTest{
     @DisplayName("GET /api/users/me/graduation-info - should returns user graduation info")
     void getMainGraduationInfo_success() throws Exception {
         User user = testDataLoader.getTestUser();
-        String token = jwtProvider.generateAccessToken(user.getId());
+        String token = jwtProvider.generateAccessToken(user.getEmail());
 
 
         mockMvc.perform(get("/api/users/me/graduation-info")
@@ -276,7 +276,7 @@ public class UserControllerIT extends AbstractIntegrationTest{
     @Sql(statements = "DELETE FROM user_major", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void getMainGraduationInfo_userMajorNotFound() throws Exception {
         User user = testDataLoader.getTestUser();
-        String token = jwtProvider.generateAccessToken(user.getId());
+        String token = jwtProvider.generateAccessToken(user.getEmail());
 
 
         mockMvc.perform(get("/api/users/me/graduation-info")
@@ -293,7 +293,7 @@ public class UserControllerIT extends AbstractIntegrationTest{
     @Sql(statements = "DELETE FROM credit_requirement", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void getMainGraduationInfo_creditRequirementNotFound() throws Exception {
         User user = testDataLoader.getTestUser();
-        String token = jwtProvider.generateAccessToken(user.getId());
+        String token = jwtProvider.generateAccessToken(user.getEmail());
 
 
         mockMvc.perform(get("/api/users/me/graduation-info")
@@ -309,7 +309,7 @@ public class UserControllerIT extends AbstractIntegrationTest{
     @DisplayName("GET /api/users/me/required-courses -returns user required courses")
     void getMyRequiredCourses_success() throws Exception {
         User user = testDataLoader.getTestUser();
-        String token = jwtProvider.generateAccessToken(user.getId());
+        String token = jwtProvider.generateAccessToken(user.getEmail());
 
 
         mockMvc.perform(get("/api/users/me/required-courses")
@@ -325,7 +325,7 @@ public class UserControllerIT extends AbstractIntegrationTest{
     @Sql(statements = "DELETE FROM user_required_course_status", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void getMyRequiredCourses_userRequiredCourseStatusNotFound() throws Exception {
         User user = testDataLoader.getTestUser();
-        String token = jwtProvider.generateAccessToken(user.getId());
+        String token = jwtProvider.generateAccessToken(user.getEmail());
 
 
         mockMvc.perform(get("/api/users/me/required-courses")
@@ -343,7 +343,7 @@ public class UserControllerIT extends AbstractIntegrationTest{
     @Sql(statements = "DELETE FROM required_major_course", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void getMyRequiredCourses_requiredMajorCourseNotFound() throws Exception {
         User user = testDataLoader.getTestUser();
-        String token = jwtProvider.generateAccessToken(user.getId());
+        String token = jwtProvider.generateAccessToken(user.getEmail());
 
 
         mockMvc.perform(get("/api/users/me/required-courses")
@@ -361,7 +361,7 @@ public class UserControllerIT extends AbstractIntegrationTest{
     @Sql(statements = "DELETE FROM required_liberal_category_by_college", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void getMyRequiredCourses_requiredLiberalCategoryNotFound() throws Exception {
         User user = testDataLoader.getTestUser();
-        String token = jwtProvider.generateAccessToken(user.getId());
+        String token = jwtProvider.generateAccessToken(user.getEmail());
 
 
         mockMvc.perform(get("/api/users/me/required-courses")
@@ -378,7 +378,7 @@ public class UserControllerIT extends AbstractIntegrationTest{
     @DisplayName("GET /api/users/me/graduation-requirements/statuses -returns user graduation-requirements statuses")
     void getGraduationRequirementStatuses_success() throws Exception {
         User user = testDataLoader.getTestUser();
-        String token = jwtProvider.generateAccessToken(user.getId());
+        String token = jwtProvider.generateAccessToken(user.getEmail());
 
 
         mockMvc.perform(get("/api/users/me/graduation-requirements/statuses")
@@ -393,7 +393,7 @@ public class UserControllerIT extends AbstractIntegrationTest{
     @Sql(statements = "DELETE FROM user_requirement_status", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void getGraduationRequirementStatuses_userRequirementStatusNotFound() throws Exception {
         User user = testDataLoader.getTestUser();
-        String token = jwtProvider.generateAccessToken(user.getId());
+        String token = jwtProvider.generateAccessToken(user.getEmail());
 
 
         mockMvc.perform(get("/api/users/me/graduation-requirements/statuses")
@@ -409,7 +409,7 @@ public class UserControllerIT extends AbstractIntegrationTest{
     @DisplayName("GET /api/users/me/summary -returns user summary")
     void getSummary_success() throws Exception {
         User user = testDataLoader.getTestUser();
-        String token = jwtProvider.generateAccessToken(user.getId());
+        String token = jwtProvider.generateAccessToken(user.getEmail());
 
 
         mockMvc.perform(get("/api/users/me/summary")
@@ -424,7 +424,7 @@ public class UserControllerIT extends AbstractIntegrationTest{
     @DisplayName("PATCH /api/users/me/majors - should update user major")
     void updateUserMajor_success() throws Exception {
         User user = testDataLoader.getTestUser();
-        String token = jwtProvider.generateAccessToken(user.getId());
+        String token = jwtProvider.generateAccessToken(user.getEmail());
 
 
         List<UserMajorUpdateRequest> requests = List.of(
@@ -445,7 +445,7 @@ public class UserControllerIT extends AbstractIntegrationTest{
     @DisplayName("PATCH /api/users/me/majors - should return 404 when no major exists")
     void updateUserMajor_majorNotFound() throws Exception {
         User user = testDataLoader.getTestUser();
-        String token = jwtProvider.generateAccessToken(user.getId());
+        String token = jwtProvider.generateAccessToken(user.getEmail());
 
 
         List<UserMajorUpdateRequest> requests = List.of(
@@ -468,7 +468,7 @@ public class UserControllerIT extends AbstractIntegrationTest{
     @DisplayName("PATCH /api/users/me/majors/type - should update user major's type")
     void updateUserMajorTypes_success() throws Exception {
         User user = testDataLoader.getTestUser();
-        String token = jwtProvider.generateAccessToken(user.getId());
+        String token = jwtProvider.generateAccessToken(user.getEmail());
 
 
         List<UserMajorTypeUpdateRequest> requests = List.of(
@@ -488,7 +488,7 @@ public class UserControllerIT extends AbstractIntegrationTest{
     @DisplayName("PATCH /api/users/me/majors/type - should return 404 when no user major exists")
     void updateUserMajorTypes_userMajorNotFound() throws Exception {
         User user = testDataLoader.getTestUser();
-        String token = jwtProvider.generateAccessToken(user.getId());
+        String token = jwtProvider.generateAccessToken(user.getEmail());
 
 
         List<UserMajorTypeUpdateRequest> requests = List.of(
@@ -510,7 +510,7 @@ public class UserControllerIT extends AbstractIntegrationTest{
     @DisplayName("PATCH /api/users/me/completed-courses - should update user major's type")
     void updateCompletedCourses_success() throws Exception {
         User user = testDataLoader.getTestUser();
-        String token = jwtProvider.generateAccessToken(user.getId());
+        String token = jwtProvider.generateAccessToken(user.getEmail());
 
 
         List<CompletedCourseUpdateRequest> requests = List.of(
@@ -530,7 +530,7 @@ public class UserControllerIT extends AbstractIntegrationTest{
     @DisplayName("PATCH /api/users/me/completed-courses - should return 404 when no user completed course exists")
     void updateCompletedCourses_userCompletedCourseNotFound() throws Exception {
         User user = testDataLoader.getTestUser();
-        String token = jwtProvider.generateAccessToken(user.getId());
+        String token = jwtProvider.generateAccessToken(user.getEmail());
 
 
         List<CompletedCourseUpdateRequest> requests = List.of(
@@ -552,7 +552,7 @@ public class UserControllerIT extends AbstractIntegrationTest{
     @DisplayName("POST /api/users/me/subscriptions - insert subscriptions for user")
     void subscribeOrganizations_success() throws Exception {
         User user = testDataLoader.getTestUser();
-        String token = jwtProvider.generateAccessToken(user.getId());
+        String token = jwtProvider.generateAccessToken(user.getEmail());
 
 
         List<UserSubscriptionRequest> requests = List.of(
@@ -572,7 +572,7 @@ public class UserControllerIT extends AbstractIntegrationTest{
     @DisplayName("PUT /api/users/me/subscriptions - should update user subscriptions")
     void updateUserSubscriptions_success() throws Exception {
         User user = testDataLoader.getTestUser();
-        String token = jwtProvider.generateAccessToken(user.getId());
+        String token = jwtProvider.generateAccessToken(user.getEmail());
 
 
         List<UserSubscriptionRequest> requests = List.of(
@@ -593,7 +593,7 @@ public class UserControllerIT extends AbstractIntegrationTest{
     @DisplayName("DELETE /api/users/me/ - delete user")
     void deleteUser_success() throws Exception {
         User user = testDataLoader.getTestUser();
-        String token = jwtProvider.generateAccessToken(user.getId());
+        String token = jwtProvider.generateAccessToken(user.getEmail());
 
 
         mockMvc.perform(delete("/api/users/me")

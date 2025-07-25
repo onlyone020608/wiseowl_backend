@@ -18,7 +18,7 @@ public class NoticeControllerIT extends AbstractIntegrationTest {
     @DisplayName("GET /api/notices/subscribed - returns user-subscribed notices grouped by source")
     void getUserSubscribedNotices_success() throws Exception {
         User user = testDataLoader.getTestUser();
-        String token = jwtProvider.generateAccessToken(user.getId());
+        String token = jwtProvider.generateAccessToken(user.getEmail());
 
         mockMvc.perform(get("/api/notices/subscribed")
                         .header("Authorization", "Bearer " + token))
@@ -42,7 +42,7 @@ public class NoticeControllerIT extends AbstractIntegrationTest {
                 .type(SubscriptionType.MAJOR)
                 .build());
 
-        String token = jwtProvider.generateAccessToken(user.getId());
+        String token = jwtProvider.generateAccessToken(user.getEmail());
         mockMvc.perform(get("/api/notices/subscribed")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isNotFound())
@@ -64,7 +64,7 @@ public class NoticeControllerIT extends AbstractIntegrationTest {
                 .type(SubscriptionType.ORGANIZATION)
                 .build());
 
-        String token = jwtProvider.generateAccessToken(user.getId());
+        String token = jwtProvider.generateAccessToken(user.getEmail());
 
         mockMvc.perform(get("/api/notices/subscribed")
                         .header("Authorization", "Bearer " + token))
