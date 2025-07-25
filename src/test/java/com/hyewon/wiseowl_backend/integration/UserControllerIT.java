@@ -589,6 +589,19 @@ public class UserControllerIT extends AbstractIntegrationTest{
 
     }
 
+    @Test
+    @DisplayName("DELETE /api/users/me/ - delete user")
+    void deleteUser_success() throws Exception {
+        User user = testDataLoader.getTestUser();
+        String token = jwtProvider.generateAccessToken(user.getId());
+
+
+        mockMvc.perform(delete("/api/users/me")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+
+    }
 
 
 }
