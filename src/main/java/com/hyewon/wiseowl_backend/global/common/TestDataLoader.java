@@ -1,5 +1,8 @@
 package com.hyewon.wiseowl_backend.global.common;
 
+import com.hyewon.wiseowl_backend.domain.auth.entity.RefreshToken;
+import com.hyewon.wiseowl_backend.domain.auth.repository.RefreshTokenRepository;
+import com.hyewon.wiseowl_backend.domain.auth.security.JwtProvider;
 import com.hyewon.wiseowl_backend.domain.course.entity.*;
 import com.hyewon.wiseowl_backend.domain.course.repository.*;
 import com.hyewon.wiseowl_backend.domain.facility.entity.Facility;
@@ -15,6 +18,7 @@ import com.hyewon.wiseowl_backend.domain.user.repository.*;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -51,8 +55,12 @@ public class TestDataLoader {
     private final RequiredMajorCourseRepository requiredMajorCourseRepository;
     private final RequiredLiberalCategoryByCollegeRepository requiredLiberalCategoryByCollegeRepository;
     private final UserCompletedCourseRepository userCompletedCourseRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtProvider jwtProvider;
+    private final RefreshTokenRepository refreshTokenRepository;
     private User testUser;
     private Semester testSemester;
+    private String refreshToken;
 
 
     @PostConstruct
@@ -81,11 +89,17 @@ public class TestDataLoader {
 
         testUser =User.builder()
                 .email("test@example.com")
-                .password("encoded-password")
+                .password(passwordEncoder.encode("encoded-password"))
                 .username("Tester")
                         .profile(profile)
                 .studentId("2021")
                 .build();
+
+        refreshToken = jwtProvider.generateRefreshToken(testUser.getEmail());
+        refreshTokenRepository.save(RefreshToken.builder()
+                        .email(testUser.getEmail())
+                        .token(refreshToken)
+                .build());
 
         profile.assignUser(testUser);
 
@@ -288,5 +302,9 @@ public class TestDataLoader {
 
     public Semester getTestSemester() {
         return testSemester;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
     }
 }

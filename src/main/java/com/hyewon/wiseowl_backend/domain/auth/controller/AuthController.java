@@ -34,7 +34,7 @@ public class AuthController {
 
     @PatchMapping("/password")
     public ResponseEntity<Void> changePassword(
-            @AuthenticationPrincipal UserPrincipal principal, ChangePasswordRequest request){
+            @AuthenticationPrincipal UserPrincipal principal, @RequestBody ChangePasswordRequest request){
         authService.changePassword(principal.getId(), request);
         return ResponseEntity.noContent().build();
     }
