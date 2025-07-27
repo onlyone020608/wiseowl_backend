@@ -23,7 +23,8 @@ public enum ErrorCode {
     USER_COMPLETED_COURSE_NOT_FOUND(HttpStatus.NOT_FOUND, "User completed courses not found."),
     INVALID_CURRENT_PASSWORD(HttpStatus.BAD_REQUEST, "Current password is incorrect."),
     FACILITY_NOT_FOUND(HttpStatus.NOT_FOUND, "No facilities are registered in the system."),
-    ORGANIZATION_NOT_FOUND(HttpStatus.NOT_FOUND, "Organization not found.");
+    ORGANIZATION_NOT_FOUND(HttpStatus.NOT_FOUND, "Organization not found."),
+    SEMESTER_NOT_FOUND(HttpStatus.NOT_FOUND, "Semester not found.");
 
 
 
