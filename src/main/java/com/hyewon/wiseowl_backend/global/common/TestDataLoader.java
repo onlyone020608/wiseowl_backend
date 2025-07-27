@@ -166,10 +166,12 @@ public class TestDataLoader {
 
         Building building1 = buildingRepository.save(Building.builder()
                         .name("백년관")
+                        .buildingNumber(0)
                 .build());
 
         Building building2 = buildingRepository.save(Building.builder()
                 .name("공학관")
+                        .buildingNumber(1)
                 .build());
 
         facilityRepository.saveAll(List.of(Facility.builder()

@@ -36,7 +36,7 @@ public class FacilityService {
                             FacilityResponse::from
                     ).toList();
                     return new BuildingFacilityResponse(
-                            building.getId(),
+                            building.getBuildingNumber(),
                             building.getName(),
                             facilities
                     );

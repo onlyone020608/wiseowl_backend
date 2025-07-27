@@ -41,9 +41,11 @@ public class FacilityServiceTest {
         building1 = Building.builder()
                 .id(1L)
                 .name("백년관")
+                .buildingNumber(0)
                 .build();
         building2 = Building.builder()
                 .id(2L)
+                .buildingNumber(1)
                 .name("공학관")
                 .build();
 
@@ -74,13 +76,13 @@ public class FacilityServiceTest {
         // when
         List<BuildingFacilityResponse> response = facilityService.fetchAllFacilities()
                 .stream()
-                .sorted(Comparator.comparing(BuildingFacilityResponse::buildingId))
+                .sorted(Comparator.comparing(BuildingFacilityResponse::buildingNumber))
                 .toList();;
 
         // then
         assertThat(response).hasSize(2);
         assertThat(response.get(0).facilities()).hasSize(2);
-        assertThat(response.get(0).buildingId()).isEqualTo(1L);
+        assertThat(response.get(0).buildingNumber()).isEqualTo(0);
         assertThat(response.get(0).buildingName()).isEqualTo("백년관");
     }
 
