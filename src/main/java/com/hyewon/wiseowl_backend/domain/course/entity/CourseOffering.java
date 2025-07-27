@@ -21,9 +21,7 @@ public class CourseOffering {
     @JoinColumn(name = "semester_id")
     private Semester semester;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "room_id")
-    private Room room;
+    private String room;
 
     private String professor;
 

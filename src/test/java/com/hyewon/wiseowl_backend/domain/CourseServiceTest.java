@@ -28,8 +28,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class CourseServiceTest {
@@ -43,7 +41,6 @@ public class CourseServiceTest {
     private Major major2;
     private College college;
     private LiberalCategory liberal;
-    private Room room;
     private Course course;
     private CourseOffering offering;
     private Course liberalCourse;
@@ -80,20 +77,6 @@ public class CourseServiceTest {
         ReflectionTestUtils.setField(liberal, "id", 1L);
         ReflectionTestUtils.setField(liberal, "name", "언어와문학");
 
-        // Building
-        Constructor<Building> buildingCtor = Building.class.getDeclaredConstructor();
-        buildingCtor.setAccessible(true);
-        Building building = buildingCtor.newInstance();
-        ReflectionTestUtils.setField(building, "id", 1L);
-        ReflectionTestUtils.setField(building, "name", "백년관");
-
-        // Room
-        Constructor<Room> roomCtor = Room.class.getDeclaredConstructor();
-        roomCtor.setAccessible(true);
-        room = roomCtor.newInstance();
-        ReflectionTestUtils.setField(room, "id", 1L);
-        ReflectionTestUtils.setField(room, "building", building);
-        ReflectionTestUtils.setField(room, "roomNumber", "101");
 
         // 전공 Course
         Constructor<Course> courseCtor = Course.class.getDeclaredConstructor();
@@ -112,7 +95,7 @@ public class CourseServiceTest {
         offering = offeringCtor.newInstance();
         ReflectionTestUtils.setField(offering, "id", 100L);
         ReflectionTestUtils.setField(offering, "course", course);
-        ReflectionTestUtils.setField(offering, "room", room);
+        ReflectionTestUtils.setField(offering, "room", "0409");
         ReflectionTestUtils.setField(offering, "courseCode", "CSE101");
 
         // 교양 Course
@@ -131,7 +114,7 @@ public class CourseServiceTest {
         liberalOffering = liberalOfferingCtor.newInstance();
         ReflectionTestUtils.setField(liberalOffering, "id", 200L);
         ReflectionTestUtils.setField(liberalOffering, "course", liberalCourse);
-        ReflectionTestUtils.setField(liberalOffering, "room", room);
+        ReflectionTestUtils.setField(liberalOffering, "room", "0409");
         ReflectionTestUtils.setField(liberalOffering, "courseCode", "GEN101");
 
     }

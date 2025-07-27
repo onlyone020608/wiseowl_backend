@@ -41,7 +41,6 @@ public class TestDataLoader {
     private final SemesterRepository semesterRepository;
     private final LiberalCategoryRepository liberalCategoryRepository;
     private final LiberalCategoryCourseRepository liberalCategoryCourseRepository;
-    private final RoomRepository roomRepository;
     private final BuildingRepository buildingRepository;
     private final CollegeRepository collegeRepository;
     private final FacilityRepository facilityRepository;
@@ -192,24 +191,20 @@ public class TestDataLoader {
                         .building(building2)
                         .build())
         );
-        Room room = roomRepository.save(Room.builder()
-                        .roomNumber("301")
-                        .building(building1)
-                .build());
 
 
         courseOfferingRepository.saveAll(List.of(
                 CourseOffering.builder()
                         .course(majorCourse)
                         .semester(testSemester)
-                        .room(room)
+                        .room("0409")
                         .professor("홍길동")
                         .classTime("화목123")
                         .build(),
                 CourseOffering.builder()
                         .course(liberalCourse)
                         .semester(testSemester)
-                        .room(room)
+                        .room("0409")
                         .professor("홍길동")
                         .classTime("월금23")
                         .build()
