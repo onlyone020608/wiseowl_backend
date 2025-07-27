@@ -19,4 +19,8 @@ public class Building {
 
     @NotBlank
     private String name;
+
+    @NotBlank
+    private Integer buildingNumber;
+
 }
