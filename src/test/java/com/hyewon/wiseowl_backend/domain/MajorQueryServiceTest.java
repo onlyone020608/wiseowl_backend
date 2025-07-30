@@ -65,4 +65,32 @@ public class MajorQueryServiceTest {
         assertThrows(MajorNotFoundException.class,
                 () ->  majorQueryService.getMajorName(majorId));
     }
+
+    @Test
+    @DisplayName("getMajor - should return major")
+    void getMajor_shouldSucceed() {
+        // given
+        Long majorId = 1L;
+        given(majorRepository.findById(majorId)).willReturn(
+                Optional.of(major));
+
+        // when
+        Major responseMajor = majorQueryService.getMajor(majorId);
+
+        // then
+       assertThat(responseMajor).isEqualTo(major);
+    }
+
+    @Test
+    @DisplayName("getMajor - should throw MajorNotFoundException when major does not exist")
+    void getMajor_shouldThrowException_whenMajorNotFound() {
+        // given
+        Long majorId = 999L;
+        given(majorRepository.findById(majorId)).willReturn(
+                Optional.empty());
+
+        // when & then
+        assertThrows(MajorNotFoundException.class,
+                () ->  majorQueryService.getMajor(majorId));
+    }
 }
