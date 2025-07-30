@@ -3,6 +3,7 @@ package com.hyewon.wiseowl_backend.global.init;
 import com.hyewon.wiseowl_backend.domain.course.entity.*;
 import com.hyewon.wiseowl_backend.domain.course.repository.*;
 import com.hyewon.wiseowl_backend.global.exception.CourseNotFoundException;
+import com.hyewon.wiseowl_backend.global.exception.LiberalCategoryNotFoundException;
 import com.hyewon.wiseowl_backend.global.exception.MajorNotFoundException;
 import com.hyewon.wiseowl_backend.global.exception.SemesterNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ public class DataInitializer implements CommandLineRunner {
     private final CourseRepository courseRepository;
     private final MajorRepository majorRepository;
     private final CourseOfferingRepository courseOfferingRepository;
+    private final LiberalCategoryCourseRepository liberalCategoryCourseRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -42,6 +44,9 @@ public class DataInitializer implements CommandLineRunner {
         }
         if(courseOfferingRepository.count() == 0) {
             loadCourseOffering();
+        }
+        if(liberalCategoryCourseRepository.count() == 0 ){
+            loadLiberalCategoryCourse();
         }
 
     }
@@ -119,7 +124,8 @@ public class DataInitializer implements CommandLineRunner {
     private void loadCourse() throws IOException {
 
         List<String> files = List.of(
-                "data/course_2024_1_liberal.csv"
+                "data/course_2024_1_liberal.csv",
+                "data/course_2024_1_major.csv"
         );
         for (String path : files) {
             InputStream inputStream = getClass().getClassLoader().getResourceAsStream(path);
@@ -164,7 +170,8 @@ public class DataInitializer implements CommandLineRunner {
     private void loadCourseOffering() throws IOException {
 
         List<String> files = List.of(
-                "data/course_offering_2024_1_liberal.csv"
+                "data/course_offering_2024_1_liberal.csv",
+                "data/course_offering_2024_1_major.csv"
         );
         for (String path : files) {
             InputStream inputStream = getClass().getClassLoader().getResourceAsStream(path);
@@ -209,6 +216,50 @@ public class DataInitializer implements CommandLineRunner {
             }
 
 
+        }
+
+
+    }
+
+    private void loadLiberalCategoryCourse() throws IOException {
+
+        List<String> files = List.of(
+                "data/liberal_category_course_2024_1.csv"
+        );
+        for (String path : files) {
+            InputStream inputStream = getClass().getClassLoader().getResourceAsStream(path);
+            if (inputStream == null) continue;
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            String line;
+            boolean isFirst = true;
+
+            while ((line = reader.readLine()) != null) {
+                if (isFirst) {
+                    isFirst = false;
+                    continue;
+                }
+
+                String[] tokens = line.split(",");
+                Long courseId = Long.parseLong(tokens[0].trim());
+                Long liberalCategoryId = Long.parseLong(tokens[1].trim());
+
+                Course course = courseRepository.findById(courseId).orElseThrow(() ->
+                        new CourseNotFoundException(courseId));
+
+                LiberalCategory liberalCategory = liberalCategoryRepository.findById(liberalCategoryId)
+                        .orElseThrow(() -> new LiberalCategoryNotFoundException(liberalCategoryId));
+
+
+
+               LiberalCategoryCourse liberalCategoryCourse = LiberalCategoryCourse.builder()
+                       .course(course)
+                       .liberalCategory(liberalCategory)
+                       .build();
+
+               liberalCategoryCourseRepository.save(liberalCategoryCourse);
+
+            }
         }
 
 
