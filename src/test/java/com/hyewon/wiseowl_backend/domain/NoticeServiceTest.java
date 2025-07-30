@@ -1,8 +1,7 @@
 package com.hyewon.wiseowl_backend.domain;
 
 import com.hyewon.wiseowl_backend.domain.course.entity.Major;
-import com.hyewon.wiseowl_backend.domain.course.repository.MajorRepository;
-import com.hyewon.wiseowl_backend.domain.facility.dto.BuildingFacilityResponse;
+import com.hyewon.wiseowl_backend.domain.course.service.MajorQueryService;
 import com.hyewon.wiseowl_backend.domain.notice.dto.NoticeResponse;
 import com.hyewon.wiseowl_backend.domain.notice.entity.Notice;
 import com.hyewon.wiseowl_backend.domain.notice.entity.Organization;
@@ -12,8 +11,7 @@ import com.hyewon.wiseowl_backend.domain.notice.service.NoticeService;
 import com.hyewon.wiseowl_backend.domain.user.entity.SubscriptionType;
 import com.hyewon.wiseowl_backend.domain.user.entity.User;
 import com.hyewon.wiseowl_backend.domain.user.entity.UserSubscription;
-import com.hyewon.wiseowl_backend.domain.user.repository.UserSubscriptionRepository;
-import com.hyewon.wiseowl_backend.global.exception.MajorNotFoundException;
+import com.hyewon.wiseowl_backend.domain.user.service.UserSubscriptionService;
 import com.hyewon.wiseowl_backend.global.exception.OrganizationNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -38,9 +36,9 @@ public class NoticeServiceTest {
     @Mock
     private NoticeRepository noticeRepository;
     @Mock
-    private UserSubscriptionRepository userSubscriptionRepository;
+    private UserSubscriptionService userSubscriptionService;
     @Mock
-    private  MajorRepository majorRepository;
+    private MajorQueryService majorQueryService;
     @Mock
     private OrganizationRepository organizationRepository;
 
@@ -106,8 +104,10 @@ public class NoticeServiceTest {
     void fetchAllFacilities_success(){
         // given
         Long userId = 1L;
-        given(userSubscriptionRepository.findAllByUserId(userId)).willReturn(List.of(userSubscription, userSubscription2));
-        given(majorRepository.findById(2L)).willReturn(Optional.of(major));
+        given(userSubscriptionService.getSubscriptions(userId))
+                .willReturn(List.of(userSubscription, userSubscription2));
+        given(majorQueryService.getMajorName(2L))
+                .willReturn("컴퓨터공학과");
         given(organizationRepository.findById(3L)).willReturn(Optional.of(organization));
         given(noticeRepository.findTop6BySourceIdOrderByPostedAtDesc(2L)).willReturn(List.of(notice, notice2));
         given(noticeRepository.findTop6BySourceIdOrderByPostedAtDesc(3L)).willReturn(List.of(notice3));
@@ -129,26 +129,14 @@ public class NoticeServiceTest {
     }
 
     @Test
-    @DisplayName("fetchAllFacilities - should throw MajorNotFoundException when major does not exist")
-    void fetchAllFacilities_shouldThrowException_whenMajorNotFound(){
-        // given
-        Long userId = 1L;
-        given(userSubscriptionRepository.findAllByUserId(userId)).willReturn(List.of(userSubscription, userSubscription2));
-        given(majorRepository.findById(2L)).willReturn(Optional.empty());
-
-        // when & then
-        assertThrows(MajorNotFoundException.class,
-                () ->  noticeService.fetchUserSubscribedNotices(userId));
-
-    }
-
-    @Test
     @DisplayName("fetchAllFacilities - should throw OrganizationNotFoundException when organization does not exist")
     void fetchAllFacilities_shouldThrowException_whenOrganizationNotFound(){
         // given
         Long userId = 1L;
-        given(userSubscriptionRepository.findAllByUserId(userId)).willReturn(List.of(userSubscription, userSubscription2));
-        given(majorRepository.findById(2L)).willReturn(Optional.of(major));
+        given(userSubscriptionService.getSubscriptions(userId))
+                .willReturn(List.of(userSubscription, userSubscription2));
+        given(majorQueryService.getMajorName(2L))
+                .willReturn("컴퓨터공학과");
         given(organizationRepository.findById(3L)).willReturn(Optional.empty());
 
         // when & then
