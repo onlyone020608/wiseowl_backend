@@ -1,6 +1,7 @@
 package com.hyewon.wiseowl_backend.domain.user.service;
 
 import com.hyewon.wiseowl_backend.domain.course.entity.*;
+import com.hyewon.wiseowl_backend.domain.course.service.MajorQueryService;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.*;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.CreditRequirementRepository;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.RequiredLiberalCategoryByCollegeRepository;
@@ -33,7 +34,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final ProfileRepository profileRepository;
     private final UserMajorRepository userMajorRepository;
-    private final MajorRepository majorRepository;
     private final UserCompletedCourseRepository userCompletedCourseRepository;
     private final CourseOfferingRepository courseOfferingRepository;
     private final MajorRequirementRepository majorRequirementRepository;
@@ -45,6 +45,7 @@ public class UserService {
     private final UserSubscriptionRepository userSubscriptionRepository;
     private final ApplicationEventPublisher eventPublisher;
     private final EntityManager entityManager;
+    private final MajorQueryService majorQueryService;
 
 
 
@@ -58,9 +59,7 @@ public class UserService {
         profile.updateEntranceYear(request.entranceYear());
 
         for (UserMajorRequest majorRequest : request.majors()) {
-            Major major = majorRepository.findById(majorRequest.majorId())
-                    .orElseThrow(() -> new MajorNotFoundException(majorRequest.majorId()));
-
+            Major major = majorQueryService.getMajor(majorRequest.majorId());
             UserMajor userMajor = UserMajor.of(user, major, majorRequest.majorType());
             userMajorRepository.save(userMajor);
 
@@ -314,7 +313,7 @@ public class UserService {
         requests.forEach(
                 request -> {
                     UserMajor userMajor = userMajorRepository.findByUserIdAndMajorType(userId, request.majorType());
-                    Major major = majorRepository.findById(request.majorId()).orElseThrow(() -> new MajorNotFoundException(request.majorId()));
+                    Major major = majorQueryService.getMajor(request.majorId());
                     userMajor.updateMajor(major);
                 }
         );

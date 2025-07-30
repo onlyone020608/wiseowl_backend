@@ -1,5 +1,6 @@
 package com.hyewon.wiseowl_backend.domain.course.service;
 
+import com.hyewon.wiseowl_backend.domain.course.entity.Major;
 import com.hyewon.wiseowl_backend.domain.course.repository.MajorRepository;
 import com.hyewon.wiseowl_backend.global.exception.MajorNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -17,5 +18,11 @@ public class MajorQueryService {
         return majorRepository.findById(id)
                 .orElseThrow(() -> new MajorNotFoundException(id))
                 .getName();
+    }
+
+    @Transactional(readOnly = true)
+    public Major getMajor(Long id) {
+        return majorRepository.findById(id)
+                .orElseThrow(() -> new MajorNotFoundException(id));
     }
 }

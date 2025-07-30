@@ -3,6 +3,7 @@ package com.hyewon.wiseowl_backend.domain;
 import com.hyewon.wiseowl_backend.domain.course.entity.*;
 import com.hyewon.wiseowl_backend.domain.course.repository.CourseOfferingRepository;
 import com.hyewon.wiseowl_backend.domain.course.repository.MajorRepository;
+import com.hyewon.wiseowl_backend.domain.course.service.MajorQueryService;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.*;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.CreditRequirementRepository;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.MajorRequirementRepository;
@@ -54,6 +55,9 @@ public class UserServiceTest {
     private ProfileRepository profileRepository;
     @Mock
     private MajorRepository majorRepository;
+
+    @Mock
+    private MajorQueryService majorQueryService;
     @Mock
     private UserMajorRepository userMajorRepository;
     @Mock
@@ -256,7 +260,7 @@ public class UserServiceTest {
 
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
         given(profileRepository.findByUserId(userId)).willReturn(Optional.of(profile));
-        given(majorRepository.findById(1L)).willReturn(Optional.of(major));
+        given(majorQueryService.getMajor(1L)).willReturn(major);
         given(majorRequirementRepository.findApplicable(major.getId(), MajorType.PRIMARY, profileUpdateRequest.entranceYear()))
                 .willReturn(List.of(mr1));
         given(requiredMajorCourseRepository.findApplicableMajorCourses(major.getId(), MajorType.PRIMARY, profileUpdateRequest.entranceYear()))
@@ -335,19 +339,6 @@ public class UserServiceTest {
                 () -> userService.updateUserProfile(userId, profileUpdateRequest));
     }
 
-    @Test
-    @DisplayName("updateUserProfile - should throw when major not found")
-    void updateUserProfile_shouldThrow_whenMajorNotFound() {
-        // given
-        Long userId = 1L;
-        given(userRepository.findById(userId)).willReturn(Optional.of(user));
-        given(profileRepository.findByUserId(userId)).willReturn(Optional.of(profile));
-        given(majorRepository.findById(1L)).willReturn(Optional.empty());
-
-        // when & then
-        assertThrows(MajorNotFoundException.class,
-                () -> userService.updateUserProfile(userId, profileUpdateRequest));
-    }
 
     @Test
     @DisplayName("insertCompletedCourses – success")
@@ -699,8 +690,9 @@ public class UserServiceTest {
                 .willReturn(userMajor);
         given(userMajorRepository.findByUserIdAndMajorType(userId, MajorType.DOUBLE))
                 .willReturn(userMajor2);
-        given(majorRepository.findById(1L)).willReturn(Optional.of(major));
-        given(majorRepository.findById(2L)).willReturn(Optional.of(major2));
+        given(majorQueryService.getMajor(1L)).willReturn(major);
+        given(majorQueryService.getMajor(2L)).willReturn(major2);
+
 
         // when
         UserMajorUpdateRequest rq1 = new UserMajorUpdateRequest(MajorType.PRIMARY, 2L);
@@ -713,24 +705,6 @@ public class UserServiceTest {
 
     }
 
-    @Test
-    @DisplayName("updateUserMajor -  should throw MajorNotFoundException when user does not exist")
-    void updateUserMajor_shouldThrowException_whenMajorNotFound(){
-        // given
-        Long userId = 1L;
-        given(userMajorRepository.findByUserIdAndMajorType(userId, MajorType.PRIMARY))
-                .willReturn(userMajor);
-        given(majorRepository.findById(2L)).willReturn(Optional.empty());
-        UserMajorUpdateRequest rq1 = new UserMajorUpdateRequest(MajorType.PRIMARY, 2L);
-        UserMajorUpdateRequest rq2 = new UserMajorUpdateRequest(MajorType.DOUBLE, 1L);
-
-
-
-        // when & then
-        assertThrows(MajorNotFoundException.class,
-                () -> userService.updateUserMajor(userId, List.of(rq1, rq2)));
-
-    }
 
     @Test
     @DisplayName("updateUserMajorTypes -  should update user major types")
