@@ -8,6 +8,7 @@ import com.hyewon.wiseowl_backend.domain.requirement.repository.RequiredLiberalC
 import com.hyewon.wiseowl_backend.domain.requirement.repository.RequiredMajorCourseRepository;
 import com.hyewon.wiseowl_backend.domain.requirement.service.CreditRequirementQueryService;
 import com.hyewon.wiseowl_backend.domain.requirement.service.MajorRequirementQueryService;
+import com.hyewon.wiseowl_backend.domain.requirement.service.RequiredMajorCourseQueryService;
 import com.hyewon.wiseowl_backend.domain.user.dto.*;
 import com.hyewon.wiseowl_backend.domain.user.entity.*;
 import com.hyewon.wiseowl_backend.domain.user.event.CompletedCoursesRegisteredEvent;
@@ -38,7 +39,7 @@ public class UserService {
     private final MajorRequirementQueryService majorRequirementQueryService;
     private final UserRequirementStatusRepository userRequirementStatusRepository;
     private final CreditRequirementQueryService creditRequirementQueryService;
-    private final RequiredMajorCourseRepository requiredMajorCourseRepository;
+    private final RequiredMajorCourseQueryService requiredMajorCourseQueryService;
     private final RequiredLiberalCategoryByCollegeRepository requiredLiberalCategoryByCollegeRepository;
     private final UserRequiredCourseStatusRepository userRequiredCourseStatusRepository;
     private final UserSubscriptionRepository userSubscriptionRepository;
@@ -68,8 +69,7 @@ public class UserService {
                     .toList();
 
             userRequirementStatusRepository.saveAll(toSave);
-
-            List<RequiredMajorCourse> majorCourseList= requiredMajorCourseRepository.findApplicableMajorCourses(majorRequest.majorId(), majorRequest.majorType(), request.entranceYear());
+            List<RequiredMajorCourse> majorCourseList= requiredMajorCourseQueryService.getApplicableMajorCourses(majorRequest.majorId(), majorRequest.majorType(), request.entranceYear());
             List<UserRequiredCourseStatus> requiredMajorCourseStatuses = majorCourseList.stream()
                     .map(requiredMajorCourse -> UserRequiredCourseStatus.of(user, CourseType.MAJOR, requiredMajorCourse.getId()))
                     .toList();
@@ -217,14 +217,14 @@ public class UserService {
                 .collect(Collectors.groupingBy(UserRequiredCourseStatus::getCourseType));
         List<UserRequiredCourseStatus> majorRequiredCourses = grouped.getOrDefault(CourseType.MAJOR, List.of()).stream().filter(
                 status -> {
-                    RequiredMajorCourse requiredMajorCourse = requiredMajorCourseRepository.findById(status.getRequiredCourseId()).orElseThrow(() -> new RequiredMajorCourseNotFoundException(status.getRequiredCourseId()));
+                    RequiredMajorCourse requiredMajorCourse = requiredMajorCourseQueryService.getRequiredMajorCourse(status.getRequiredCourseId());
                     return requiredMajorCourse.getMajorType().equals(majorType);
                 }
         ).toList();
 
         List<MajorRequiredCourseItemResponse> majorRequired = majorRequiredCourses.stream().map(
                 status -> {
-                    RequiredMajorCourse requiredMajorCourse = requiredMajorCourseRepository.findById(status.getRequiredCourseId()).orElseThrow(() -> new RequiredMajorCourseNotFoundException(status.getRequiredCourseId()));
+                    RequiredMajorCourse requiredMajorCourse =requiredMajorCourseQueryService.getRequiredMajorCourse(status.getRequiredCourseId());
                     Course course = requiredMajorCourse.getCourse();
                     return new MajorRequiredCourseItemResponse(course.getCourseCodePrefix(), course.getName(), status.isFulfilled());
                 }
