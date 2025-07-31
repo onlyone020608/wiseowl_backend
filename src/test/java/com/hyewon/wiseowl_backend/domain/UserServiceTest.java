@@ -3,6 +3,7 @@ package com.hyewon.wiseowl_backend.domain;
 import com.hyewon.wiseowl_backend.domain.course.entity.*;
 import com.hyewon.wiseowl_backend.domain.course.repository.CourseOfferingRepository;
 import com.hyewon.wiseowl_backend.domain.course.repository.MajorRepository;
+import com.hyewon.wiseowl_backend.domain.course.service.CourseOfferingQueryService;
 import com.hyewon.wiseowl_backend.domain.course.service.MajorQueryService;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.*;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.CreditRequirementRepository;
@@ -63,7 +64,7 @@ public class UserServiceTest {
     @Mock
     private UserCompletedCourseRepository userCompletedCourseRepository;
     @Mock
-    private CourseOfferingRepository courseOfferingRepository;
+    private CourseOfferingQueryService courseOfferingQueryService;
     @Mock
     private MajorRequirementRepository majorRequirementRepository;
     @Mock
@@ -347,7 +348,7 @@ public class UserServiceTest {
         Long userId = 1L;
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
         given(userCompletedCourseRepository.existsByUserId(userId)).willReturn(false);
-        given(courseOfferingRepository.findById(1L)).willReturn(Optional.of(offering));
+        given(courseOfferingQueryService.getCourseOffering(1L)).willReturn(offering);
 
         // when
         userService.insertCompletedCourses(userId, completedCourseInsertRequest);
@@ -381,20 +382,6 @@ public class UserServiceTest {
                 () -> userService.insertCompletedCourses(userId, completedCourseInsertRequest));
     }
 
-
-    @Test
-    @DisplayName("insertCompletedCourses – courseOffering not found")
-    void insertCompletedCourses_offeringNotFound() {
-        // given
-        Long userId = 1L;
-        given(userRepository.findById(userId)).willReturn(Optional.of(user));
-        given(userCompletedCourseRepository.existsByUserId(userId)).willReturn(false);
-        given(courseOfferingRepository.findById(1L)).willReturn(Optional.empty());
-
-        // when & then
-        assertThrows(CourseOfferingNotFoundException.class,
-                () -> userService.insertCompletedCourses(userId, completedCourseInsertRequest));
-    }
 
     @Test
     @DisplayName("getGraduationRequirementsForUser - should group by major and map to response")

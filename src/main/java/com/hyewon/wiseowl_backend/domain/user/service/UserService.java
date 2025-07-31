@@ -1,6 +1,7 @@
 package com.hyewon.wiseowl_backend.domain.user.service;
 
 import com.hyewon.wiseowl_backend.domain.course.entity.*;
+import com.hyewon.wiseowl_backend.domain.course.service.CourseOfferingQueryService;
 import com.hyewon.wiseowl_backend.domain.course.service.MajorQueryService;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.*;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.CreditRequirementRepository;
@@ -35,7 +36,7 @@ public class UserService {
     private final ProfileRepository profileRepository;
     private final UserMajorRepository userMajorRepository;
     private final UserCompletedCourseRepository userCompletedCourseRepository;
-    private final CourseOfferingRepository courseOfferingRepository;
+    private final CourseOfferingQueryService courseOfferingQueryService;
     private final MajorRequirementRepository majorRequirementRepository;
     private final UserRequirementStatusRepository userRequirementStatusRepository;
     private final CreditRequirementRepository creditRequirementRepository;
@@ -109,8 +110,7 @@ public class UserService {
         }
         List<UserCompletedCourse> toSave = request.courses().stream()
                 .map(c -> {
-                    CourseOffering offering = courseOfferingRepository.findById(c.courseOfferingId())
-                            .orElseThrow(() -> new CourseOfferingNotFoundException(c.courseOfferingId()));
+                    CourseOffering offering = courseOfferingQueryService.getCourseOffering(c.courseOfferingId());
 
                     return UserCompletedCourse.of(user, offering, c.grade(), c.retake());
                 }).toList();
