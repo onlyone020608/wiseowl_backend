@@ -72,8 +72,6 @@ public class UserServiceTest {
     @Mock
     private UserRequirementStatusRepository userRequirementStatusRepository;
     @Mock
-    private CreditRequirementRepository creditRequirementRepository;
-    @Mock
     private CreditRequirementQueryService creditRequirementQueryService;
     @Mock
     private RequiredMajorCourseRepository requiredMajorCourseRepository;
