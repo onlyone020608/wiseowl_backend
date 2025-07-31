@@ -1,6 +1,4 @@
 package com.hyewon.wiseowl_backend.domain.requirement.service;
-
-import com.hyewon.wiseowl_backend.domain.course.entity.Major;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorRequirement;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorType;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.MajorRequirementRepository;

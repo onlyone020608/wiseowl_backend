@@ -4,10 +4,9 @@ import com.hyewon.wiseowl_backend.domain.course.entity.*;
 import com.hyewon.wiseowl_backend.domain.course.service.CourseOfferingQueryService;
 import com.hyewon.wiseowl_backend.domain.course.service.MajorQueryService;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.*;
-import com.hyewon.wiseowl_backend.domain.requirement.repository.RequiredLiberalCategoryByCollegeRepository;
-import com.hyewon.wiseowl_backend.domain.requirement.repository.RequiredMajorCourseRepository;
 import com.hyewon.wiseowl_backend.domain.requirement.service.CreditRequirementQueryService;
 import com.hyewon.wiseowl_backend.domain.requirement.service.MajorRequirementQueryService;
+import com.hyewon.wiseowl_backend.domain.requirement.service.RequiredLiberalCategoryQueryService;
 import com.hyewon.wiseowl_backend.domain.requirement.service.RequiredMajorCourseQueryService;
 import com.hyewon.wiseowl_backend.domain.user.dto.*;
 import com.hyewon.wiseowl_backend.domain.user.entity.*;
@@ -40,7 +39,7 @@ public class UserService {
     private final UserRequirementStatusRepository userRequirementStatusRepository;
     private final CreditRequirementQueryService creditRequirementQueryService;
     private final RequiredMajorCourseQueryService requiredMajorCourseQueryService;
-    private final RequiredLiberalCategoryByCollegeRepository requiredLiberalCategoryByCollegeRepository;
+    private final RequiredLiberalCategoryQueryService requiredLiberalCategoryQueryService;
     private final UserRequiredCourseStatusRepository userRequiredCourseStatusRepository;
     private final UserSubscriptionRepository userSubscriptionRepository;
     private final ApplicationEventPublisher eventPublisher;
@@ -78,7 +77,7 @@ public class UserService {
 
             // primary major에 해당할 때만
             if(majorRequest.majorType().equals(MajorType.PRIMARY)){
-                List<UserRequiredCourseStatus> requiredLiberalCourseStatuses = requiredLiberalCategoryByCollegeRepository.findApplicableLiberalCategories(major.getCollege().getId(), request.entranceYear())
+                List<UserRequiredCourseStatus> requiredLiberalCourseStatuses = requiredLiberalCategoryQueryService.getApplicableLiberalCategories(major.getCollege().getId(), request.entranceYear())
                         .stream()
                         .map(requiredLiberal -> UserRequiredCourseStatus.of(user, CourseType.GENERAL, requiredLiberal.getId()))
                         .toList();
@@ -234,7 +233,7 @@ public class UserService {
         List<UserRequiredCourseStatus> liberalRequiredCourses = grouped.getOrDefault(CourseType.GENERAL, List.of());
         List<LiberalRequiredCourseItemResponse> liberalRequired = liberalRequiredCourses.stream().map(
                 status -> {
-                    RequiredLiberalCategoryByCollege requiredLiberal = requiredLiberalCategoryByCollegeRepository.findById(status.getRequiredCourseId()).orElseThrow(() -> new RequiredLiberalCategoryNotFoundException(status.getRequiredCourseId()));
+                    RequiredLiberalCategoryByCollege requiredLiberal = requiredLiberalCategoryQueryService.getRequiredLiberalCategory(status.getRequiredCourseId());
 
                     return new LiberalRequiredCourseItemResponse(requiredLiberal.getLiberalCategory().getName(), status.isFulfilled(), requiredLiberal.getRequiredCredit());
                 }

@@ -5,9 +5,9 @@ import com.hyewon.wiseowl_backend.domain.course.repository.MajorRepository;
 import com.hyewon.wiseowl_backend.domain.course.service.CourseOfferingQueryService;
 import com.hyewon.wiseowl_backend.domain.course.service.MajorQueryService;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.*;
-import com.hyewon.wiseowl_backend.domain.requirement.repository.RequiredLiberalCategoryByCollegeRepository;
 import com.hyewon.wiseowl_backend.domain.requirement.service.CreditRequirementQueryService;
 import com.hyewon.wiseowl_backend.domain.requirement.service.MajorRequirementQueryService;
+import com.hyewon.wiseowl_backend.domain.requirement.service.RequiredLiberalCategoryQueryService;
 import com.hyewon.wiseowl_backend.domain.requirement.service.RequiredMajorCourseQueryService;
 import com.hyewon.wiseowl_backend.domain.user.dto.*;
 import com.hyewon.wiseowl_backend.domain.user.entity.*;
@@ -74,8 +74,9 @@ public class UserServiceTest {
     @Mock
     private RequiredMajorCourseQueryService requiredMajorCourseQueryService;
 
+
     @Mock
-    private RequiredLiberalCategoryByCollegeRepository requiredLiberalCategoryByCollegeRepository;
+    private RequiredLiberalCategoryQueryService requiredLiberalCategoryQueryService;
 
     @Mock
     private UserRequiredCourseStatusRepository userRequiredCourseStatusRepository;
@@ -266,7 +267,7 @@ public class UserServiceTest {
                 .willReturn(List.of(mr1));
         given(requiredMajorCourseQueryService.getApplicableMajorCourses(major.getId(), MajorType.PRIMARY, profileUpdateRequest.entranceYear()))
                 .willReturn(List.of(requiredMajorCourse));
-        given(requiredLiberalCategoryByCollegeRepository.findApplicableLiberalCategories(major.getCollege().getId(),  profileUpdateRequest.entranceYear()))
+        given(requiredLiberalCategoryQueryService.getApplicableLiberalCategories(major.getCollege().getId(),  profileUpdateRequest.entranceYear()))
                 .willReturn(List.of(rlc));
 
 
@@ -514,8 +515,8 @@ public class UserServiceTest {
                 .willReturn(List.of(userRequiredCourseStatus1, userRequiredCourseStatus2));
         given(requiredMajorCourseQueryService.getRequiredMajorCourse(10L))
                 .willReturn(requiredMajorCourse);
-        given(requiredLiberalCategoryByCollegeRepository.findById(20L))
-               .willReturn(Optional.of(rlc));
+        given(requiredLiberalCategoryQueryService.getRequiredLiberalCategory(20L))
+                .willReturn(rlc);
 
         // when
 
@@ -548,23 +549,7 @@ public class UserServiceTest {
 
 
 
-    @Test
-    @DisplayName("fetchUserRequiredCourseStatus - should throw when required liberal category not found")
-    void fetchUserRequiredCourseStatus_shouldThrow_whenNoRequiredLiberalCategory() {
-        // given
-        Long userId = 1L;
-        given(userRequiredCourseStatusRepository.findAllByUserId(userId))
-                .willReturn(List.of(userRequiredCourseStatus1, userRequiredCourseStatus2));
-        given(requiredMajorCourseQueryService.getRequiredMajorCourse(10L))
-                .willReturn(requiredMajorCourse);
-        given(requiredLiberalCategoryByCollegeRepository.findById(20L))
-                .willReturn(Optional.empty());
 
-        // when & then
-        assertThrows(RequiredLiberalCategoryNotFoundException.class,
-                () -> userService.fetchUserRequiredCourseStatus(userId, MajorType.PRIMARY));
-
-    }
 
     @Test
     @DisplayName("fetchUserGraduationRequirementStatus - should return graduation requirement statuses grouped by major type")
