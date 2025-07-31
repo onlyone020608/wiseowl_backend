@@ -7,6 +7,7 @@ import com.hyewon.wiseowl_backend.domain.requirement.entity.*;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.CreditRequirementRepository;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.RequiredLiberalCategoryByCollegeRepository;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.RequiredMajorCourseRepository;
+import com.hyewon.wiseowl_backend.domain.requirement.service.MajorRequirementQueryService;
 import com.hyewon.wiseowl_backend.domain.user.dto.*;
 import com.hyewon.wiseowl_backend.domain.course.repository.CourseOfferingRepository;
 import com.hyewon.wiseowl_backend.domain.course.repository.MajorRepository;
@@ -37,7 +38,7 @@ public class UserService {
     private final UserMajorRepository userMajorRepository;
     private final UserCompletedCourseRepository userCompletedCourseRepository;
     private final CourseOfferingQueryService courseOfferingQueryService;
-    private final MajorRequirementRepository majorRequirementRepository;
+    private final MajorRequirementQueryService majorRequirementQueryService;
     private final UserRequirementStatusRepository userRequirementStatusRepository;
     private final CreditRequirementRepository creditRequirementRepository;
     private final RequiredMajorCourseRepository requiredMajorCourseRepository;
@@ -64,7 +65,7 @@ public class UserService {
             UserMajor userMajor = UserMajor.of(user, major, majorRequest.majorType());
             userMajorRepository.save(userMajor);
 
-            List<MajorRequirement> applicable = majorRequirementRepository.findApplicable(major.getId(), majorRequest.majorType(), request.entranceYear());
+            List<MajorRequirement> applicable = majorRequirementQueryService.getApplicableRequirements(major.getId(), majorRequest.majorType(), request.entranceYear());
             List<UserRequirementStatus> toSave = applicable.stream()
                     .map(req -> UserRequirementStatus.of(user, req))
                     .toList();

@@ -10,6 +10,7 @@ import com.hyewon.wiseowl_backend.domain.requirement.repository.CreditRequiremen
 import com.hyewon.wiseowl_backend.domain.requirement.repository.MajorRequirementRepository;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.RequiredLiberalCategoryByCollegeRepository;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.RequiredMajorCourseRepository;
+import com.hyewon.wiseowl_backend.domain.requirement.service.MajorRequirementQueryService;
 import com.hyewon.wiseowl_backend.domain.user.dto.*;
 import com.hyewon.wiseowl_backend.domain.user.entity.*;
 import com.hyewon.wiseowl_backend.domain.user.event.CompletedCoursesRegisteredEvent;
@@ -67,6 +68,8 @@ public class UserServiceTest {
     private CourseOfferingQueryService courseOfferingQueryService;
     @Mock
     private MajorRequirementRepository majorRequirementRepository;
+    @Mock
+    private MajorRequirementQueryService majorRequirementQueryService;
     @Mock
     private UserRequirementStatusRepository userRequirementStatusRepository;
     @Mock
@@ -262,7 +265,7 @@ public class UserServiceTest {
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
         given(profileRepository.findByUserId(userId)).willReturn(Optional.of(profile));
         given(majorQueryService.getMajor(1L)).willReturn(major);
-        given(majorRequirementRepository.findApplicable(major.getId(), MajorType.PRIMARY, profileUpdateRequest.entranceYear()))
+        given(majorRequirementQueryService.getApplicableRequirements(major.getId(), MajorType.PRIMARY, profileUpdateRequest.entranceYear()))
                 .willReturn(List.of(mr1));
         given(requiredMajorCourseRepository.findApplicableMajorCourses(major.getId(), MajorType.PRIMARY, profileUpdateRequest.entranceYear()))
                 .willReturn(List.of(requiredMajorCourse));
