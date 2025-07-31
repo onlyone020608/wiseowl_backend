@@ -10,6 +10,7 @@ import com.hyewon.wiseowl_backend.domain.requirement.repository.CreditRequiremen
 import com.hyewon.wiseowl_backend.domain.requirement.repository.MajorRequirementRepository;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.RequiredLiberalCategoryByCollegeRepository;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.RequiredMajorCourseRepository;
+import com.hyewon.wiseowl_backend.domain.requirement.service.CreditRequirementQueryService;
 import com.hyewon.wiseowl_backend.domain.requirement.service.MajorRequirementQueryService;
 import com.hyewon.wiseowl_backend.domain.user.dto.*;
 import com.hyewon.wiseowl_backend.domain.user.entity.*;
@@ -67,13 +68,13 @@ public class UserServiceTest {
     @Mock
     private CourseOfferingQueryService courseOfferingQueryService;
     @Mock
-    private MajorRequirementRepository majorRequirementRepository;
-    @Mock
     private MajorRequirementQueryService majorRequirementQueryService;
     @Mock
     private UserRequirementStatusRepository userRequirementStatusRepository;
     @Mock
     private CreditRequirementRepository creditRequirementRepository;
+    @Mock
+    private CreditRequirementQueryService creditRequirementQueryService;
     @Mock
     private RequiredMajorCourseRepository requiredMajorCourseRepository;
 
@@ -464,7 +465,7 @@ public class UserServiceTest {
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
         given(userMajorRepository.findAllByUserId(userId)).willReturn(List.of(userMajor));
         given(userRequirementStatusRepository.findAllByUserId(userId)).willReturn(List.of(urs1));
-        given(creditRequirementRepository.findAllByMajorIdAndMajorType(major.getId(),MajorType.PRIMARY)).willReturn(List.of(creditRequirement));
+        given(creditRequirementQueryService.getCreditRequirements(major.getId(), MajorType.PRIMARY)).willReturn(List.of(creditRequirement));
         given(userCompletedCourseRepository.findByUserId(userId)).willReturn(List.of(ucc));
 
 
@@ -505,21 +506,6 @@ public class UserServiceTest {
 
         // when & then
         assertThrows(UserMajorNotFoundException.class,
-                () -> userService.fetchUserGraduationOverview(userId));
-    }
-
-    @Test
-    @DisplayName("fetchUserGraduationOverview - should throw when credit requirement not found")
-    void fetchUserGraduationOverview_shouldThrow_whenNoCreditRequirement() {
-        // given
-        Long userId = 1L;
-        given(userRepository.findById(userId)).willReturn(Optional.of(user));
-        given(userMajorRepository.findAllByUserId(userId)).willReturn(List.of(userMajor));
-        given(userRequirementStatusRepository.findAllByUserId(userId)).willReturn(List.of(urs1));
-        given(creditRequirementRepository.findAllByMajorIdAndMajorType(major.getId(), MajorType.PRIMARY)).willReturn(List.of()); // 비워둠
-
-        // when & then
-        assertThrows(CreditRequirementNotFoundException.class,
                 () -> userService.fetchUserGraduationOverview(userId));
     }
 

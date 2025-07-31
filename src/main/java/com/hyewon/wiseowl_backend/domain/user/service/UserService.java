@@ -4,14 +4,11 @@ import com.hyewon.wiseowl_backend.domain.course.entity.*;
 import com.hyewon.wiseowl_backend.domain.course.service.CourseOfferingQueryService;
 import com.hyewon.wiseowl_backend.domain.course.service.MajorQueryService;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.*;
-import com.hyewon.wiseowl_backend.domain.requirement.repository.CreditRequirementRepository;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.RequiredLiberalCategoryByCollegeRepository;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.RequiredMajorCourseRepository;
+import com.hyewon.wiseowl_backend.domain.requirement.service.CreditRequirementQueryService;
 import com.hyewon.wiseowl_backend.domain.requirement.service.MajorRequirementQueryService;
 import com.hyewon.wiseowl_backend.domain.user.dto.*;
-import com.hyewon.wiseowl_backend.domain.course.repository.CourseOfferingRepository;
-import com.hyewon.wiseowl_backend.domain.course.repository.MajorRepository;
-import com.hyewon.wiseowl_backend.domain.requirement.repository.MajorRequirementRepository;
 import com.hyewon.wiseowl_backend.domain.user.entity.*;
 import com.hyewon.wiseowl_backend.domain.user.event.CompletedCoursesRegisteredEvent;
 import com.hyewon.wiseowl_backend.domain.user.event.CompletedCoursesUpdateEvent;
@@ -40,7 +37,7 @@ public class UserService {
     private final CourseOfferingQueryService courseOfferingQueryService;
     private final MajorRequirementQueryService majorRequirementQueryService;
     private final UserRequirementStatusRepository userRequirementStatusRepository;
-    private final CreditRequirementRepository creditRequirementRepository;
+    private final CreditRequirementQueryService creditRequirementQueryService;
     private final RequiredMajorCourseRepository requiredMajorCourseRepository;
     private final RequiredLiberalCategoryByCollegeRepository requiredLiberalCategoryByCollegeRepository;
     private final UserRequiredCourseStatusRepository userRequiredCourseStatusRepository;
@@ -188,12 +185,8 @@ public class UserService {
                                     status.isFulfilled()
                             ))
                             .toList();
-                    List<CreditRequirement> creditRequirements =
-                            creditRequirementRepository.findAllByMajorIdAndMajorType(major.getId(), majorType);
 
-                    if (creditRequirements.isEmpty()) {
-                        throw new CreditRequirementNotFoundException(major.getId(), majorType);
-                    }
+                    List<CreditRequirement> creditRequirements = creditRequirementQueryService.getCreditRequirements(major.getId(), majorType);
 
                     int requiredCredits = creditRequirements.stream()
                             .filter(cr -> cr.getCourseType().equals(CourseType.MAJOR))
