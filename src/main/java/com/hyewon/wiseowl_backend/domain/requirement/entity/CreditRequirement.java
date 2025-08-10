@@ -25,13 +25,12 @@ public class CreditRequirement {
     @Enumerated(EnumType.STRING)
     private CourseType courseType;
 
+    @Enumerated(EnumType.STRING) @Column(nullable = false)
+    private Track track;
+
     private int requiredCredits;
 
     private Integer appliesFromYear;
 
     private Integer appliesToYear;
-
-
-
-
 }
