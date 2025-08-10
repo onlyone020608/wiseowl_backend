@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional
 public class UserService {
+
     private final UserRepository userRepository;
     private final ProfileRepository profileRepository;
     private final UserMajorRepository userMajorRepository;
@@ -81,17 +82,8 @@ public class UserService {
                         .toList();
 
                 userRequiredCourseStatusRepository.saveAll(requiredLiberalCourseStatuses);
-
-
             }
-
-
-
-
-
-
         }
-
     }
 
     @Transactional
@@ -103,6 +95,7 @@ public class UserService {
         if (alreadyExists) {
             throw new CompletedCourseAlreadyExistsException();
         }
+
         List<UserCompletedCourse> toSave = request.courses().stream()
                 .map(c -> {
                     CourseOffering offering = courseOfferingQueryService.getCourseOffering(c.courseOfferingId());
@@ -112,8 +105,6 @@ public class UserService {
 
         userCompletedCourseRepository.saveAll(toSave);
         eventPublisher.publishEvent(new CompletedCoursesRegisteredEvent(userId, toSave));
-
-
     }
 
     @Transactional(readOnly = true)
@@ -123,6 +114,7 @@ public class UserService {
                 .collect(Collectors.groupingBy(urs ->
                         urs.getMajorRequirement().getMajor().getId())
                 );
+
         if(all.isEmpty()){
             throw new UserGraduationStatusNotFoundException(userId);
         }
@@ -136,9 +128,6 @@ public class UserService {
                             majorId, majorName, anyMr.getMajorType(), statuses
                     );
                 }).toList();
-
-
-
     }
 
     @Transactional
@@ -148,11 +137,7 @@ public class UserService {
                     .orElseThrow(() -> new UserGraduationStatusNotFoundException(userId));
 
             status.updateFulfilled(update.fulfilled());
-
-
         }
-
-
     }
 
     @Transactional(readOnly = true)
@@ -205,17 +190,18 @@ public class UserService {
                 }).toList();
 
         return new MainPageGraduationStatusResponse(user.getUsername(), requirementStatus);
-
-
     }
+
     @Transactional(readOnly = true)
     public UserRequiredCourseStatusResponse fetchUserRequiredCourseStatus(Long userId, MajorType majorType) {
         List<UserRequiredCourseStatus> userRequiredCourseStatuses = userRequiredCourseStatusRepository.findAllByUserId(userId);
         if(userRequiredCourseStatuses.isEmpty()) {
             throw new  UserRequiredCourseStatusNotFoundException(userId);
         }
+
         Map<CourseType, List<UserRequiredCourseStatus>> grouped = userRequiredCourseStatuses.stream()
                 .collect(Collectors.groupingBy(UserRequiredCourseStatus::getCourseType));
+
         List<UserRequiredCourseStatus> majorRequiredCourses = grouped.getOrDefault(CourseType.MAJOR, List.of()).stream().filter(
                 status -> {
                     RequiredMajorCourse requiredMajorCourse = requiredMajorCourseQueryService.getRequiredMajorCourse(status.getRequiredCourseId());
@@ -231,7 +217,6 @@ public class UserService {
                 }
         ).toList();
 
-
         List<UserRequiredCourseStatus> liberalRequiredCourses = grouped.getOrDefault(CourseType.GENERAL, List.of());
         List<LiberalRequiredCourseItemResponse> liberalRequired = liberalRequiredCourses.stream().map(
                 status -> {
@@ -241,11 +226,9 @@ public class UserService {
                 }
         ).toList();
 
-
         return new UserRequiredCourseStatusResponse(majorRequired, liberalRequired);
-
-
     }
+
     @Transactional(readOnly = true)
     public List<UserGraduationRequirementStatusResponse> fetchUserGraduationRequirementStatus(Long userId){
         List<UserRequirementStatus> requirementStatuses = userRequirementStatusRepository.findAllByUserId(userId);
@@ -270,7 +253,6 @@ public class UserService {
 
                 }
         ).toList();
-
     }
 
     @Transactional(readOnly = true)
@@ -283,6 +265,7 @@ public class UserService {
         Optional<UserMajor> secondUserMajor = userMajorRepository.findByUserIdAndMajorTypeIn(
                 userId, List.of(MajorType.DOUBLE, MajorType.MINOR)
         );
+
         Major primaryMajor = primaryUserMajor.getMajor();
         College primaryCollege = primaryMajor.getCollege();
         UserMajorDetail secondMajorDetail = secondUserMajor
@@ -321,7 +304,6 @@ public class UserService {
                     .orElseThrow(() -> new UserMajorNotFoundException(request.userMajorId()));
             userMajor.updateMajorType(request.majorType());
         });
-
     }
 
     @Transactional
@@ -337,7 +319,6 @@ public class UserService {
             }
         });
         eventPublisher.publishEvent(new CompletedCoursesUpdateEvent(userId));
-
     }
 
     @Transactional
@@ -349,7 +330,6 @@ public class UserService {
                 }
         ).toList();
         userSubscriptionRepository.saveAll(toSave);
-
     }
 
     @Transactional
@@ -366,11 +346,7 @@ public class UserService {
         ).toList();
 
         userSubscriptionRepository.saveAll(toSave);
-
-
-
     }
-
 
     @Transactional
     public void deleteUser(Long userId) {
@@ -379,11 +355,4 @@ public class UserService {
 
         user.markAsDeleted();
     }
-
-
-
-
-
-
-
 }

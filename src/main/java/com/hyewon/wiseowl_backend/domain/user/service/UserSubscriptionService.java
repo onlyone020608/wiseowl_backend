@@ -12,6 +12,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional
 public class UserSubscriptionService {
+
     private final UserSubscriptionRepository userSubscriptionRepository;
 
     @Transactional(readOnly = true)

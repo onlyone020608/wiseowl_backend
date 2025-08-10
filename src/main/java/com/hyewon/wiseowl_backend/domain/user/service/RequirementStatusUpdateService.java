@@ -39,11 +39,11 @@ public class RequirementStatusUpdateService {
 
     @Transactional
     public void updateRequirementStatus(Long userId, List<UserCompletedCourse> completedCourses){
-
         List<UserRequiredCourseStatus> userStatuses = statusRepository.findAllByUserId(userId);
         if(userStatuses.isEmpty()){
             throw new UserRequiredCourseStatusNotFoundException(userId);
         }
+
         Map<CourseType, List<UserCompletedCourse>> groupedByType = completedCourses.stream().collect(Collectors.groupingBy(cc -> cc.getCourseOffering().getCourse().getCourseType()));
         List<UserCompletedCourse> majorCompletedCourses = groupedByType.getOrDefault(CourseType.MAJOR, List.of());
         for(UserRequiredCourseStatus status : userStatuses) {
@@ -63,8 +63,6 @@ public class RequirementStatusUpdateService {
             if (fulfilled) {
                 status.markFulfilled();
             }
-
-
         }
 
         List<UserCompletedCourse> allCompletedCourses = userCompletedCourseRepository.findByUserId(userId);
@@ -90,11 +88,6 @@ public class RequirementStatusUpdateService {
             if(requiredCredit <= earnedCredit){
                 status.markFulfilled();
             }
-
         }
-
     }
-
-
-
 }

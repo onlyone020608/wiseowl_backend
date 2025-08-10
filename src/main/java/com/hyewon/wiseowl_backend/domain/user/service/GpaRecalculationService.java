@@ -37,6 +37,5 @@ public class GpaRecalculationService {
         double gpa = totalCredits == 0 ? 0 : totalGradePoints / totalCredits;
         Profile profile = profileRepository.findByUserId(userId).orElseThrow(ProfileNotFoundException::new);
         profile.updateGPA(gpa);
-
     }
 }
