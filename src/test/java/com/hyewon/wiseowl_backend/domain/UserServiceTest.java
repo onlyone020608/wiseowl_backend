@@ -84,13 +84,13 @@ public class UserServiceTest {
     @Mock
     private UserSubscriptionRepository userSubscriptionRepository;
 
+    @Mock private UserTrackRepository userTrackRepository;
+
     @Mock
     private ApplicationEventPublisher eventPublisher;
 
     @Mock
     private EntityManager entityManager;
-
-
 
     private User user;
     private Profile profile;
@@ -116,6 +116,7 @@ public class UserServiceTest {
     private ProfileUpdateRequest profileUpdateRequest;
     private UserRequiredCourseStatus userRequiredCourseStatus1;
     private UserRequiredCourseStatus userRequiredCourseStatus2;
+    private UserTrack userTrack;
 
 
     @BeforeEach
@@ -210,11 +211,17 @@ public class UserServiceTest {
                 List.of(new UserMajorRequest(1L, MajorType.PRIMARY))
         );
 
+        userTrack = UserTrack.builder()
+                .user(user)
+                .track(Track.PRIMARY_WITH_DOUBLE)
+                .build();
+
         creditRequirement = CreditRequirement.builder()
                 .major(major)
                 .majorType(MajorType.PRIMARY)
                 .courseType(CourseType.MAJOR)
                 .requiredCredits(130)
+                .track(Track.PRIMARY_WITH_DOUBLE)
                 .build();
 
         requiredMajorCourse = RequiredMajorCourse.builder()
@@ -461,10 +468,10 @@ public class UserServiceTest {
         Long userId = 1L;
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
         given(userMajorRepository.findAllByUserId(userId)).willReturn(List.of(userMajor));
+        given(userTrackRepository.findByUserId(userId)).willReturn(userTrack);
         given(userRequirementStatusRepository.findAllByUserId(userId)).willReturn(List.of(urs1));
-        given(creditRequirementQueryService.getCreditRequirements(major.getId(), MajorType.PRIMARY)).willReturn(List.of(creditRequirement));
+        given(creditRequirementQueryService.getCreditRequirements(major.getId(), MajorType.PRIMARY, Track.PRIMARY_WITH_DOUBLE)).willReturn(List.of(creditRequirement));
         given(userCompletedCourseRepository.findByUserId(userId)).willReturn(List.of(ucc));
-
 
         // when
         MainPageGraduationStatusResponse response = userService.fetchUserGraduationOverview(userId);

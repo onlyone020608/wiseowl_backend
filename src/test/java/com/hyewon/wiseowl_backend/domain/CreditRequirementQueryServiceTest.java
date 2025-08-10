@@ -3,6 +3,7 @@ package com.hyewon.wiseowl_backend.domain;
 import com.hyewon.wiseowl_backend.domain.course.entity.Major;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.CreditRequirement;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorType;
+import com.hyewon.wiseowl_backend.domain.requirement.entity.Track;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.CreditRequirementRepository;
 import com.hyewon.wiseowl_backend.domain.requirement.service.CreditRequirementQueryService;
 import com.hyewon.wiseowl_backend.global.exception.CreditRequirementNotFoundException;
@@ -38,6 +39,7 @@ public class CreditRequirementQueryServiceTest {
        creditRequirement = CreditRequirement.builder()
                .major(major)
                .majorType(MajorType.PRIMARY)
+               .track(Track.PRIMARY_WITH_DOUBLE)
                .build();
 
     }
@@ -45,12 +47,12 @@ public class CreditRequirementQueryServiceTest {
     @DisplayName("getMajorName - should return credit requirement")
     void getCreditRequirements_shouldSucceed() {
         // given
-        given(creditRequirementRepository.findAllByMajorIdAndMajorType(1L, MajorType.PRIMARY)).willReturn(
+        given(creditRequirementRepository.findAllByMajorIdAndMajorTypeAndTrack(1L, MajorType.PRIMARY, Track.PRIMARY_WITH_DOUBLE)).willReturn(
                 List.of(creditRequirement)
         );
 
         // when
-        List<CreditRequirement> creditRequirements = creditRequirementQueryService.getCreditRequirements(1L, MajorType.PRIMARY);
+        List<CreditRequirement> creditRequirements = creditRequirementQueryService.getCreditRequirements(1L, MajorType.PRIMARY, Track.PRIMARY_WITH_DOUBLE);
         // then
         assertThat(creditRequirements).isEqualTo(List.of(creditRequirement));
 
@@ -61,14 +63,12 @@ public class CreditRequirementQueryServiceTest {
     @DisplayName("getMajorName - should throw CreditRequirementNotFoundException when credit requirement does not exist")
     void getCreditRequirements_shouldThrowException_whenMajorNotFound() {
         // given
-        given(creditRequirementRepository.findAllByMajorIdAndMajorType(999L, MajorType.PRIMARY)).willReturn(
+        given(creditRequirementRepository.findAllByMajorIdAndMajorTypeAndTrack(999L, MajorType.PRIMARY, Track.PRIMARY_WITH_DOUBLE)).willReturn(
                 List.of()
         );
 
         // when & then
         assertThrows(CreditRequirementNotFoundException.class,
-                () ->  creditRequirementQueryService.getCreditRequirements(999L, MajorType.PRIMARY));
-
-
+                () ->  creditRequirementQueryService.getCreditRequirements(999L, MajorType.PRIMARY, Track.PRIMARY_WITH_DOUBLE));
     }
 }

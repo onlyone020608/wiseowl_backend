@@ -2,6 +2,7 @@ package com.hyewon.wiseowl_backend.domain.requirement.service;
 
 import com.hyewon.wiseowl_backend.domain.requirement.entity.CreditRequirement;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorType;
+import com.hyewon.wiseowl_backend.domain.requirement.entity.Track;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.CreditRequirementRepository;
 import com.hyewon.wiseowl_backend.global.exception.CreditRequirementNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -17,10 +18,10 @@ public class CreditRequirementQueryService {
     private final CreditRequirementRepository creditRequirementRepository;
 
     @Transactional(readOnly = true)
-    public List<CreditRequirement> getCreditRequirements(Long majorId, MajorType majorType){
-        List<CreditRequirement> results = creditRequirementRepository.findAllByMajorIdAndMajorType(majorId, majorType);
+    public List<CreditRequirement> getCreditRequirements(Long majorId, MajorType majorType, Track track){
+        List<CreditRequirement> results = creditRequirementRepository.findAllByMajorIdAndMajorTypeAndTrack(majorId, majorType, track);
         if(results.isEmpty()){
-            throw new CreditRequirementNotFoundException(majorId, majorType);
+            throw new CreditRequirementNotFoundException(majorId, majorType, track);
         }
         return results;
     }

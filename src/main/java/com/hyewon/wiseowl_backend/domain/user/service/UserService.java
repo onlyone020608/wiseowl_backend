@@ -41,13 +41,11 @@ public class UserService {
     private final RequiredMajorCourseQueryService requiredMajorCourseQueryService;
     private final RequiredLiberalCategoryQueryService requiredLiberalCategoryQueryService;
     private final UserRequiredCourseStatusRepository userRequiredCourseStatusRepository;
+    private final UserTrackRepository userTrackRepository;
     private final UserSubscriptionRepository userSubscriptionRepository;
     private final ApplicationEventPublisher eventPublisher;
     private final EntityManager entityManager;
     private final MajorQueryService majorQueryService;
-
-
-
 
     @Transactional
     public void updateUserProfile(Long userId, ProfileUpdateRequest request){
@@ -166,6 +164,10 @@ public class UserService {
         if (userMajors.isEmpty()) {
             throw new UserMajorNotFoundException(userId);
         }
+
+        // TODO: 미정인 1학년의 경우 처리
+        UserTrack userTrack = userTrackRepository.findByUserId(userId);
+
         List<RequirementStatusByMajor> requirementStatus = userMajors.stream()
                 .map(userMajor -> {
                     Major major = userMajor.getMajor();
@@ -185,7 +187,7 @@ public class UserService {
                             ))
                             .toList();
 
-                    List<CreditRequirement> creditRequirements = creditRequirementQueryService.getCreditRequirements(major.getId(), majorType);
+                    List<CreditRequirement> creditRequirements = creditRequirementQueryService.getCreditRequirements(major.getId(), majorType, userTrack.getTrack());
 
                     int requiredCredits = creditRequirements.stream()
                             .filter(cr -> cr.getCourseType().equals(CourseType.MAJOR))
