@@ -52,31 +52,21 @@ public class UserService {
     public void updateUserProfile(Long userId, ProfileUpdateRequest request){
         User user = userRepository.findById(userId).orElseThrow(()-> new UserNotFoundException(userId));
         Profile profile = profileRepository.findByUserId(userId).orElseThrow(ProfileNotFoundException::new);
+        Integer entranceYear = request.entranceYear();
 
         user.updateUsername(request.name());
-        profile.updateEntranceYear(request.entranceYear());
+        profile.updateEntranceYear(entranceYear);
 
         for (UserMajorRequest majorRequest : request.majors()) {
             Major major = majorQueryService.getMajor(majorRequest.majorId());
-            UserMajor userMajor = UserMajor.of(user, major, majorRequest.majorType());
-            userMajorRepository.save(userMajor);
+            userMajorRepository.save(UserMajor.of(user, major, majorRequest.majorType()));
 
-            List<MajorRequirement> applicable = majorRequirementQueryService.getApplicableRequirements(major.getId(), majorRequest.majorType(), request.entranceYear());
-            List<UserRequirementStatus> toSave = applicable.stream()
-                    .map(req -> UserRequirementStatus.of(user, req))
-                    .toList();
-
-            userRequirementStatusRepository.saveAll(toSave);
-            List<RequiredMajorCourse> majorCourseList= requiredMajorCourseQueryService.getApplicableMajorCourses(majorRequest.majorId(), majorRequest.majorType(), request.entranceYear());
-            List<UserRequiredCourseStatus> requiredMajorCourseStatuses = majorCourseList.stream()
-                    .map(requiredMajorCourse -> UserRequiredCourseStatus.of(user, CourseType.MAJOR, requiredMajorCourse.getId()))
-                    .toList();
-
-            userRequiredCourseStatusRepository.saveAll(requiredMajorCourseStatuses);
+            setupRequirementStatusesForMajor(majorRequest, entranceYear, major, user);
+            setupRequiredCourseStatusesForMajor(majorRequest, entranceYear, user);
 
             // primary major에 해당할 때만
             if(majorRequest.majorType().equals(MajorType.PRIMARY)){
-                List<UserRequiredCourseStatus> requiredLiberalCourseStatuses = requiredLiberalCategoryQueryService.getApplicableLiberalCategories(major.getCollege().getId(), request.entranceYear())
+                List<UserRequiredCourseStatus> requiredLiberalCourseStatuses = requiredLiberalCategoryQueryService.getApplicableLiberalCategories(major.getCollege().getId(), entranceYear)
                         .stream()
                         .map(requiredLiberal -> UserRequiredCourseStatus.of(user, CourseType.GENERAL, requiredLiberal.getId()))
                         .toList();
@@ -84,6 +74,24 @@ public class UserService {
                 userRequiredCourseStatusRepository.saveAll(requiredLiberalCourseStatuses);
             }
         }
+    }
+
+    private void setupRequiredCourseStatusesForMajor(UserMajorRequest majorRequest, Integer entranceYear, User user) {
+        List<RequiredMajorCourse> majorCourseList= requiredMajorCourseQueryService.getApplicableMajorCourses(majorRequest.majorId(), majorRequest.majorType(), entranceYear);
+        List<UserRequiredCourseStatus> requiredMajorCourseStatuses = majorCourseList.stream()
+                .map(requiredMajorCourse -> UserRequiredCourseStatus.of(user, CourseType.MAJOR, requiredMajorCourse.getId()))
+                .toList();
+
+        userRequiredCourseStatusRepository.saveAll(requiredMajorCourseStatuses);
+    }
+
+    private void setupRequirementStatusesForMajor(UserMajorRequest majorRequest,Integer entranceYear, Major major, User user) {
+        List<MajorRequirement> applicable = majorRequirementQueryService.getApplicableRequirements(major.getId(), majorRequest.majorType(), entranceYear);
+        List<UserRequirementStatus> toSave = applicable.stream()
+                .map(req -> UserRequirementStatus.of(user, req))
+                .toList();
+
+        userRequirementStatusRepository.saveAll(toSave);
     }
 
     @Transactional
