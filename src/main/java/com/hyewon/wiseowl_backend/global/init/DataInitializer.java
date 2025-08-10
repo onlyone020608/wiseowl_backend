@@ -2,6 +2,10 @@ package com.hyewon.wiseowl_backend.global.init;
 
 import com.hyewon.wiseowl_backend.domain.course.entity.*;
 import com.hyewon.wiseowl_backend.domain.course.repository.*;
+import com.hyewon.wiseowl_backend.domain.requirement.entity.CreditRequirement;
+import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorType;
+import com.hyewon.wiseowl_backend.domain.requirement.entity.Track;
+import com.hyewon.wiseowl_backend.domain.requirement.repository.CreditRequirementRepository;
 import com.hyewon.wiseowl_backend.global.exception.CourseNotFoundException;
 import com.hyewon.wiseowl_backend.global.exception.LiberalCategoryNotFoundException;
 import com.hyewon.wiseowl_backend.global.exception.MajorNotFoundException;
@@ -27,9 +31,11 @@ public class DataInitializer implements CommandLineRunner {
     private final MajorRepository majorRepository;
     private final CourseOfferingRepository courseOfferingRepository;
     private final LiberalCategoryCourseRepository liberalCategoryCourseRepository;
+    private final CreditRequirementRepository creditRequirementRepository;
 
     @Override
     public void run(String... args) throws Exception {
+
         if (buildingRepository.count() == 0) {
             loadBuildings();
         }
@@ -48,10 +54,13 @@ public class DataInitializer implements CommandLineRunner {
         if(liberalCategoryCourseRepository.count() == 0 ){
             loadLiberalCategoryCourse();
         }
-
+        if(creditRequirementRepository.count() == 0) {
+            loadCreditRequirement();
+        }
     }
 
     private void loadBuildings() throws IOException {
+
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream("data/building.csv");
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
@@ -72,11 +81,10 @@ public class DataInitializer implements CommandLineRunner {
 
             buildingRepository.save(building);
         }
-
-
     }
 
     private void loadSemesters() throws IOException {
+
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream("data/semester.csv");
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
@@ -96,11 +104,10 @@ public class DataInitializer implements CommandLineRunner {
                     .build();
             semesterRepository.save(semester);
         }
-
-
     }
 
     private void loadLiberalCategory() throws IOException {
+
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream("data/liberal_category.csv");
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
@@ -127,6 +134,7 @@ public class DataInitializer implements CommandLineRunner {
                 "data/course_2024_1_liberal.csv",
                 "data/course_2024_1_major.csv"
         );
+
         for (String path : files) {
             InputStream inputStream = getClass().getClassLoader().getResourceAsStream(path);
             if (inputStream == null) continue;
@@ -151,7 +159,6 @@ public class DataInitializer implements CommandLineRunner {
                 Major major = majorRepository.findById(majorId).orElseThrow(() ->
                         new MajorNotFoundException(majorId));
 
-
                 Course course = Course.builder()
                         .major(major)
                         .name(name)
@@ -163,8 +170,6 @@ public class DataInitializer implements CommandLineRunner {
                 courseRepository.save(course);
             }
         }
-
-
     }
 
     private void loadCourseOffering() throws IOException {
@@ -173,6 +178,7 @@ public class DataInitializer implements CommandLineRunner {
                 "data/course_offering_2024_1_liberal.csv",
                 "data/course_offering_2024_1_major.csv"
         );
+
         for (String path : files) {
             InputStream inputStream = getClass().getClassLoader().getResourceAsStream(path);
             if (inputStream == null) continue;
@@ -201,8 +207,6 @@ public class DataInitializer implements CommandLineRunner {
                 Semester semester = semesterRepository.findById(semesterId).orElseThrow(() ->
                         new SemesterNotFoundException(semesterId));
 
-
-
                 CourseOffering courseOffering = CourseOffering.builder()
                         .course(course)
                         .semester(semester)
@@ -214,11 +218,7 @@ public class DataInitializer implements CommandLineRunner {
 
                 courseOfferingRepository.save(courseOffering);
             }
-
-
         }
-
-
     }
 
     private void loadLiberalCategoryCourse() throws IOException {
@@ -226,6 +226,7 @@ public class DataInitializer implements CommandLineRunner {
         List<String> files = List.of(
                 "data/liberal_category_course_2024_1.csv"
         );
+
         for (String path : files) {
             InputStream inputStream = getClass().getClassLoader().getResourceAsStream(path);
             if (inputStream == null) continue;
@@ -250,20 +251,59 @@ public class DataInitializer implements CommandLineRunner {
                 LiberalCategory liberalCategory = liberalCategoryRepository.findById(liberalCategoryId)
                         .orElseThrow(() -> new LiberalCategoryNotFoundException(liberalCategoryId));
 
-
-
                LiberalCategoryCourse liberalCategoryCourse = LiberalCategoryCourse.builder()
                        .course(course)
                        .liberalCategory(liberalCategory)
                        .build();
 
                liberalCategoryCourseRepository.save(liberalCategoryCourse);
+            }
+        }
+    }
+
+    private void loadCreditRequirement() throws IOException {
+        List<String> files = List.of(
+                "data/credit_requirement_2024.csv"
+        );
+
+        for (String path : files) {
+            InputStream inputStream = getClass().getClassLoader().getResourceAsStream(path);
+            if (inputStream == null) continue;
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            String line;
+            boolean isFirst = true;
+
+            while ((line = reader.readLine()) != null) {
+                if (isFirst) {
+                    isFirst = false;
+                    continue;
+                }
+
+                String[] tokens = line.split(",");
+                Long majorId = Long.parseLong(tokens[0].trim());
+                MajorType majorType = MajorType.valueOf(tokens[1].trim().toUpperCase());
+                CourseType courseType = CourseType.valueOf(tokens[2].trim().toUpperCase());
+                int requiredCredit = Integer.parseInt(tokens[3].trim());
+                Track track = Track.valueOf(tokens[4].trim().toUpperCase());
+                Integer appliesFromYear = Integer.parseInt(tokens[5].trim());
+                Integer appliesToYear = Integer.parseInt(tokens[6].trim());
+
+                Major major = majorRepository.findById(majorId).orElseThrow(() ->new MajorNotFoundException(majorId));
+
+                CreditRequirement creditRequirement = CreditRequirement.builder()
+                        .major(major)
+                        .majorType(majorType)
+                        .courseType(courseType)
+                        .requiredCredits(requiredCredit)
+                        .track(track)
+                        .appliesFromYear(appliesFromYear)
+                        .appliesToYear(appliesToYear)
+                        .build();
+
+                creditRequirementRepository.save(creditRequirement);
 
             }
         }
-
-
     }
-
-
 }
