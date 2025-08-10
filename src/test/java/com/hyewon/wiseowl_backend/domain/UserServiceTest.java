@@ -208,7 +208,8 @@ public class UserServiceTest {
         profileUpdateRequest = new ProfileUpdateRequest(
                 "test",
                 2022,
-                List.of(new UserMajorRequest(1L, MajorType.PRIMARY))
+                List.of(new UserMajorRequest(1L, MajorType.PRIMARY)),
+                Track.PRIMARY_WITH_DOUBLE
         );
 
         userTrack = UserTrack.builder()
@@ -287,12 +288,18 @@ public class UserServiceTest {
         assertThat(user.getUsername()).isEqualTo("test");
 
         ArgumentCaptor<UserMajor> userMajorCaptor = ArgumentCaptor.forClass(UserMajor.class);
+        ArgumentCaptor<UserTrack> userTrackCaptor = ArgumentCaptor.forClass(UserTrack.class);
         verify(userMajorRepository).save(userMajorCaptor.capture());
+        verify(userTrackRepository).save(userTrackCaptor.capture());
 
         UserMajor savedUserMajor = userMajorCaptor.getValue();
         assertThat(savedUserMajor.getUser()).isEqualTo(user);
         assertThat(savedUserMajor.getMajor()).isEqualTo(major);
         assertThat(savedUserMajor.getMajorType()).isEqualTo(MajorType.PRIMARY);
+
+        UserTrack savedUserTrack = userTrackCaptor.getValue();
+        assertThat(savedUserTrack.getUser()).isEqualTo(user);
+        assertThat(savedUserTrack.getTrack()).isEqualTo(Track.PRIMARY_WITH_DOUBLE);
 
         verify(userRequirementStatusRepository).saveAll(argThat(iterable -> {
             List<UserRequirementStatus> list = StreamSupport

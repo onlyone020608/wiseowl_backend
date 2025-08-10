@@ -56,6 +56,7 @@ public class UserService {
 
         user.updateUsername(request.name());
         profile.updateEntranceYear(entranceYear);
+        userTrackRepository.save(UserTrack.of(user, request.track()));
 
         for (UserMajorRequest majorRequest : request.majors()) {
             Major major = majorQueryService.getMajor(majorRequest.majorId());

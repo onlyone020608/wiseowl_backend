@@ -21,4 +21,13 @@ public class UserTrack {
 
     @Enumerated(EnumType.STRING) @Column(nullable = false)
     private Track track;
+
+    private UserTrack(User user, Track track) {
+        this.user = user;
+        this.track = track;
+    }
+
+    public static UserTrack of(User user, Track track) {
+        return new UserTrack(user, track);
+    }
 }

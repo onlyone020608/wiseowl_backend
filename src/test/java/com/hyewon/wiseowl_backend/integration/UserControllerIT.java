@@ -2,6 +2,7 @@ package com.hyewon.wiseowl_backend.integration;
 
 import com.hyewon.wiseowl_backend.domain.course.entity.CourseOffering;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorType;
+import com.hyewon.wiseowl_backend.domain.requirement.entity.Track;
 import com.hyewon.wiseowl_backend.domain.user.dto.*;
 import com.hyewon.wiseowl_backend.domain.user.entity.Grade;
 import com.hyewon.wiseowl_backend.domain.user.entity.SubscriptionType;
@@ -34,7 +35,8 @@ public class UserControllerIT extends AbstractIntegrationTest{
                 2021,
                 List.of(new UserMajorRequest(
                         1L, MajorType.PRIMARY
-                ))
+                )),
+                Track.PRIMARY_WITH_DOUBLE
         );
 
 
@@ -63,7 +65,8 @@ public class UserControllerIT extends AbstractIntegrationTest{
                 2021,
                 List.of(new UserMajorRequest(
                         1L, MajorType.PRIMARY
-                ))
+                )),
+                Track.PRIMARY_WITH_DOUBLE
         );
 
 
@@ -90,7 +93,8 @@ public class UserControllerIT extends AbstractIntegrationTest{
                 2021,
                 List.of(new UserMajorRequest(
                         999L, MajorType.PRIMARY
-                ))
+                )),
+                Track.PRIMARY_WITH_DOUBLE
         );
 
 
