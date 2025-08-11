@@ -98,7 +98,7 @@ public class UserService {
     @Transactional
     public void insertCompletedCourses(Long userId, CompletedCourseInsertRequest request){
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException(userId));
 
         boolean alreadyExists = userCompletedCourseRepository.existsByUserId(userId);
         if (alreadyExists) {
@@ -108,7 +108,6 @@ public class UserService {
         List<UserCompletedCourse> toSave = request.courses().stream()
                 .map(c -> {
                     CourseOffering offering = courseOfferingQueryService.getCourseOffering(c.courseOfferingId());
-
                     return UserCompletedCourse.of(user, offering, c.grade(), c.retake());
                 }).toList();
 
