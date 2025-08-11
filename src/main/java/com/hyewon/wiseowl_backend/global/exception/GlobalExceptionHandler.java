@@ -15,7 +15,7 @@ public class GlobalExceptionHandler {
             EmailAlreadyExistsException.class,
             CompletedCourseAlreadyExistsException.class,
             CourseOfferingNotFoundException.class,
-            UserGraduationStatusNotFoundException.class,
+            UserRequirementStatusNotFoundException.class,
             UserMajorNotFoundException.class,
             CreditRequirementNotFoundException.class,
             RequiredMajorCourseNotFoundException.class,
@@ -44,7 +44,7 @@ public class GlobalExceptionHandler {
             return buildResponse(e.getErrorCode());
         } else if(ex instanceof CourseOfferingNotFoundException e){
             return buildResponse(e.getErrorCode());
-        } else if(ex instanceof UserGraduationStatusNotFoundException e){
+        } else if(ex instanceof UserRequirementStatusNotFoundException e){
             return buildResponse(e.getErrorCode());
         } else if(ex instanceof UserMajorNotFoundException e){
             return buildResponse(e.getErrorCode());

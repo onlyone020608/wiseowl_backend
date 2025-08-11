@@ -120,7 +120,7 @@ public class UserService {
     public List<GraduationRequirementGroupByMajorResponse> getGraduationRequirementsForUser(Long userId){
         List<UserRequirementStatus> all = userRequirementStatusRepository.findAllByUserId(userId);
         if(all.isEmpty()){
-            throw new UserGraduationStatusNotFoundException(userId);
+            throw new UserRequirementStatusNotFoundException(userId);
         }
 
         ArrayList<List<UserRequirementStatus>> grouped = new ArrayList<>(all.stream()
@@ -143,7 +143,7 @@ public class UserService {
     public void updateUserRequirementStatus(Long userId, UserRequirementFulfillmentRequest request){
         for(RequirementStatusUpdate update : request.requirements()){
             UserRequirementStatus status = userRequirementStatusRepository.findById(update.userRequirementStatusId())
-                    .orElseThrow(() -> new UserGraduationStatusNotFoundException(userId));
+                    .orElseThrow(() -> new UserRequirementStatusNotFoundException(userId));
 
             status.updateFulfilled(update.fulfilled());
         }
@@ -242,7 +242,7 @@ public class UserService {
     public List<UserGraduationRequirementStatusResponse> fetchUserGraduationRequirementStatus(Long userId){
         List<UserRequirementStatus> requirementStatuses = userRequirementStatusRepository.findAllByUserId(userId);
         if(requirementStatuses.isEmpty()) {
-            throw new UserGraduationStatusNotFoundException(userId);
+            throw new UserRequirementStatusNotFoundException(userId);
         }
         Map<MajorType, List<UserRequirementStatus>> map = requirementStatuses.stream()
                 .collect(Collectors.groupingBy(urs -> urs.getMajorRequirement().getMajorType()));

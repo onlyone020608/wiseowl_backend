@@ -378,7 +378,7 @@ public class UserServiceTest {
 
         // when & then
         assertThatThrownBy(() -> userService.getGraduationRequirementsForUser(userId))
-                .isInstanceOf(UserGraduationStatusNotFoundException.class);
+                .isInstanceOf(UserRequirementStatusNotFoundException.class);
     }
 
     @Test
@@ -407,7 +407,7 @@ public class UserServiceTest {
         // when & then
         RequirementStatusUpdate update = new RequirementStatusUpdate(urs1.getId(), true);
         UserRequirementFulfillmentRequest rfRequest = new UserRequirementFulfillmentRequest(major.getId(), List.of(update));
-        assertThrows(UserGraduationStatusNotFoundException.class,
+        assertThrows(UserRequirementStatusNotFoundException.class,
                 () -> userService.updateUserRequirementStatus(userId, rfRequest));
     }
 
@@ -528,7 +528,7 @@ public class UserServiceTest {
                 .willReturn(List.of());
 
         // when & then
-        assertThrows(UserGraduationStatusNotFoundException.class,
+        assertThrows(UserRequirementStatusNotFoundException.class,
                 () -> userService.fetchUserGraduationRequirementStatus(userId));
     }
 
