@@ -23,14 +23,13 @@ import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 public class CreditRequirementQueryServiceTest {
-    @InjectMocks
-    CreditRequirementQueryService creditRequirementQueryService;
+    @InjectMocks CreditRequirementQueryService creditRequirementQueryService;
 
-    @Mock
-    CreditRequirementRepository creditRequirementRepository;
+    @Mock CreditRequirementRepository creditRequirementRepository;
 
     private Major major;
     private CreditRequirement creditRequirement;
+
     @BeforeEach
     void setUp() {
         major = Major.builder()
@@ -41,22 +40,20 @@ public class CreditRequirementQueryServiceTest {
                .majorType(MajorType.PRIMARY)
                .track(Track.PRIMARY_WITH_DOUBLE)
                .build();
-
     }
+
     @Test
     @DisplayName("getMajorName - should return credit requirement")
     void getCreditRequirements_shouldSucceed() {
         // given
         given(creditRequirementRepository.findAllByMajorIdAndMajorTypeAndTrack(1L, MajorType.PRIMARY, Track.PRIMARY_WITH_DOUBLE)).willReturn(
-                List.of(creditRequirement)
-        );
+                List.of(creditRequirement));
 
         // when
         List<CreditRequirement> creditRequirements = creditRequirementQueryService.getCreditRequirements(1L, MajorType.PRIMARY, Track.PRIMARY_WITH_DOUBLE);
+
         // then
         assertThat(creditRequirements).isEqualTo(List.of(creditRequirement));
-
-
     }
 
     @Test
