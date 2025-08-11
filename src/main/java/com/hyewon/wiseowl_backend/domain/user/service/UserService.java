@@ -21,6 +21,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -118,22 +119,22 @@ public class UserService {
     @Transactional(readOnly = true)
     public List<GraduationRequirementGroupByMajorResponse> getGraduationRequirementsForUser(Long userId){
         List<UserRequirementStatus> all = userRequirementStatusRepository.findAllByUserId(userId);
-        Map<Long, List<UserRequirementStatus>> grouped = all.stream()
-                .collect(Collectors.groupingBy(urs ->
-                        urs.getMajorRequirement().getMajor().getId())
-                );
-
         if(all.isEmpty()){
             throw new UserGraduationStatusNotFoundException(userId);
         }
 
-        return grouped.values().stream().map(
+        ArrayList<List<UserRequirementStatus>> grouped = new ArrayList<>(all.stream()
+                .collect(Collectors.groupingBy(urs ->
+                        urs.getMajorRequirement().getMajor().getId())
+                ).values());
+
+        return grouped.stream().map(
                 statuses -> {
-                    MajorRequirement anyMr = statuses.get(0).getMajorRequirement();
-                    Long majorId = anyMr.getMajor().getId();
-                    String majorName = anyMr.getMajor().getName();
+                    MajorRequirement firstMajorRequirement = statuses.get(0).getMajorRequirement();
+                    Long majorId = firstMajorRequirement.getMajor().getId();
+                    String majorName = firstMajorRequirement.getMajor().getName();
                     return GraduationRequirementGroupByMajorResponse.from(
-                            majorId, majorName, anyMr.getMajorType(), statuses
+                            majorId, majorName, firstMajorRequirement.getMajorType(), statuses
                     );
                 }).toList();
     }
