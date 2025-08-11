@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
 
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForClassTypes.tuple;
@@ -49,48 +48,23 @@ public class UserServiceTest {
     @InjectMocks
     UserService userService;
 
-    @Mock
-    private UserRepository userRepository;
-    @Mock
-    private ProfileRepository profileRepository;
-    @Mock
-    private MajorRepository majorRepository;
-
-    @Mock
-    private MajorQueryService majorQueryService;
-    @Mock
-    private UserMajorRepository userMajorRepository;
-    @Mock
-    private UserCompletedCourseRepository userCompletedCourseRepository;
-    @Mock
-    private CourseOfferingQueryService courseOfferingQueryService;
-    @Mock
-    private MajorRequirementQueryService majorRequirementQueryService;
-    @Mock
-    private UserRequirementStatusRepository userRequirementStatusRepository;
-    @Mock
-    private CreditRequirementQueryService creditRequirementQueryService;
-
-    @Mock
-    private RequiredMajorCourseQueryService requiredMajorCourseQueryService;
-
-
-    @Mock
-    private RequiredLiberalCategoryQueryService requiredLiberalCategoryQueryService;
-
-    @Mock
-    private UserRequiredCourseStatusRepository userRequiredCourseStatusRepository;
-
-    @Mock
-    private UserSubscriptionRepository userSubscriptionRepository;
-
+    @Mock private UserRepository userRepository;
+    @Mock private ProfileRepository profileRepository;
+    @Mock private MajorRepository majorRepository;
+    @Mock private MajorQueryService majorQueryService;
+    @Mock private UserMajorRepository userMajorRepository;
+    @Mock private UserCompletedCourseRepository userCompletedCourseRepository;
+    @Mock private CourseOfferingQueryService courseOfferingQueryService;
+    @Mock private MajorRequirementQueryService majorRequirementQueryService;
+    @Mock private UserRequirementStatusRepository userRequirementStatusRepository;
+    @Mock private CreditRequirementQueryService creditRequirementQueryService;
+    @Mock private RequiredMajorCourseQueryService requiredMajorCourseQueryService;
+    @Mock private RequiredLiberalCategoryQueryService requiredLiberalCategoryQueryService;
+    @Mock private UserRequiredCourseStatusRepository userRequiredCourseStatusRepository;
+    @Mock private UserSubscriptionRepository userSubscriptionRepository;
     @Mock private UserTrackRepository userTrackRepository;
-
-    @Mock
-    private ApplicationEventPublisher eventPublisher;
-
-    @Mock
-    private EntityManager entityManager;
+    @Mock private ApplicationEventPublisher eventPublisher;
+    @Mock private EntityManager entityManager;
 
     private User user;
     private Profile profile;
@@ -117,7 +91,6 @@ public class UserServiceTest {
     private UserRequiredCourseStatus userRequiredCourseStatus1;
     private UserRequiredCourseStatus userRequiredCourseStatus2;
     private UserTrack userTrack;
-
 
     @BeforeEach
     void setUp() {
@@ -182,11 +155,9 @@ public class UserServiceTest {
                 .majorType(MajorType.DOUBLE)
                 .build();
         creditRequirement = mock(CreditRequirement.class);
-
         liberalCategory = LiberalCategory.builder()
                 .name("인간과사회")
                 .build();
-
         course = Course.builder()
                 .major(major)
                 .name("자료구조")
@@ -197,7 +168,6 @@ public class UserServiceTest {
         offering = CourseOffering.builder()
                 .course(course)
                 .build();
-
         ucc = UserCompletedCourse.builder()
                 .id(1L)
                 .user(user)
@@ -211,12 +181,10 @@ public class UserServiceTest {
                 List.of(new UserMajorRequest(1L, MajorType.PRIMARY)),
                 Track.PRIMARY_WITH_DOUBLE
         );
-
         userTrack = UserTrack.builder()
                 .user(user)
                 .track(Track.PRIMARY_WITH_DOUBLE)
                 .build();
-
         creditRequirement = CreditRequirement.builder()
                 .major(major)
                 .majorType(MajorType.PRIMARY)
@@ -224,14 +192,12 @@ public class UserServiceTest {
                 .requiredCredits(130)
                 .track(Track.PRIMARY_WITH_DOUBLE)
                 .build();
-
         requiredMajorCourse = RequiredMajorCourse.builder()
                 .id(10L)
                 .course(course)
                 .major(major)
                 .majorType(MajorType.PRIMARY)
                 .build();
-
         rlc =RequiredLiberalCategoryByCollege.builder()
                 .id(20L)
                 .liberalCategory(liberalCategory)
@@ -243,7 +209,6 @@ public class UserServiceTest {
                 .requiredCourseId(10L)
                 .fulfilled(false)
                 .build();
-
         userRequiredCourseStatus2 = UserRequiredCourseStatus.builder()
                 .id(20L)
                 .user(user)
@@ -251,15 +216,9 @@ public class UserServiceTest {
                 .requiredCourseId(20L)
                 .fulfilled(false)
                 .build();
-
-
-
-
-
         CompletedCourseInsertItem item =
                 new CompletedCourseInsertItem(1L, Grade.A, true);
         completedCourseInsertRequest = new CompletedCourseInsertRequest(List.of(item));
-
     }
 
     @Test
@@ -278,12 +237,10 @@ public class UserServiceTest {
         given(requiredLiberalCategoryQueryService.getApplicableLiberalCategories(major.getCollege().getId(),  profileUpdateRequest.entranceYear()))
                 .willReturn(List.of(rlc));
 
-
         // when
         userService.updateUserProfile(userId, profileUpdateRequest);
 
         // then
-
         assertThat(profile.getEntranceYear()).isEqualTo(2022);
         assertThat(user.getUsername()).isEqualTo("test");
 
@@ -328,7 +285,6 @@ public class UserServiceTest {
         }));
     }
 
-
     @Test
     @DisplayName("updateUserProfile - should throw when user not found")
     void updateUserProfile_shouldThrow_whenUserNotFound() {
@@ -340,7 +296,6 @@ public class UserServiceTest {
         assertThrows(UserNotFoundException.class,
                 () -> userService.updateUserProfile(userId, profileUpdateRequest));
     }
-
 
     @Test
     @DisplayName("updateUserProfile - should throw when profile not found")
@@ -354,7 +309,6 @@ public class UserServiceTest {
         assertThrows(ProfileNotFoundException.class,
                 () -> userService.updateUserProfile(userId, profileUpdateRequest));
     }
-
 
     @Test
     @DisplayName("insertCompletedCourses – success")
@@ -377,12 +331,9 @@ public class UserServiceTest {
                     && list.get(0).getCourseOffering().equals(offering)
                     && list.get(0).getGrade().equals(Grade.A)
                     && list.get(0).isRetake();
-
         }));
         verify(eventPublisher).publishEvent(any(CompletedCoursesRegisteredEvent.class));
-
     }
-
 
     @Test
     @DisplayName("insertCompletedCourses – already exists")
@@ -397,7 +348,6 @@ public class UserServiceTest {
                 () -> userService.insertCompletedCourses(userId, completedCourseInsertRequest));
     }
 
-
     @Test
     @DisplayName("getGraduationRequirementsForUser - should group by major and map to response")
     void getGraduationRequirementsForUser_shouldSucceed() {
@@ -410,16 +360,13 @@ public class UserServiceTest {
         List<GraduationRequirementGroupByMajorResponse> result =
                 userService.getGraduationRequirementsForUser(userId);
 
-
         // then
         assertThat(result.get(0).majorName()).isEqualTo("컴퓨터공학과");
         assertThat(result.get(0).majorType()).isEqualTo(MajorType.PRIMARY);
         assertThat(result.get(0).requirements().get(0).userRequirementStatusId()).isEqualTo(20L);
         assertThat(result.get(0).requirements().get(0).name()).isEqualTo("졸업시험");
         assertThat(result.get(0).requirements().get(0).fulfilled()).isEqualTo(false);
-
     }
-
 
     @Test
     @DisplayName("getGraduationRequirementsForUser - should throw when no data found")
@@ -433,7 +380,6 @@ public class UserServiceTest {
         assertThatThrownBy(() -> userService.getGraduationRequirementsForUser(userId))
                 .isInstanceOf(UserGraduationStatusNotFoundException.class);
     }
-
 
     @Test
     @DisplayName("updateUserRequirementStatus - should update userRequirementStatus")
@@ -449,8 +395,6 @@ public class UserServiceTest {
 
         // then
         assertThat(urs1.isFulfilled()).isEqualTo(true);
-
-
     }
 
     @Test
@@ -465,7 +409,6 @@ public class UserServiceTest {
         UserRequirementFulfillmentRequest rfRequest = new UserRequirementFulfillmentRequest(major.getId(), List.of(update));
         assertThrows(UserGraduationStatusNotFoundException.class,
                 () -> userService.updateUserRequirementStatus(userId, rfRequest));
-
     }
 
     @Test
@@ -492,7 +435,6 @@ public class UserServiceTest {
         assertThat(byMajor.earnedCredits()).isEqualTo(3);
         assertThat(byMajor.requirements().get(0).fulfilled()).isEqualTo(false);
         assertThat(byMajor.requirements().get(0).requirementName()).isEqualTo("졸업시험");
-
     }
 
     @Test
@@ -533,11 +475,9 @@ public class UserServiceTest {
                 .willReturn(rlc);
 
         // when
-
         UserRequiredCourseStatusResponse response = userService.fetchUserRequiredCourseStatus(userId, MajorType.PRIMARY);
 
         // then
-
         assertThat(response.majorRequiredCourses().get(0).courseCode()).isEqualTo("V41006");
         assertThat(response.majorRequiredCourses().get(0).courseName()).isEqualTo("자료구조");
         assertThat(response.majorRequiredCourses().get(0).fulfilled()).isEqualTo(false);;
@@ -545,8 +485,8 @@ public class UserServiceTest {
         assertThat(response.liberalRequiredCourses().get(0).liberalCategoryName()).isEqualTo("인간과사회");
         assertThat(response.liberalRequiredCourses().get(0).requiredCredit()).isEqualTo(6);
         assertThat(response.liberalRequiredCourses().get(0).fulfilled()).isEqualTo(false);
-
     }
+
     @Test
     @DisplayName("fetchUserRequiredCourseStatus - should throw when user required course status not found")
     void fetchUserRequiredCourseStatus_shouldThrow_whenNoUserRequiredCourseStatus() {
@@ -558,12 +498,7 @@ public class UserServiceTest {
         // when & then
         assertThrows(UserRequiredCourseStatusNotFoundException.class,
                 () -> userService.fetchUserRequiredCourseStatus(userId, MajorType.PRIMARY));
-
     }
-
-
-
-
 
     @Test
     @DisplayName("fetchUserGraduationRequirementStatus - should return graduation requirement statuses grouped by major type")
@@ -582,8 +517,6 @@ public class UserServiceTest {
         assertThat(response.get(0).graduationRequirementItems().get(0).description()).isEqualTo("다른시험대체가능");
         assertThat(response.get(0).graduationRequirementItems().get(0).fulfilled()).isEqualTo(false);
         assertThat(response.get(1).majorType()).isEqualTo(MajorType.DOUBLE);
-
-
     }
 
     @Test
@@ -597,9 +530,7 @@ public class UserServiceTest {
         // when & then
         assertThrows(UserGraduationStatusNotFoundException.class,
                 () -> userService.fetchUserGraduationRequirementStatus(userId));
-
     }
-
 
     @Test
     @DisplayName("fetchUserSummary -  should return user summary including primary and second major if present")
@@ -620,8 +551,6 @@ public class UserServiceTest {
         assertThat(response.primaryMajor().majorName()).isEqualTo("컴퓨터공학과");
         assertThat(response.doubleMajor().majorName()).isEqualTo("철학과");
         assertThat(response.GPA()).isEqualTo(3.9);
-
-
     }
 
     @Test
@@ -631,11 +560,9 @@ public class UserServiceTest {
         Long userId = 1L;
         given(userRepository.findById(userId)).willReturn(Optional.empty());
 
-
         // when & then
         assertThrows(UserNotFoundException.class,
                 () -> userService.fetchUserSummary(userId));
-
     }
 
     @Test
@@ -650,7 +577,6 @@ public class UserServiceTest {
         given(majorQueryService.getMajor(1L)).willReturn(major);
         given(majorQueryService.getMajor(2L)).willReturn(major2);
 
-
         // when
         UserMajorUpdateRequest rq1 = new UserMajorUpdateRequest(MajorType.PRIMARY, 2L);
         UserMajorUpdateRequest rq2 = new UserMajorUpdateRequest(MajorType.DOUBLE, 1L);
@@ -659,9 +585,7 @@ public class UserServiceTest {
         // then
         assertThat(userMajor.getMajor()).isEqualTo(major2);
         assertThat(userMajor2.getMajor()).isEqualTo(major);
-
     }
-
 
     @Test
     @DisplayName("updateUserMajorTypes -  should update user major types")
@@ -715,7 +639,6 @@ public class UserServiceTest {
         assertThat(ucc.getGrade()).isEqualTo(Grade.B);
         assertThat(ucc.isRetake()).isEqualTo(false);
         verify(eventPublisher).publishEvent(any(CompletedCoursesUpdateEvent.class));
-
     }
 
     @Test
@@ -730,7 +653,6 @@ public class UserServiceTest {
         CompletedCourseUpdateRequest rq1 = new CompletedCourseUpdateRequest(2L, Grade.B, false);
         assertThrows(UserCompletedCourseNotFoundException.class,
                 () -> userService.updateCompletedCourses(userId, List.of(rq1)));
-
     }
 
     @Test
@@ -744,7 +666,6 @@ public class UserServiceTest {
         ArgumentCaptor<List<UserSubscription>> captor = ArgumentCaptor.forClass(List.class);
 
         // when
-
         userService.registerUserSubscriptions(userId,  List.of(request1, request2));
 
         // then
@@ -761,7 +682,6 @@ public class UserServiceTest {
         assertThat(saved).allSatisfy(subscription ->
                 assertThat(subscription.getUser()).isEqualTo(user)
         );
-
     }
 
     @Test
@@ -777,9 +697,6 @@ public class UserServiceTest {
 
         assertThrows(UserNotFoundException.class, () ->
                 userService.registerUserSubscriptions(userId,  List.of(request1, request2)));
-
-
-
     }
 
     @Test
@@ -814,8 +731,6 @@ public class UserServiceTest {
         assertThat(saved).allSatisfy(subscription ->
                 assertThat(subscription.getUser()).isEqualTo(user)
         );
-
-
     }
 
     @Test
@@ -832,8 +747,6 @@ public class UserServiceTest {
         // when & then
         assertThrows(UserNotFoundException.class, () ->
                 userService.replaceAllUserSubscriptions(userId,  List.of(request1, request2)));
-
-
     }
 
     @DisplayName("deleteUser - marks user as deleted when user exists")
@@ -857,12 +770,8 @@ public class UserServiceTest {
         Long userId = 999L;
         given(userRepository.findById(userId)).willReturn(Optional.empty());
 
-
         // when & then
         assertThrows(UserNotFoundException.class, () ->
                 userService.deleteUser(userId));
     }
-
-
-
 }
