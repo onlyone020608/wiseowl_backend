@@ -29,7 +29,6 @@ import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 public class CourseServiceTest {
-
     @Mock private CourseOfferingRepository courseOfferingRepository;
     @Mock private LiberalCategoryRepository liberalCategoryRepository;
     @Mock private MajorRepository majorRepository;
@@ -43,7 +42,6 @@ public class CourseServiceTest {
     private CourseOffering courseOffering;
     private Course liberalCourse;
     private CourseOffering liberalCourseOffering;
-
 
     @BeforeEach
     void setUp() throws Exception {
@@ -104,13 +102,13 @@ public class CourseServiceTest {
         given(courseOfferingRepository.findDistinctLiberalCategoriesBySemester(semesterId))
                 .willReturn(List.of(liberal));
 
-        // when & then
+        // when
         List<CourseCategoryDto> result = courseService.getCourseCategoriesBySemester(semesterId);
 
+        // then
         assertThat(result).hasSize(2);
         assertThat(result).extracting("name")
                 .containsExactlyInAnyOrder("컴퓨터공학과", "언어와문학");
-
     }
 
     @Test
@@ -134,10 +132,8 @@ public class CourseServiceTest {
     void getCourseOfferings_success() {
         // given
         Long semesterId = 1L;
-
         given(courseOfferingRepository.findAllBySemesterId(semesterId))
                 .willReturn(List.of(courseOffering, liberalCourseOffering));
-
         given(liberalCategoryRepository.findByCourse(liberalCourse))
                 .willReturn(Optional.of(liberal));
 
@@ -147,7 +143,6 @@ public class CourseServiceTest {
         // then
         assertThat(result).hasSize(2);
         assertThat(result).extracting("courseName").containsExactlyInAnyOrder("자료구조", "글쓰기");
-    
     }
 
     @Test
@@ -170,7 +165,6 @@ public class CourseServiceTest {
         // given
         given(courseOfferingRepository.findAllBySemesterId(1L))
                 .willReturn(List.of(liberalCourseOffering));
-
         given(liberalCategoryRepository.findByCourse(liberalCourse))
                 .willReturn(Optional.empty());
 
@@ -179,6 +173,7 @@ public class CourseServiceTest {
             courseService.getCourseOfferingsBySemester(1L);
         });
     }
+
     @Test
     @DisplayName("getCollegesWithMajors – groups majors by college")
     void getCollegesWithMajors_success() {
@@ -191,9 +186,9 @@ public class CourseServiceTest {
                 courseService.getCollegesWithMajors();
 
         // then
-        assertThat(result).hasSize(1);
         CollegeWithMajorsDto dto = result.get(0);
 
+        assertThat(result).hasSize(1);
         assertThat(dto.collegeId()).isEqualTo(1L);
         assertThat(dto.collegeName()).isEqualTo("공과대학");
         assertThat(dto.majors())
@@ -214,6 +209,4 @@ public class CourseServiceTest {
         // then
         assertThat(result).isEmpty();
     }
-
-
 }
