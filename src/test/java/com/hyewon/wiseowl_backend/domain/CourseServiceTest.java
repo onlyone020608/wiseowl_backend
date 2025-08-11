@@ -18,9 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
 
-import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,81 +40,58 @@ public class CourseServiceTest {
     private College college;
     private LiberalCategory liberal;
     private Course course;
-    private CourseOffering offering;
+    private CourseOffering courseOffering;
     private Course liberalCourse;
-    private CourseOffering liberalOffering;
+    private CourseOffering liberalCourseOffering;
 
 
     @BeforeEach
     void setUp() throws Exception {
-        // College
-        Constructor<College> collegeCtor = College.class.getDeclaredConstructor();
-        collegeCtor.setAccessible(true);
-        college = collegeCtor.newInstance();
-        ReflectionTestUtils.setField(college, "id", 1L);
-        ReflectionTestUtils.setField(college, "name", "공과대학");
-
-        // Major A
-        Constructor<Major> majorCtor = Major.class.getDeclaredConstructor();
-        majorCtor.setAccessible(true);
-        major1 = majorCtor.newInstance();
-        ReflectionTestUtils.setField(major1, "id", 10L);
-        ReflectionTestUtils.setField(major1, "name", "컴퓨터공학과");
-        ReflectionTestUtils.setField(major1, "college", college);
-
-        // Major B
-        major2 = majorCtor.newInstance();
-        ReflectionTestUtils.setField(major2, "id", 11L);
-        ReflectionTestUtils.setField(major2, "name", "전기전자공학과");
-        ReflectionTestUtils.setField(major2, "college", college);
-
-        //LiberalCategory
-        Constructor<LiberalCategory> liberalCtor = LiberalCategory.class.getDeclaredConstructor();
-        liberalCtor.setAccessible(true);
-        liberal = liberalCtor.newInstance();
-        ReflectionTestUtils.setField(liberal, "id", 1L);
-        ReflectionTestUtils.setField(liberal, "name", "언어와문학");
-
-
-        // 전공 Course
-        Constructor<Course> courseCtor = Course.class.getDeclaredConstructor();
-        courseCtor.setAccessible(true);
-        course = courseCtor.newInstance();
-        ReflectionTestUtils.setField(course, "id", 10L);
-        ReflectionTestUtils.setField(course, "courseCodePrefix", "CSE");
-        ReflectionTestUtils.setField(course, "credit", 3);
-        ReflectionTestUtils.setField(course, "courseType", CourseType.MAJOR);
-        ReflectionTestUtils.setField(course, "name", "자료구조");
-        ReflectionTestUtils.setField(course, "major", major1);
-
-        // 전공 CourseOffering
-        Constructor<CourseOffering> offeringCtor = CourseOffering.class.getDeclaredConstructor();
-        offeringCtor.setAccessible(true);
-        offering = offeringCtor.newInstance();
-        ReflectionTestUtils.setField(offering, "id", 100L);
-        ReflectionTestUtils.setField(offering, "course", course);
-        ReflectionTestUtils.setField(offering, "room", "0409");
-        ReflectionTestUtils.setField(offering, "courseCode", "CSE101");
-
-        // 교양 Course
-        Constructor<Course> liberalCourseCtor = Course.class.getDeclaredConstructor();
-        liberalCourseCtor.setAccessible(true);
-        liberalCourse = liberalCourseCtor.newInstance();
-        ReflectionTestUtils.setField(liberalCourse, "id", 20L);
-        ReflectionTestUtils.setField(liberalCourse, "courseCodePrefix", "GEN");
-        ReflectionTestUtils.setField(liberalCourse, "credit", 2);
-        ReflectionTestUtils.setField(liberalCourse, "courseType", CourseType.GENERAL);
-        ReflectionTestUtils.setField(liberalCourse, "name", "글쓰기");
-
-        // 교양 CourseOffering
-        Constructor<CourseOffering> liberalOfferingCtor = CourseOffering.class.getDeclaredConstructor();
-        liberalOfferingCtor.setAccessible(true);
-        liberalOffering = liberalOfferingCtor.newInstance();
-        ReflectionTestUtils.setField(liberalOffering, "id", 200L);
-        ReflectionTestUtils.setField(liberalOffering, "course", liberalCourse);
-        ReflectionTestUtils.setField(liberalOffering, "room", "0409");
-        ReflectionTestUtils.setField(liberalOffering, "courseCode", "GEN101");
-
+        college = College.builder()
+                .id(1L)
+                .name("공과대학")
+                .build();
+        major1 = Major.builder()
+                .id(10L)
+                .name("컴퓨터공학과")
+                .college(college)
+                .build();
+        major2 = Major.builder()
+                .id(11L)
+                .name("전기전자공학과")
+                .college(college)
+                .build();
+        liberal = LiberalCategory.builder()
+                .id(1L)
+                .name("언어와문학")
+                .build();
+        course = Course.builder()
+                .id(10L)
+                .courseCodePrefix("CSE")
+                .credit(3)
+                .courseType(CourseType.MAJOR)
+                .name("자료구조")
+                .major(major1)
+                .build();
+        courseOffering = CourseOffering.builder()
+                .id(100L)
+                .course(course)
+                .room("0409")
+                .courseCode("CSE101")
+                .build();
+        liberalCourse = Course.builder()
+                .id(20L)
+                .courseCodePrefix("GEN")
+                .credit(2)
+                .courseType(CourseType.GENERAL)
+                .name("글쓰기")
+                .build();
+        liberalCourseOffering = CourseOffering.builder()
+                .id(200L)
+                .course(liberalCourse)
+                .room("0409")
+                .courseCode("GEN101")
+                .build();
     }
 
     @Test
@@ -161,7 +136,7 @@ public class CourseServiceTest {
         Long semesterId = 1L;
 
         given(courseOfferingRepository.findAllBySemesterId(semesterId))
-                .willReturn(List.of(offering, liberalOffering));
+                .willReturn(List.of(courseOffering, liberalCourseOffering));
 
         given(liberalCategoryRepository.findByCourse(liberalCourse))
                 .willReturn(Optional.of(liberal));
@@ -194,7 +169,7 @@ public class CourseServiceTest {
     void getCourseOfferings_shouldThrow_whenLiberalNotFound() {
         // given
         given(courseOfferingRepository.findAllBySemesterId(1L))
-                .willReturn(List.of(liberalOffering));
+                .willReturn(List.of(liberalCourseOffering));
 
         given(liberalCategoryRepository.findByCourse(liberalCourse))
                 .willReturn(Optional.empty());
