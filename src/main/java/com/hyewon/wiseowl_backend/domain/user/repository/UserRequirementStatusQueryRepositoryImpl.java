@@ -24,8 +24,8 @@ public class UserRequirementStatusQueryRepositoryImpl implements UserRequirement
     public List<UserRequirementStatus> findByUserAndMajor(Long userId, Major major, MajorType majorType) {
         return query.select(urs)
                 .join(urs.user, user)
-                .join(urs.majorRequirement, mr)
-                .join(mr.major, m)
+                .join(urs.majorRequirement, mr).fetchJoin()
+                .join(mr.major, m).fetchJoin()
                 .where(
                         user.id.eq(userId),
                         m.eq(major),
