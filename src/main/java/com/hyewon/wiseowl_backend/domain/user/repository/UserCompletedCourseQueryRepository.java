@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface UserCompletedCourseQueryRepository {
     List<CreditAndGradeDto>findCourseCreditsAndGradesByUserId(Long userId);
-
+    int sumCreditsByUser(Long userId);
 }

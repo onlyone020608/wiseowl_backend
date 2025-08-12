@@ -421,7 +421,7 @@ public class UserServiceTest {
         given(userTrackRepository.findByUserId(userId)).willReturn(userTrack);
         given(userRequirementStatusRepository.findAllByUserId(userId)).willReturn(List.of(urs1));
         given(creditRequirementQueryService.getCreditRequirements(major.getId(), MajorType.PRIMARY, Track.PRIMARY_WITH_DOUBLE)).willReturn(List.of(creditRequirement));
-        given(userCompletedCourseRepository.findByUserId(userId)).willReturn(List.of(ucc));
+        given(userCompletedCourseRepository.sumCreditsByUser(userId)).willReturn(3);
 
         // when
         MainPageGraduationStatusResponse response = userService.fetchUserGraduationOverview(userId);

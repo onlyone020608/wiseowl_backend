@@ -28,4 +28,21 @@ public class UserCompletedCourseQueryRepositoryImpl implements UserCompletedCour
                 .where(ucc.user.id.eq(userId))
                 .fetch();
     }
+
+    @Override
+    public int sumCreditsByUser(Long userId) {
+        QUserCompletedCourse ucc = QUserCompletedCourse.userCompletedCourse;
+        QCourseOffering co = QCourseOffering.courseOffering;
+        QCourse c = QCourse.course;
+
+        Integer sum = query
+                .select(c.credit.sum())
+                .from(ucc)
+                .join(ucc.courseOffering, co)
+                .join(co.course, c)
+                .where(ucc.user.id.eq(userId))
+                .fetchOne();
+
+        return sum;
+    }
 }
