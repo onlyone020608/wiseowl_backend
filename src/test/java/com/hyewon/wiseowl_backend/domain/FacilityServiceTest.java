@@ -24,11 +24,8 @@ import static org.mockito.BDDMockito.given;
 @ExtendWith(MockitoExtension.class)
 public class FacilityServiceTest {
 
-    @Mock
-    private FacilityRepository facilityRepository;
-
-    @InjectMocks
-    private FacilityService facilityService;
+    @Mock private FacilityRepository facilityRepository;
+    @InjectMocks private FacilityService facilityService;
 
     private Building building1;
     private Building building2;
@@ -48,7 +45,6 @@ public class FacilityServiceTest {
                 .buildingNumber(1)
                 .name("공학관")
                 .build();
-
         facility1 = Facility.builder()
                 .building(building1)
                 .name("열람실")
@@ -64,12 +60,11 @@ public class FacilityServiceTest {
                 .floor(2)
                 .building(building2)
                 .build();
-
     }
 
     @Test
     @DisplayName("fetchAllFacilities - should return all facilities")
-    void fetchAllFacilities_success(){
+    void fetchAllFacilities_success() {
         // given
         given(facilityRepository.findAll()).willReturn(List.of(facility1, facility2, facility3));
 
@@ -88,13 +83,12 @@ public class FacilityServiceTest {
 
     @Test
     @DisplayName("fetchAllFacilities - should throw FacilityNotFoundException when facility does not exist")
-    void fetchAllFacilities_shouldThrowException_whenFacilityNotFound(){
+    void fetchAllFacilities_shouldThrowException_whenFacilityNotFound() {
         // given
         given(facilityRepository.findAll()).willReturn(List.of());
 
         // when & then
         assertThrows(FacilityNotFoundException.class,
                 () -> facilityService.fetchAllFacilities());
-
     }
 }
