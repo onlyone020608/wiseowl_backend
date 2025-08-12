@@ -22,14 +22,12 @@ import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 public class CourseOfferingQueryServiceTest {
-    @InjectMocks
-    CourseOfferingQueryService courseOfferingQueryService;
-
-    @Mock
-    CourseOfferingRepository courseOfferingRepository;
+    @InjectMocks CourseOfferingQueryService courseOfferingQueryService;
+    @Mock CourseOfferingRepository courseOfferingRepository;
 
     private CourseOffering offering;
     private Course course;
+
     @BeforeEach
     void setUp() {
         course = Course.builder()
@@ -43,7 +41,6 @@ public class CourseOfferingQueryServiceTest {
                 .id(1L)
                 .course(course)
                 .build();
-
     }
 
     @Test
