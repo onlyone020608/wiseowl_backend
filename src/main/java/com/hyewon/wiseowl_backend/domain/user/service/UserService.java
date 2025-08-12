@@ -174,12 +174,7 @@ public class UserService {
                                 return mr.getMajor().equals(major) && mr.getMajorType().equals(majorType);
                             }).toList();
 
-                    List<CreditRequirement> creditRequirements = creditRequirementQueryService.getCreditRequirements(major.getId(), majorType, userTrack.getTrack());
-                    int requiredCredits = creditRequirements.stream()
-                            .filter(cr -> cr.getCourseType().equals(CourseType.MAJOR))
-                            .mapToInt(CreditRequirement::getRequiredCredits)
-                            .sum();
-
+                    int requiredCredits = creditRequirementQueryService.sumRequiredCredits(major, majorType, userTrack.getTrack(), user.getProfile().getEntranceYear());
                     int earnedCredits = userCompletedCourseRepository.sumCreditsByUser(userId);
 
                     return RequirementStatusByMajor.from(major.getName(), earnedCredits, requiredCredits, statuses);

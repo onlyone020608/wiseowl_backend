@@ -96,6 +96,7 @@ public class UserServiceTest {
     void setUp() {
         profile2 = Profile.builder()
                 .GPA(3.9)
+                .entranceYear(2024)
                 .build();
         user = User.builder()
                 .username("Test")
@@ -420,7 +421,7 @@ public class UserServiceTest {
         given(userMajorRepository.findAllByUserId(userId)).willReturn(List.of(userMajor));
         given(userTrackRepository.findByUserId(userId)).willReturn(userTrack);
         given(userRequirementStatusRepository.findAllByUserId(userId)).willReturn(List.of(urs1));
-        given(creditRequirementQueryService.getCreditRequirements(major.getId(), MajorType.PRIMARY, Track.PRIMARY_WITH_DOUBLE)).willReturn(List.of(creditRequirement));
+        given(creditRequirementQueryService.sumRequiredCredits(major, MajorType.PRIMARY, Track.PRIMARY_WITH_DOUBLE, 2024)).willReturn(130);
         given(userCompletedCourseRepository.sumCreditsByUser(userId)).willReturn(3);
 
         // when

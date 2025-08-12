@@ -1,15 +1,12 @@
 package com.hyewon.wiseowl_backend.domain.requirement.service;
 
-import com.hyewon.wiseowl_backend.domain.requirement.entity.CreditRequirement;
+import com.hyewon.wiseowl_backend.domain.course.entity.Major;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorType;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.Track;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.CreditRequirementRepository;
-import com.hyewon.wiseowl_backend.global.exception.CreditRequirementNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -18,11 +15,7 @@ public class CreditRequirementQueryService {
     private final CreditRequirementRepository creditRequirementRepository;
 
     @Transactional(readOnly = true)
-    public List<CreditRequirement> getCreditRequirements(Long majorId, MajorType majorType, Track track){
-        List<CreditRequirement> results = creditRequirementRepository.findAllByMajorIdAndMajorTypeAndTrack(majorId, majorType, track);
-        if(results.isEmpty()){
-            throw new CreditRequirementNotFoundException(majorId, majorType, track);
-        }
-        return results;
+    public int sumRequiredCredits(Major major, MajorType majorType, Track track, Integer entranceYear) {
+        return creditRequirementRepository.sumRequiredCredits(major, majorType, track, entranceYear);
     }
 }
