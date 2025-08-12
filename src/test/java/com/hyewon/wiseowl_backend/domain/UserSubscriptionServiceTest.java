@@ -13,7 +13,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
@@ -21,35 +20,31 @@ import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 public class UserSubscriptionServiceTest {
-    @InjectMocks
-    UserSubscriptionService userSubscriptionService;
-
-    @Mock
-    UserSubscriptionRepository userSubscriptionRepository;
+    @InjectMocks UserSubscriptionService userSubscriptionService;
+    @Mock UserSubscriptionRepository userSubscriptionRepository;
 
     private UserSubscription userSubscription;
     private User user;
+
     @BeforeEach
     void setUp() {
         user = User.builder()
                 .id(1L)
                 .build();
-
         userSubscription = UserSubscription.builder()
                 .user(user)
                 .targetId(2L)
                 .type(SubscriptionType.MAJOR)
                 .build();
-
     }
+
     @Test
     @DisplayName("getSubscriptions - should return user's subscription list")
     void getSubscriptions_shouldSucceed() {
         // given
         Long userId = 1L;
         given(userSubscriptionRepository.findAllByUserId(userId)).willReturn(
-                List.of(userSubscription)
-        );
+                List.of(userSubscription));
 
         // when
         List<UserSubscription> subscriptions = userSubscriptionService.getSubscriptions(userId);
@@ -57,8 +52,6 @@ public class UserSubscriptionServiceTest {
         // then
         assertThat(subscriptions).hasSize(1);
         assertThat(userSubscription).isEqualTo(subscriptions.get(0));
-
-
     }
 }
 
