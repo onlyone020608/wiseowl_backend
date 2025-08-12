@@ -38,16 +38,13 @@ import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 public class AuthServiceTest {
-
     @Mock private AuthenticationManager authenticationManager;
     @Mock private JwtProvider jwtProvider;
     @Mock private  UserRepository userRepository;
     @Mock private PasswordEncoder passwordEncoder;
     @Mock private Authentication authentication;
     @Mock private RefreshTokenRepository refreshTokenRepository;
-
-    @InjectMocks
-    private AuthService authService;
+    @InjectMocks private AuthService authService;
 
     private SignUpRequest signUpRequest;
     private LoginRequest loginRequest;
@@ -58,7 +55,6 @@ public class AuthServiceTest {
     void setUp() {
         signUpRequest = new SignUpRequest("tester@email.com", "securepass");
         loginRequest = new LoginRequest("tester@email.com", "rawPassword");
-//        user = User.of("tester@email.com", "encodedPassword");
         user = User.builder()
                 .id(1L)
                 .username("Test")
@@ -66,7 +62,6 @@ public class AuthServiceTest {
                 .password("encodedPassword")
                 .build();
         userPrincipal = new UserPrincipal(user);
-
     }
 
     @Test
@@ -142,7 +137,6 @@ public class AuthServiceTest {
 
         // then
         assertThat(user.getPassword()).isEqualTo("encodedNewPassword");
-
     }
 
     @Test
@@ -157,7 +151,6 @@ public class AuthServiceTest {
         // when & then
         assertThatThrownBy(() -> authService.changePassword(999L, request))
                 .isInstanceOf(UserNotFoundException.class);
-
     }
 
     @Test
@@ -231,13 +224,4 @@ public class AuthServiceTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Refresh token mismatch");
     }
-
-
-
-
-
-
-
-
-
 }
