@@ -3,6 +3,7 @@ package com.hyewon.wiseowl_backend.domain.user.repository;
 import com.hyewon.wiseowl_backend.domain.course.entity.QCourse;
 import com.hyewon.wiseowl_backend.domain.course.entity.QCourseOffering;
 import com.hyewon.wiseowl_backend.domain.user.dto.CreditAndGradeDto;
+import com.hyewon.wiseowl_backend.domain.user.entity.QUser;
 import com.hyewon.wiseowl_backend.domain.user.entity.QUserCompletedCourse;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
@@ -20,12 +21,15 @@ public class UserCompletedCourseQueryRepositoryImpl implements UserCompletedCour
         QUserCompletedCourse ucc = QUserCompletedCourse.userCompletedCourse;
         QCourseOffering co = QCourseOffering.courseOffering;
         QCourse c = QCourse.course;
+        QUser user = QUser.user;
+
         return query
                 .select(Projections.constructor(CreditAndGradeDto.class, c.credit, ucc.grade))
                 .from(ucc)
                 .join(ucc.courseOffering, co)
                 .join(co.course, c)
-                .where(ucc.user.id.eq(userId))
+                .join(ucc.user, user)
+                .where(user.id.eq(userId))
                 .fetch();
     }
 
@@ -34,15 +38,17 @@ public class UserCompletedCourseQueryRepositoryImpl implements UserCompletedCour
         QUserCompletedCourse ucc = QUserCompletedCourse.userCompletedCourse;
         QCourseOffering co = QCourseOffering.courseOffering;
         QCourse c = QCourse.course;
+        QUser user = QUser.user;
 
         Integer sum = query
                 .select(c.credit.sum())
                 .from(ucc)
                 .join(ucc.courseOffering, co)
                 .join(co.course, c)
-                .where(ucc.user.id.eq(userId))
+                .join(ucc.user, user)
+                .where(user.id.eq(userId))
                 .fetchOne();
 
-        return sum;
+        return sum != null ? 0 : sum;
     }
 }
