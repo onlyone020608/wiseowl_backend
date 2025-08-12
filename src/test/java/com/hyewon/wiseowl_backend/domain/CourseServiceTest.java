@@ -94,7 +94,7 @@ public class CourseServiceTest {
 
     @Test
     @DisplayName("getCourseCategoriesBySemester - returns combined majors and liberals")
-    void getCourseCategories_success(){
+    void getCourseCategories_success() {
         // given
         Long semesterId = 1L;
         given(courseOfferingRepository.findDistinctMajorsBySemesterId(semesterId))
