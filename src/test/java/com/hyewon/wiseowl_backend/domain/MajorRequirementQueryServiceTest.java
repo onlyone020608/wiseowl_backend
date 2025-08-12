@@ -15,18 +15,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 public class MajorRequirementQueryServiceTest {
-
-    @InjectMocks
-    MajorRequirementQueryService majorRequirementQueryService;
-
-    @Mock
-    MajorRequirementRepository majorRequirementRepository;
+    @InjectMocks MajorRequirementQueryService majorRequirementQueryService;
+    @Mock MajorRequirementRepository majorRequirementRepository;
 
     private Major major;
     private MajorRequirement majorRequirement;
@@ -40,7 +35,6 @@ public class MajorRequirementQueryServiceTest {
                .majorType(MajorType.PRIMARY)
                .major(major)
                .build();
-
     }
 
     @Test
@@ -48,8 +42,7 @@ public class MajorRequirementQueryServiceTest {
     void getApplicableRequirements_shouldSucceed() {
         // given
         given(majorRequirementRepository.findApplicable(1L, MajorType.PRIMARY, 2021)).willReturn(
-                List.of(majorRequirement)
-               );
+                List.of(majorRequirement));
 
         // when
         List<MajorRequirement> applicableRequirements = majorRequirementQueryService.getApplicableRequirements(1L, MajorType.PRIMARY, 2021);
@@ -57,7 +50,5 @@ public class MajorRequirementQueryServiceTest {
         // then
         assertThat(applicableRequirements).hasSize(1);
         assertThat(applicableRequirements.get(0)).isEqualTo(majorRequirement);
-
     }
-
 }
