@@ -22,11 +22,8 @@ import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 public class RequiredLiberalCategoryQueryServiceTest {
-    @InjectMocks
-    RequiredLiberalCategoryQueryService requiredLiberalCategoryQueryService;
-
-    @Mock
-    RequiredLiberalCategoryByCollegeRepository requiredLiberalCategoryByCollegeRepository;
+    @InjectMocks RequiredLiberalCategoryQueryService requiredLiberalCategoryQueryService;
+    @Mock RequiredLiberalCategoryByCollegeRepository requiredLiberalCategoryByCollegeRepository;
 
     private RequiredLiberalCategoryByCollege requiredLiberalCategoryByCollege;
     private College college;
@@ -40,16 +37,11 @@ public class RequiredLiberalCategoryQueryServiceTest {
                 .id(2L)
                 .college(college)
                 .build();
-
     }
-
-
-
 
     @Test
     @DisplayName("getApplicableLiberalCategories - should return applicable required liberal category")
     void getApplicableLiberalCategories_shouldSucceed() {
-
         // given
         given(requiredLiberalCategoryByCollegeRepository.findApplicableLiberalCategories(1L, 2021)).willReturn(
                 List.of(requiredLiberalCategoryByCollege)
@@ -66,7 +58,6 @@ public class RequiredLiberalCategoryQueryServiceTest {
     @Test
     @DisplayName("getRequiredLiberalCategory - should return required liberal category")
     void getRequiredLiberalCategory_shouldSucceed() {
-
         // given
         given(requiredLiberalCategoryByCollegeRepository.findById(2L)).willReturn(
                 Optional.of(requiredLiberalCategoryByCollege));
@@ -81,7 +72,6 @@ public class RequiredLiberalCategoryQueryServiceTest {
     @Test
     @DisplayName("getRequiredLiberalCategory - should throw RequiredLiberalCategoryNotFoundException when required liberal category does not exist")
     void getRequiredLiberalCategory_shouldThrowException_whenRequiredLiberalCategoryNotFound() {
-
         // given
         given(requiredLiberalCategoryByCollegeRepository.findById(999L)).willReturn(
                 Optional.empty());
