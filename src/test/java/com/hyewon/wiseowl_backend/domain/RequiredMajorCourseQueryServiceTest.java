@@ -23,14 +23,10 @@ import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 public class RequiredMajorCourseQueryServiceTest {
-    @InjectMocks
-    RequiredMajorCourseQueryService requiredMajorCourseQueryService;
-
-    @Mock
-    RequiredMajorCourseRepository reqMajorCourseRepository;
+    @InjectMocks RequiredMajorCourseQueryService requiredMajorCourseQueryService;
+    @Mock RequiredMajorCourseRepository reqMajorCourseRepository;
 
     private Major major;
-
     private RequiredMajorCourse requiredMajorCourse;
 
     @BeforeEach
@@ -43,13 +39,11 @@ public class RequiredMajorCourseQueryServiceTest {
                 .major(major)
                 .majorType(MajorType.PRIMARY)
                 .build();
-
     }
 
     @Test
     @DisplayName("getApplicableMajorCourses - should return applicable required major course")
     void getApplicableMajorCourses_shouldSucceed() {
-
         // given
         given(reqMajorCourseRepository.findApplicableMajorCourses(1L, MajorType.PRIMARY, 2021)).willReturn(
                 List.of(requiredMajorCourse)
@@ -66,7 +60,6 @@ public class RequiredMajorCourseQueryServiceTest {
     @Test
     @DisplayName("getRequiredMajorCourse - should return required major course")
     void getRequiredMajorCourse_shouldSucceed() {
-
         // given
         given(reqMajorCourseRepository.findById(2L)).willReturn(
                 Optional.of(requiredMajorCourse));
@@ -81,7 +74,6 @@ public class RequiredMajorCourseQueryServiceTest {
     @Test
     @DisplayName("getRequiredMajorCourse - should throw RequiredMajorCourseNotFoundException when required major course does not exist")
     void getRequiredMajorCourse_shouldThrowException_whenRequiredMajorCourseNotFound() {
-
         // given
         given(reqMajorCourseRepository.findById(999L)).willReturn(
                 Optional.empty());
