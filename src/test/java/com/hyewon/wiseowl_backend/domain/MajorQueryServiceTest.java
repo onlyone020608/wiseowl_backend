@@ -20,23 +20,18 @@ import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 public class MajorQueryServiceTest {
-
-    @InjectMocks
-    MajorQueryService majorQueryService;
-
-    @Mock
-    MajorRepository majorRepository;
+    @InjectMocks MajorQueryService majorQueryService;
+    @Mock MajorRepository majorRepository;
 
     private Major major;
+
     @BeforeEach
     void setUp() {
         major = Major.builder()
                 .id(1L)
                 .name("컴퓨터공학과")
                 .build();
-
     }
-
 
     @Test
     @DisplayName("getMajorName - should return major name")
