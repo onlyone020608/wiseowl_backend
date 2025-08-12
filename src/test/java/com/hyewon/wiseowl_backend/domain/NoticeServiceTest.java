@@ -30,20 +30,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 
-
 @ExtendWith(MockitoExtension.class)
 public class NoticeServiceTest {
-    @Mock
-    private NoticeRepository noticeRepository;
-    @Mock
-    private UserSubscriptionService userSubscriptionService;
-    @Mock
-    private MajorQueryService majorQueryService;
-    @Mock
-    private OrganizationRepository organizationRepository;
-
-    @InjectMocks
-    private NoticeService noticeService;
+    @Mock private NoticeRepository noticeRepository;
+    @Mock private UserSubscriptionService userSubscriptionService;
+    @Mock private MajorQueryService majorQueryService;
+    @Mock private OrganizationRepository organizationRepository;
+    @InjectMocks private NoticeService noticeService;
 
     private User user;
     private Major major;
@@ -95,13 +88,11 @@ public class NoticeServiceTest {
                 .targetId(3L)
                 .type(SubscriptionType.ORGANIZATION)
                 .build();
-
-
     }
 
     @Test
     @DisplayName("fetchAllFacilities - should return up to 6 recent notices for each subscribed target")
-    void fetchAllFacilities_success(){
+    void fetchAllFacilities_success() {
         // given
         Long userId = 1L;
         given(userSubscriptionService.getSubscriptions(userId))
@@ -125,12 +116,11 @@ public class NoticeServiceTest {
         assertThat(response.get(1).notices()).hasSize(2);
         assertThat(response.get(1).subscriptionName()).isEqualTo("컴퓨터공학과");
         assertThat(response.get(1).notices().getFirst().title()).isEqualTo("졸업시험공지사항");
-
     }
 
     @Test
     @DisplayName("fetchAllFacilities - should throw OrganizationNotFoundException when organization does not exist")
-    void fetchAllFacilities_shouldThrowException_whenOrganizationNotFound(){
+    void fetchAllFacilities_shouldThrowException_whenOrganizationNotFound() {
         // given
         Long userId = 1L;
         given(userSubscriptionService.getSubscriptions(userId))
@@ -142,8 +132,5 @@ public class NoticeServiceTest {
         // when & then
         assertThrows(OrganizationNotFoundException.class,
                 () ->  noticeService.fetchUserSubscribedNotices(userId));
-
     }
-
-
 }
