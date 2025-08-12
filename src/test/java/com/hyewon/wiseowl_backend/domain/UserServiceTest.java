@@ -43,11 +43,9 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
-
     private static final Logger log = LoggerFactory.getLogger(UserServiceTest.class);
-    @InjectMocks
-    UserService userService;
 
+    @InjectMocks UserService userService;
     @Mock private UserRepository userRepository;
     @Mock private ProfileRepository profileRepository;
     @Mock private MajorRepository majorRepository;
@@ -414,7 +412,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("fetchUserGraduationOverview - should return overview for each major")
-    void fetchUserGraduationOverview_success(){
+    void fetchUserGraduationOverview_success() {
         //given
         Long userId = 1L;
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
@@ -503,7 +501,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("fetchUserGraduationRequirementStatus - should return graduation requirement statuses grouped by major type")
-    void fetchUserGraduationRequirementStatus_success(){
+    void fetchUserGraduationRequirementStatus_success() {
         // given
         Long userId = 1L;
         given(userRequirementStatusRepository.findAllByUserId(userId))
@@ -522,7 +520,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("fetchUserGraduationRequirementStatus -  should throw when user requirement status not found")
-    void fetchUserGraduationRequirementStatus_shouldThrow_whenNoUserRequirementStatus(){
+    void fetchUserGraduationRequirementStatus_shouldThrow_whenNoUserRequirementStatus() {
         // given
         Long userId = 1L;
         given(userRequirementStatusRepository.findAllByUserId(userId))
@@ -535,7 +533,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("fetchUserSummary -  should return user summary including primary and second major if present")
-    void fetchUserSummary_success(){
+    void fetchUserSummary_success() {
         // given
         Long userId = 1L;
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
@@ -556,7 +554,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("fetchUserSummary - should throw UserNotFoundException when user does not exist")
-    void fetchUserSummary_shouldThrowException_whenUserNotFound(){
+    void fetchUserSummary_shouldThrowException_whenUserNotFound() {
         // given
         Long userId = 1L;
         given(userRepository.findById(userId)).willReturn(Optional.empty());
@@ -568,7 +566,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("updateUserMajor -  should update user major")
-    void updateUserMajor_success(){
+    void updateUserMajor_success() {
         // given
         Long userId = 1L;
         given(userMajorRepository.findByUserIdAndMajorType(userId, MajorType.PRIMARY))
@@ -590,7 +588,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("updateUserMajorTypes -  should update user major types")
-    void updateUserMajorTypes_success(){
+    void updateUserMajorTypes_success() {
         // given
         given(userMajorRepository.findById(userMajor.getId()))
                 .willReturn(Optional.of(userMajor));
@@ -605,12 +603,11 @@ public class UserServiceTest {
         // then
         assertThat(userMajor.getMajorType()).isEqualTo(MajorType.DOUBLE);
         assertThat(userMajor2.getMajorType()).isEqualTo(MajorType.PRIMARY);
-
     }
 
     @Test
     @DisplayName("updateUserMajorTypes - should throw UserMajorNotFoundException when user major does not exist")
-    void updateUserMajorTypes_shouldThrowException_whenUserMajorNotFound(){
+    void updateUserMajorTypes_shouldThrowException_whenUserMajorNotFound() {
         // given
         given(userMajorRepository.findById(userMajor.getId()))
                 .willReturn(Optional.empty());
@@ -621,12 +618,11 @@ public class UserServiceTest {
         // when & then
         assertThrows(UserMajorNotFoundException.class,
                 () -> userService.updateUserMajorTypes(List.of(rq1, rq2)));
-
     }
 
     @Test
     @DisplayName("updateCompletedCourses -  should update user completed courses")
-    void updateCompletedCourses_success(){
+    void updateCompletedCourses_success() {
         // given
         Long userId = 1L;
         given(userCompletedCourseRepository.findById(1L))
@@ -644,7 +640,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("updateCompletedCourses -   should throw UserCompletedCourseNotFoundException when user completed course does not exist")
-    void updateCompletedCourses_shouldThrowException_whenUserCompletedCourseNotFound(){
+    void updateCompletedCourses_shouldThrowException_whenUserCompletedCourseNotFound() {
         // given
         Long userId = 1L;
         given(userCompletedCourseRepository.findById(2L))
@@ -658,7 +654,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("registerUserSubscriptions - should save user subscriptions for majors and organizations" )
-    void registerUserSubscriptions_success(){
+    void registerUserSubscriptions_success() {
         // given
         Long userId = 1L;
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
@@ -687,7 +683,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("registerUserSubscriptions - should throw UserNotFoundException when user does not exist" )
-    void registerUserSubscriptions_shouldThrowException_whenUserNotFound(){
+    void registerUserSubscriptions_shouldThrowException_whenUserNotFound() {
         // given
         Long userId = 999L;
         given(userRepository.findById(userId)).willReturn(Optional.empty());
@@ -695,14 +691,13 @@ public class UserServiceTest {
         UserSubscriptionRequest request2 = new UserSubscriptionRequest(2L, SubscriptionType.ORGANIZATION);
 
         // when & then
-
         assertThrows(UserNotFoundException.class, () ->
                 userService.registerUserSubscriptions(userId,  List.of(request1, request2)));
     }
 
     @Test
     @DisplayName("replaceAllUserSubscriptions - should update user subscriptions for majors and organizations" )
-    void replaceAllUserSubscriptions_success(){
+    void replaceAllUserSubscriptions_success() {
         // given
         Long userId = 1L;
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
@@ -726,9 +721,7 @@ public class UserServiceTest {
                 .extracting("targetId", "type")
                 .containsExactlyInAnyOrder(
                         tuple(1L, SubscriptionType.MAJOR),
-                        tuple(2L, SubscriptionType.ORGANIZATION)
-                );
-
+                        tuple(2L, SubscriptionType.ORGANIZATION));
         assertThat(saved).allSatisfy(subscription ->
                 assertThat(subscription.getUser()).isEqualTo(user)
         );
@@ -736,7 +729,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("replaceAllUserSubscriptions - should throw UserNotFoundException when user does not exist" )
-    void replaceAllUserSubscriptions_shouldThrowException_whenUserNotFound(){
+    void replaceAllUserSubscriptions_shouldThrowException_whenUserNotFound() {
         // given
         Long userId = 999L;
         given(userRepository.findById(userId)).willReturn(Optional.empty());
