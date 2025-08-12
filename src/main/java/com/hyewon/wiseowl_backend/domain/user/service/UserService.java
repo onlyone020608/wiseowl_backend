@@ -167,12 +167,7 @@ public class UserService {
                     Major major = userMajor.getMajor();
                     MajorType majorType = userMajor.getMajorType();
 
-                    List<UserRequirementStatus> statuses = userRequirementStatusRepository.findAllByUserId(userId)
-                            .stream()
-                            .filter(urs -> {
-                                MajorRequirement mr = urs.getMajorRequirement();
-                                return mr.getMajor().equals(major) && mr.getMajorType().equals(majorType);
-                            }).toList();
+                    List<UserRequirementStatus> statuses = userRequirementStatusRepository.findByUserAndMajor(userId, major, majorType);
 
                     int requiredCredits = creditRequirementQueryService.sumRequiredCredits(major, majorType, userTrack.getTrack(), user.getProfile().getEntranceYear());
                     int earnedCredits = userCompletedCourseRepository.sumCreditsByUser(userId);

@@ -420,7 +420,7 @@ public class UserServiceTest {
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
         given(userMajorRepository.findAllByUserId(userId)).willReturn(List.of(userMajor));
         given(userTrackRepository.findByUserId(userId)).willReturn(userTrack);
-        given(userRequirementStatusRepository.findAllByUserId(userId)).willReturn(List.of(urs1));
+        given(userRequirementStatusRepository.findByUserAndMajor(userId, major, MajorType.PRIMARY)).willReturn(List.of(urs1));
         given(creditRequirementQueryService.sumRequiredCredits(major, MajorType.PRIMARY, Track.PRIMARY_WITH_DOUBLE, 2024)).willReturn(130);
         given(userCompletedCourseRepository.sumCreditsByUser(userId)).willReturn(3);
 
