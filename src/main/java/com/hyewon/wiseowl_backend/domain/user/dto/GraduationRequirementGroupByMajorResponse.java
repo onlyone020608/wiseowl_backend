@@ -9,7 +9,7 @@ public record GraduationRequirementGroupByMajorResponse(
         Long majorId,
         String majorName,
         MajorType majorType,
-        List<GraduationRequirementResponse> requirements
+        List<UserRequirementStatusItem> requirements
 ) {
     public static GraduationRequirementGroupByMajorResponse from(
             Long majorId,
@@ -22,9 +22,8 @@ public record GraduationRequirementGroupByMajorResponse(
                 majorName,
                 majorType,
                 statuses.stream()
-                        .map(GraduationRequirementResponse::from)
+                        .map(UserRequirementStatusItem::from)
                         .toList()
         );
     }
-
 }

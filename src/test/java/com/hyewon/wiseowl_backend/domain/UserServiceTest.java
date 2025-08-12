@@ -434,7 +434,7 @@ public class UserServiceTest {
         assertThat(byMajor.requiredCredits()).isEqualTo(130);
         assertThat(byMajor.earnedCredits()).isEqualTo(3);
         assertThat(byMajor.requirements().get(0).fulfilled()).isEqualTo(false);
-        assertThat(byMajor.requirements().get(0).requirementName()).isEqualTo("졸업시험");
+        assertThat(byMajor.requirements().get(0).name()).isEqualTo("졸업시험");
     }
 
     @Test

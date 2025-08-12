@@ -150,7 +150,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public MainPageGraduationStatusResponse fetchUserGraduationOverview(Long userId){
+    public MainPageGraduationStatusResponse fetchUserGraduationOverview(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
@@ -174,13 +174,6 @@ public class UserService {
                                 return mr.getMajor().equals(major) && mr.getMajorType().equals(majorType);
                             }).toList();
 
-                    List<RequirementStatusSummary> requirements = statuses.stream()
-                            .map(status -> new RequirementStatusSummary(
-                                    status.getId(), status.getMajorRequirement().getRequirement().getName(),
-                                    status.isFulfilled()
-                            ))
-                            .toList();
-
                     List<CreditRequirement> creditRequirements = creditRequirementQueryService.getCreditRequirements(major.getId(), majorType, userTrack.getTrack());
 
                     int requiredCredits = creditRequirements.stream()
@@ -194,8 +187,7 @@ public class UserService {
                             .mapToInt(ucc -> ucc.getCourseOffering().getCourse().getCredit())
                             .sum();
 
-                    return new RequirementStatusByMajor(major.getName(), earnedCredits, requiredCredits, requirements);
-
+                    return RequirementStatusByMajor.from(major.getName(), earnedCredits, requiredCredits, statuses);
                 }).toList();
 
         return new MainPageGraduationStatusResponse(user.getUsername(), requirementStatus);
