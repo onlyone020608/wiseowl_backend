@@ -57,7 +57,7 @@ public class UserController {
     public ResponseEntity<MainPageGraduationStatusResponse> getMainGraduationInfo(
             @AuthenticationPrincipal UserPrincipal principal
     ){
-        MainPageGraduationStatusResponse userGraduationOverview = userService.fetchUserGraduationOverview(principal.getId());
+        MainPageGraduationStatusResponse userGraduationOverview = userService.getUserGraduationOverview(principal.getId());
         return ResponseEntity.ok(userGraduationOverview);
 
     }

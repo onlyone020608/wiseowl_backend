@@ -150,7 +150,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public MainPageGraduationStatusResponse fetchUserGraduationOverview(Long userId) {
+    public MainPageGraduationStatusResponse getUserGraduationOverview(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
 

@@ -412,7 +412,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("fetchUserGraduationOverview - should return overview for each major")
-    void fetchUserGraduationOverview_success() {
+    void getUserGraduationOverview_success() {
         //given
         Long userId = 1L;
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
@@ -423,7 +423,7 @@ public class UserServiceTest {
         given(userCompletedCourseRepository.sumCreditsByUser(userId)).willReturn(3);
 
         // when
-        MainPageGraduationStatusResponse response = userService.fetchUserGraduationOverview(userId);
+        MainPageGraduationStatusResponse response = userService.getUserGraduationOverview(userId);
 
         // then
         RequirementStatusByMajor byMajor = response.requirementStatuses().get(0);
@@ -438,19 +438,19 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("fetchUserGraduationOverview - should throw when user not found")
-    void fetchUserGraduationOverview_shouldThrow_whenUserNotFound() {
+    void getUserGraduationOverview_shouldThrow_whenUserNotFound() {
         // given
         Long userId = 1L;
         given(userRepository.findById(userId)).willReturn(Optional.empty());
 
         // when & then
         assertThrows(UserNotFoundException.class,
-                () -> userService.fetchUserGraduationOverview(userId));
+                () -> userService.getUserGraduationOverview(userId));
     }
 
     @Test
     @DisplayName("fetchUserGraduationOverview - should throw when user has no majors")
-    void fetchUserGraduationOverview_shouldThrow_whenNoMajors() {
+    void getUserGraduationOverview_shouldThrow_whenNoMajors() {
         // given
         Long userId = 1L;
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
@@ -458,7 +458,7 @@ public class UserServiceTest {
 
         // when & then
         assertThrows(UserMajorNotFoundException.class,
-                () -> userService.fetchUserGraduationOverview(userId));
+                () -> userService.getUserGraduationOverview(userId));
     }
 
     @Test
