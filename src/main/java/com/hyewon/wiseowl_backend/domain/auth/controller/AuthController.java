@@ -7,7 +7,6 @@ import com.hyewon.wiseowl_backend.domain.auth.dto.SignUpRequest;
 import com.hyewon.wiseowl_backend.domain.auth.security.UserPrincipal;
 import com.hyewon.wiseowl_backend.domain.auth.service.AuthService;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
-
     private final AuthService authService;
 
     @PostMapping
@@ -34,7 +32,7 @@ public class AuthController {
 
     @PatchMapping("/password")
     public ResponseEntity<Void> changePassword(
-            @AuthenticationPrincipal UserPrincipal principal, @RequestBody ChangePasswordRequest request){
+            @AuthenticationPrincipal UserPrincipal principal, @RequestBody ChangePasswordRequest request) {
         authService.changePassword(principal.getId(), request);
         return ResponseEntity.noContent().build();
     }

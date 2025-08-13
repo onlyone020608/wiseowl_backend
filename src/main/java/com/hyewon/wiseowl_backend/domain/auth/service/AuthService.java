@@ -19,9 +19,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -35,12 +32,10 @@ public class AuthService {
     @Transactional
     public TokenResponse login(LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
-        );
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
         UserPrincipal userDetails = (UserPrincipal) authentication.getPrincipal();
         String email = userDetails.getEmail();
-
 
         String accessToken = jwtProvider.generateAccessToken(email);
         String refreshToken = jwtProvider.generateRefreshToken(email);
@@ -70,7 +65,6 @@ public class AuthService {
 
         String encoded = passwordEncoder.encode(request.getNewPassword());
         user.updatePassword(encoded);
-
     }
 
     @Transactional

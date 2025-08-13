@@ -10,18 +10,16 @@ import java.util.List;
 
 @Getter
 public class UserPrincipal implements UserDetails {
-
     private final Long id;
     private final String username;
     private final String email;
     private final String password;
 
-    public UserPrincipal(User user){
+    public UserPrincipal(User user) {
         this.id = user.getId();
         this.username = user.getUsername();
         this.email = user.getEmail();
         this.password = user.getPassword();
-
     }
 
     @Override
@@ -58,5 +56,4 @@ public class UserPrincipal implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-
 }

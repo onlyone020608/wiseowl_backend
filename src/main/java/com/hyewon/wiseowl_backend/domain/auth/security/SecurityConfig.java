@@ -1,6 +1,5 @@
 package com.hyewon.wiseowl_backend.domain.auth.security;
 
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -73,6 +72,4 @@ public class SecurityConfig  {
         source.registerCorsConfiguration("/**", config);
         return source;
     }
-
-
 }

@@ -13,7 +13,6 @@ import java.util.Date;
 
 @Component
 public class JwtProvider {
-
     private final Key key;
 
     private final long accessTokenExpirationMs;

@@ -14,10 +14,5 @@ public class SignUpRequest {
                          @JsonProperty("password") String password) {
         this.email = email;
         this.password = password;
-
     }
-
-
-
-
 }

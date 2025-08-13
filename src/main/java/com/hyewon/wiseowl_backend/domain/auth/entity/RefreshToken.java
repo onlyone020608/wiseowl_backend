@@ -15,7 +15,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RefreshToken {
-
     @Id
     private String email;
 
