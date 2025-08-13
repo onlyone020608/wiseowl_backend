@@ -491,16 +491,20 @@ public class UserServiceTest {
         // given
         Long userId = 1L;
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
-        given(userMajorRepository.findByUserIdAndMajorType(userId, MajorType.PRIMARY)).willReturn(userMajor);
-        given(userMajorRepository.findByUserIdAndMajorTypeIn(
-                userId, List.of(MajorType.DOUBLE, MajorType.MINOR)
-        )).willReturn(Optional.of(userMajor2));
+        given(userMajorRepository.findUserMajorWithCollege(userId, MajorType.PRIMARY)).willReturn(
+                Optional.of(new UserMajorDetail(college.getId(), college.getName(), major.getId(), major.getName()))
+        );
+        given(userMajorRepository.findUserMajorWithCollege(
+                userId, MajorType.DOUBLE)
+        ).willReturn(Optional.of(new UserMajorDetail(college.getId(), college.getName(), major2.getId(), major2.getName())));
+        given(userMajorRepository.existsByUserIdAndMajorType(userId, MajorType.DOUBLE)).willReturn(true);
+        given(userMajorRepository.existsByUserIdAndMajorType(userId, MajorType.MINOR)).willReturn(false);
 
         // when
         UserSummaryResponse response = userService.getUserSummary(userId);
 
         // then
-        assertThat(response.userName()).isEqualTo("Test");
+        assertThat(response.username()).isEqualTo("Test");
         assertThat(response.primaryMajor().majorName()).isEqualTo("컴퓨터공학과");
         assertThat(response.doubleMajor().majorName()).isEqualTo("철학과");
         assertThat(response.GPA()).isEqualTo(3.9);

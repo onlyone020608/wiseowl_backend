@@ -190,29 +190,20 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException(userId));
         Profile profile = user.getProfile();
 
-        UserMajor primaryUserMajor = userMajorRepository.findByUserIdAndMajorType(userId, MajorType.PRIMARY);
-        Optional<UserMajor> secondUserMajor = userMajorRepository.findByUserIdAndMajorTypeIn(
-                userId, List.of(MajorType.DOUBLE, MajorType.MINOR)
-        );
+        UserMajorDetail firstMajorDetail = userMajorRepository.findUserMajorWithCollege(userId, MajorType.PRIMARY).orElse(null);
+        UserMajorDetail secondMajorDetail = null;
 
-        Major primaryMajor = primaryUserMajor.getMajor();
-        College primaryCollege = primaryMajor.getCollege();
-        UserMajorDetail secondMajorDetail = secondUserMajor
-                .map(UserMajor::getMajor)
-                .map(major -> {
-                    College college = major.getCollege();
-                    return new UserMajorDetail(
-                            college.getId(),
-                            college.getName(),
-                            major.getId(),
-                            major.getName()
-                    );
-                })
-                .orElse(null);
+        boolean isDouble = userMajorRepository.existsByUserIdAndMajorType(userId, MajorType.DOUBLE);
+        boolean isMinor = userMajorRepository.existsByUserIdAndMajorType(userId, MajorType.MINOR);
 
-        return new UserSummaryResponse(user.getUsername(), user.getStudentId(),profile.getGPA(),
-                new UserMajorDetail(primaryCollege.getId(), primaryCollege.getName(), primaryMajor.getId(), primaryMajor.getName())
-                ,secondMajorDetail);
+        if (isDouble) {
+            secondMajorDetail = userMajorRepository.findUserMajorWithCollege(userId, MajorType.DOUBLE).orElse(null);
+        } else if (isMinor) {
+            secondMajorDetail = userMajorRepository.findUserMajorWithCollege(userId, MajorType.MINOR).orElse(null);
+        }
+
+        return new UserSummaryResponse(user.getUsername(), user.getStudentId(), profile.getGPA(),
+                firstMajorDetail, secondMajorDetail);
     }
 
     @Transactional

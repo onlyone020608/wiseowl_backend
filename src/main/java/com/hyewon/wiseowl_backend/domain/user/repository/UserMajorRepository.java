@@ -7,8 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
-public interface UserMajorRepository extends JpaRepository<UserMajor, Long> {
+public interface UserMajorRepository extends JpaRepository<UserMajor, Long>, UserMajorQueryRepository {
     List<UserMajor> findAllByUserId(Long userId);
     UserMajor findByUserIdAndMajorType(Long userId, MajorType majorType);
     Optional<UserMajor> findByUserIdAndMajorTypeIn(Long userId, List<MajorType> majorTypes);
+    boolean existsByUserIdAndMajorType(Long userId, MajorType majorType);
 }
