@@ -29,9 +29,4 @@ public class Facility {
     private Integer floor;
 
     private String description;
-
-
-
-
-
 }

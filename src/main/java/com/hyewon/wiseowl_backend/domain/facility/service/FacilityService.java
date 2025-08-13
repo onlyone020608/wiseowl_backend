@@ -18,17 +18,17 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional
 public class FacilityService {
-
     private final FacilityRepository facilityRepository;
 
     @Transactional(readOnly = true)
-    public List<BuildingFacilityResponse> fetchAllFacilities(){
+    public List<BuildingFacilityResponse> fetchAllFacilities() {
         List<Facility> all = facilityRepository.findAll();
-        if(all.isEmpty()){
+        if (all.isEmpty()) {
             throw new FacilityNotFoundException();
         }
         Map<Building, List<Facility>> grouped = all.stream()
                 .collect(Collectors.groupingBy(Facility::getBuilding));
+
         return grouped.entrySet().stream().map(
                 entry -> {
                     Building building = entry.getKey();
@@ -40,7 +40,6 @@ public class FacilityService {
                             building.getName(),
                             facilities
                     );
-
                 }
         ).toList();
     }

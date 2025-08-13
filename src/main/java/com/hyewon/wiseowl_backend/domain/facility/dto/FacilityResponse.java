@@ -8,7 +8,6 @@ public record FacilityResponse(
         Integer floor,
         FacilityCategory facilityCategory,
         String description
-
 ) {
     public static FacilityResponse from(Facility facility) {
         return new FacilityResponse(
