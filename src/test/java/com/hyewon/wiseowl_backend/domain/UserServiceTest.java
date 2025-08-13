@@ -486,8 +486,8 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("fetchUserSummary -  should return user summary including primary and second major if present")
-    void fetchUserSummary_success() {
+    @DisplayName("getUserSummary -  should return user summary including primary and second major if present")
+    void getUserSummary_success() {
         // given
         Long userId = 1L;
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
@@ -497,7 +497,7 @@ public class UserServiceTest {
         )).willReturn(Optional.of(userMajor2));
 
         // when
-        UserSummaryResponse response = userService.fetchUserSummary(userId);
+        UserSummaryResponse response = userService.getUserSummary(userId);
 
         // then
         assertThat(response.userName()).isEqualTo("Test");
@@ -507,15 +507,15 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("fetchUserSummary - should throw UserNotFoundException when user does not exist")
-    void fetchUserSummary_shouldThrowException_whenUserNotFound() {
+    @DisplayName("getUserSummary - should throw UserNotFoundException when user does not exist")
+    void getUserSummary_shouldThrowException_whenUserNotFound() {
         // given
         Long userId = 1L;
         given(userRepository.findById(userId)).willReturn(Optional.empty());
 
         // when & then
         assertThrows(UserNotFoundException.class,
-                () -> userService.fetchUserSummary(userId));
+                () -> userService.getUserSummary(userId));
     }
 
     @Test

@@ -68,7 +68,7 @@ public class UserController {
 
     @GetMapping("/me/summary")
     public UserSummaryResponse getSummary(@AuthenticationPrincipal UserPrincipal principal) {
-        return userService.fetchUserSummary(principal.getId());
+        return userService.getUserSummary(principal.getId());
     }
 
     @PatchMapping("/me/majors")

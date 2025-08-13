@@ -185,7 +185,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public UserSummaryResponse fetchUserSummary(Long userId) {
+    public UserSummaryResponse getUserSummary(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
         Profile profile = user.getProfile();
