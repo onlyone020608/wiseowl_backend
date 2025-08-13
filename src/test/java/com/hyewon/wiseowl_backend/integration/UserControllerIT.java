@@ -379,37 +379,6 @@ public class UserControllerIT extends AbstractIntegrationTest{
     }
 
     @Test
-    @DisplayName("GET /api/users/me/graduation-requirements/statuses -returns user graduation-requirements statuses")
-    void getGraduationRequirementStatuses_success() throws Exception {
-        User user = testDataLoader.getTestUser();
-        String token = jwtProvider.generateAccessToken(user.getEmail());
-
-
-        mockMvc.perform(get("/api/users/me/graduation-requirements/statuses")
-                        .header("Authorization", "Bearer " + token))
-                .andExpect(status().isOk());
-
-
-    }
-
-    @Test
-    @DisplayName("GET /api/users/me/graduation-requirements/statuses -should return 404 when no user requirement status exists")
-    @Sql(statements = "DELETE FROM user_requirement_status", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    void getGraduationRequirementStatuses_userRequirementStatusNotFound() throws Exception {
-        User user = testDataLoader.getTestUser();
-        String token = jwtProvider.generateAccessToken(user.getEmail());
-
-
-        mockMvc.perform(get("/api/users/me/graduation-requirements/statuses")
-                        .header("Authorization", "Bearer " + token))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.error").value("USER_GRADUATION_STATUS_NOT_FOUND"))
-                .andExpect(jsonPath("$.message").exists());
-
-
-    }
-
-    @Test
     @DisplayName("GET /api/users/me/summary -returns user summary")
     void getSummary_success() throws Exception {
         User user = testDataLoader.getTestUser();

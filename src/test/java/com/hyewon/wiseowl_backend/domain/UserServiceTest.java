@@ -486,38 +486,6 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("fetchUserGraduationRequirementStatus - should return graduation requirement statuses grouped by major type")
-    void fetchUserGraduationRequirementStatus_success() {
-        // given
-        Long userId = 1L;
-        given(userRequirementStatusRepository.findAllByUserId(userId))
-                .willReturn(List.of(urs1, urs2));
-
-        // when
-        List<UserGraduationRequirementStatusResponse> response = userService.fetchUserGraduationRequirementStatus(userId);
-
-        // then
-        assertThat(response.get(0).majorType()).isEqualTo(MajorType.PRIMARY);
-        assertThat(response.get(0).graduationRequirementItems().get(0).requirementName()).isEqualTo("졸업시험");
-        assertThat(response.get(0).graduationRequirementItems().get(0).description()).isEqualTo("다른시험대체가능");
-        assertThat(response.get(0).graduationRequirementItems().get(0).fulfilled()).isEqualTo(false);
-        assertThat(response.get(1).majorType()).isEqualTo(MajorType.DOUBLE);
-    }
-
-    @Test
-    @DisplayName("fetchUserGraduationRequirementStatus -  should throw when user requirement status not found")
-    void fetchUserGraduationRequirementStatus_shouldThrow_whenNoUserRequirementStatus() {
-        // given
-        Long userId = 1L;
-        given(userRequirementStatusRepository.findAllByUserId(userId))
-                .willReturn(List.of());
-
-        // when & then
-        assertThrows(UserRequirementStatusNotFoundException.class,
-                () -> userService.fetchUserGraduationRequirementStatus(userId));
-    }
-
-    @Test
     @DisplayName("fetchUserSummary -  should return user summary including primary and second major if present")
     void fetchUserSummary_success() {
         // given

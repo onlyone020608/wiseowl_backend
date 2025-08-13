@@ -187,32 +187,6 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public List<UserGraduationRequirementStatusResponse> fetchUserGraduationRequirementStatus(Long userId){
-        List<UserRequirementStatus> requirementStatuses = userRequirementStatusRepository.findAllByUserId(userId);
-        if(requirementStatuses.isEmpty()) {
-            throw new UserRequirementStatusNotFoundException(userId);
-        }
-        Map<MajorType, List<UserRequirementStatus>> map = requirementStatuses.stream()
-                .collect(Collectors.groupingBy(urs -> urs.getMajorRequirement().getMajorType()));
-
-        return map.entrySet().stream().map(
-                entry -> {
-                    MajorType type = entry.getKey();
-                    List<UserRequirementStatus> statuses = entry.getValue();
-                    List<GraduationRequirementItemResponse> graduationRequirementItems = statuses.stream().map(
-                            status -> {
-                                String name = status.getMajorRequirement().getRequirement().getName();
-                                String description = status.getMajorRequirement().getDescription();
-                                return new GraduationRequirementItemResponse(name, description, status.isFulfilled());
-                            }
-                    ).toList();
-                    return new UserGraduationRequirementStatusResponse(type, graduationRequirementItems);
-
-                }
-        ).toList();
-    }
-
-    @Transactional(readOnly = true)
     public UserSummaryResponse fetchUserSummary(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
