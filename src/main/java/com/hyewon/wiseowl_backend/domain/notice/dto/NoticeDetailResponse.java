@@ -8,7 +8,6 @@ public record NoticeDetailResponse(
         String title,
         String url,
         LocalDate postedAt
-
 ) {
     public static NoticeDetailResponse from(Notice notice) {
         return new NoticeDetailResponse(

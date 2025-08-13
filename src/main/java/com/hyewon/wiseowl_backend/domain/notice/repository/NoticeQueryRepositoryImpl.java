@@ -11,7 +11,6 @@ import java.util.List;
 public class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
     private final JPAQueryFactory query;
 
-
     @Override
     public List<Notice> findTop6BySourceIdOrderByPostedAtDesc(Long sourceId) {
         QNotice notice = QNotice.notice;

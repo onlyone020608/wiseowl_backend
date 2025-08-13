@@ -1,6 +1,5 @@
 package com.hyewon.wiseowl_backend.domain.notice.service;
 
-
 import com.hyewon.wiseowl_backend.domain.course.service.MajorQueryService;
 import com.hyewon.wiseowl_backend.domain.notice.dto.NoticeDetailResponse;
 import com.hyewon.wiseowl_backend.domain.notice.dto.NoticeResponse;
@@ -33,11 +32,11 @@ public class NoticeService {
         return subscriptions.stream().map(
                 subscription -> {
                     String subscriptionName = null;
-                    if(subscription.getType().equals(SubscriptionType.MAJOR)){
+                    if (subscription.getType().equals(SubscriptionType.MAJOR)) {
                         subscriptionName = majorQueryService.getMajorName(subscription.getTargetId());
 
                     }
-                    if(subscription.getType().equals(SubscriptionType.ORGANIZATION)){
+                    if (subscription.getType().equals(SubscriptionType.ORGANIZATION)) {
                         Organization organization = organizationRepository.findById(subscription.getTargetId()).orElseThrow(
                                 () -> new OrganizationNotFoundException(subscription.getTargetId()));
                         subscriptionName = organization.getName();
@@ -45,11 +44,9 @@ public class NoticeService {
                     List<Notice> notices = noticeRepository.findTop6BySourceIdOrderByPostedAtDesc(subscription.getTargetId());
                     List<NoticeDetailResponse> noticeDetailResponses = notices.stream().map(NoticeDetailResponse::from).toList();
 
-
                     return new NoticeResponse(
                             subscriptionName,
                             noticeDetailResponses
-
                     );
                 }
         ).toList();

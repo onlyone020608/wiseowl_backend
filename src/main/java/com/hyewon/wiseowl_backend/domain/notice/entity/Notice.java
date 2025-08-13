@@ -30,8 +30,4 @@ public class Notice {
     private Long sourceId;
 
     private String content;
-
-
-
-
 }
