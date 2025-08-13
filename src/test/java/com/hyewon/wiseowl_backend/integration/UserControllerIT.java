@@ -22,13 +22,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class UserControllerIT extends AbstractIntegrationTest{
+public class UserControllerIT extends AbstractIntegrationTest {
     @Test
     @DisplayName("POST /api/users/me/profile - should update user profile")
     void updateProfile_success() throws Exception {
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
-
 
         ProfileUpdateRequest request = new ProfileUpdateRequest(
                 "testName",
@@ -39,14 +38,11 @@ public class UserControllerIT extends AbstractIntegrationTest{
                 Track.PRIMARY_WITH_DOUBLE
         );
 
-
         mockMvc.perform(post("/api/users/me/profile")
                         .header("Authorization", "Bearer " + token)
                 .content(objectMapper.writeValueAsString(request))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-
-
     }
 
     @Test
@@ -59,7 +55,6 @@ public class UserControllerIT extends AbstractIntegrationTest{
                 .build());
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
-
         ProfileUpdateRequest request = new ProfileUpdateRequest(
                 "testName",
                 2021,
@@ -69,7 +64,6 @@ public class UserControllerIT extends AbstractIntegrationTest{
                 Track.PRIMARY_WITH_DOUBLE
         );
 
-
         mockMvc.perform(post("/api/users/me/profile")
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -77,8 +71,6 @@ public class UserControllerIT extends AbstractIntegrationTest{
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value("PROFILE_NOT_FOUND"))
                 .andExpect(jsonPath("$.message").exists());
-
-
     }
 
     @Test
@@ -86,7 +78,6 @@ public class UserControllerIT extends AbstractIntegrationTest{
     void updateProfile_majorNotFound() throws Exception {
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
-
 
         ProfileUpdateRequest request = new ProfileUpdateRequest(
                 "testName",
@@ -97,7 +88,6 @@ public class UserControllerIT extends AbstractIntegrationTest{
                 Track.PRIMARY_WITH_DOUBLE
         );
 
-
         mockMvc.perform(post("/api/users/me/profile")
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -105,8 +95,6 @@ public class UserControllerIT extends AbstractIntegrationTest{
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value("MAJOR_NOT_FOUND"))
                 .andExpect(jsonPath("$.message").exists());
-
-
     }
 
     @Test
@@ -115,19 +103,15 @@ public class UserControllerIT extends AbstractIntegrationTest{
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
-
         CompletedCourseInsertRequest request = new CompletedCourseInsertRequest(
              List.of( new CompletedCourseInsertItem(1L, Grade.A, false))
         );
-
 
         mockMvc.perform(post("/api/users/me/completed-courses")
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated());
-
-
     }
 
     @Test
@@ -143,11 +127,9 @@ public class UserControllerIT extends AbstractIntegrationTest{
                         .courseOffering(offering)
                 .build());
 
-
         CompletedCourseInsertRequest request = new CompletedCourseInsertRequest(
                 List.of( new CompletedCourseInsertItem(1L, Grade.A, false))
         );
-
 
         mockMvc.perform(post("/api/users/me/completed-courses")
                         .header("Authorization", "Bearer " + token)
@@ -156,8 +138,6 @@ public class UserControllerIT extends AbstractIntegrationTest{
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.error").value("COMPLETED_COURSE_ALREADY_EXISTS"))
                 .andExpect(jsonPath("$.message").exists());
-
-
     }
 
     @Test
@@ -170,7 +150,6 @@ public class UserControllerIT extends AbstractIntegrationTest{
                 List.of( new CompletedCourseInsertItem(999L, Grade.A, false))
         );
 
-
         mockMvc.perform(post("/api/users/me/completed-courses")
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.writeValueAsString(request))
@@ -178,8 +157,6 @@ public class UserControllerIT extends AbstractIntegrationTest{
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value("COURSE_OFFERING_NOT_FOUND"))
                 .andExpect(jsonPath("$.message").exists());
-
-
     }
 
     @Test
@@ -188,13 +165,10 @@ public class UserControllerIT extends AbstractIntegrationTest{
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
-
         mockMvc.perform(get("/api/users/me/graduation-requirements")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1));
-
-
     }
 
     @Test
@@ -204,14 +178,11 @@ public class UserControllerIT extends AbstractIntegrationTest{
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
-
         mockMvc.perform(get("/api/users/me/graduation-requirements")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value("USER_GRADUATION_STATUS_NOT_FOUND"))
                 .andExpect(jsonPath("$.message").exists());
-;
-
     }
 
     @Test
@@ -220,20 +191,16 @@ public class UserControllerIT extends AbstractIntegrationTest{
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
-
         UserRequirementFulfillmentRequest request = new UserRequirementFulfillmentRequest(
                 1L,
                 List.of( new RequirementStatusUpdate(1L,true))
         );
-
 
         mockMvc.perform(put("/api/users/me/graduation-requirements")
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
-
-
     }
 
     @Test
@@ -242,12 +209,9 @@ public class UserControllerIT extends AbstractIntegrationTest{
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
-
         UserRequirementFulfillmentRequest request = new UserRequirementFulfillmentRequest(
                 1L,
-                List.of( new RequirementStatusUpdate(999L,true))
-        );
-
+                List.of( new RequirementStatusUpdate(999L,true)));
 
         mockMvc.perform(put("/api/users/me/graduation-requirements")
                         .header("Authorization", "Bearer " + token)
@@ -256,8 +220,6 @@ public class UserControllerIT extends AbstractIntegrationTest{
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value("USER_GRADUATION_STATUS_NOT_FOUND"))
                 .andExpect(jsonPath("$.message").exists());
-
-
     }
 
     @Test
@@ -266,13 +228,10 @@ public class UserControllerIT extends AbstractIntegrationTest{
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
-
         mockMvc.perform(get("/api/users/me/graduation-info")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.userName").value("Tester"));
-
-
     }
 
     @Test
@@ -282,14 +241,11 @@ public class UserControllerIT extends AbstractIntegrationTest{
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
-
         mockMvc.perform(get("/api/users/me/graduation-info")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value("USER_MAJOR_NOT_FOUND"))
                 .andExpect(jsonPath("$.message").exists());
-
-
     }
 
     @Test
@@ -299,14 +255,11 @@ public class UserControllerIT extends AbstractIntegrationTest{
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
-
         mockMvc.perform(get("/api/users/me/graduation-info")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value("CREDIT_REQUIREMENT_NOT_FOUND"))
                 .andExpect(jsonPath("$.message").exists());
-
-
     }
 
     @Test
@@ -315,13 +268,10 @@ public class UserControllerIT extends AbstractIntegrationTest{
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
-
         mockMvc.perform(get("/api/users/me/required-courses")
                         .header("Authorization", "Bearer " + token)
                 .param("majorType", "PRIMARY"))
                 .andExpect(status().isOk());
-
-
     }
 
     @Test
@@ -331,15 +281,12 @@ public class UserControllerIT extends AbstractIntegrationTest{
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
-
         mockMvc.perform(get("/api/users/me/required-courses")
                         .header("Authorization", "Bearer " + token)
                         .param("majorType", "PRIMARY"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value("USER_REQUIRED_COURSE_STATUS_NOT_FOUND"))
                 .andExpect(jsonPath("$.message").exists());
-
-
     }
 
     @Test
@@ -349,15 +296,12 @@ public class UserControllerIT extends AbstractIntegrationTest{
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
-
         mockMvc.perform(get("/api/users/me/required-courses")
                         .header("Authorization", "Bearer " + token)
                         .param("majorType", "PRIMARY"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value("REQUIRED_MAJOR_COURSE_NOT_FOUND"))
                 .andExpect(jsonPath("$.message").exists());
-
-
     }
 
     @Test
@@ -367,15 +311,12 @@ public class UserControllerIT extends AbstractIntegrationTest{
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
-
         mockMvc.perform(get("/api/users/me/required-courses")
                         .header("Authorization", "Bearer " + token)
                         .param("majorType", "PRIMARY"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value("REQUIRED_LIBERAL_CATEGORY_NOT_FOUND"))
                 .andExpect(jsonPath("$.message").exists());
-
-
     }
 
     @Test
@@ -384,13 +325,10 @@ public class UserControllerIT extends AbstractIntegrationTest{
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
-
         mockMvc.perform(get("/api/users/me/summary")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.userName").value("Tester"));
-
-
     }
 
     @Test
@@ -399,19 +337,14 @@ public class UserControllerIT extends AbstractIntegrationTest{
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
-
         List<UserMajorUpdateRequest> requests = List.of(
-                new UserMajorUpdateRequest(MajorType.PRIMARY, 1L)
-        );
-
+                new UserMajorUpdateRequest(MajorType.PRIMARY, 1L));
 
         mockMvc.perform(patch("/api/users/me/majors")
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.writeValueAsString(requests))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
-
-
     }
 
     @Test
@@ -420,11 +353,8 @@ public class UserControllerIT extends AbstractIntegrationTest{
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
-
         List<UserMajorUpdateRequest> requests = List.of(
-                new UserMajorUpdateRequest(MajorType.PRIMARY, 999L)
-        );
-
+                new UserMajorUpdateRequest(MajorType.PRIMARY, 999L));
 
         mockMvc.perform(patch("/api/users/me/majors")
                         .header("Authorization", "Bearer " + token)
@@ -433,8 +363,6 @@ public class UserControllerIT extends AbstractIntegrationTest{
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value("MAJOR_NOT_FOUND"))
                 .andExpect(jsonPath("$.message").exists());
-
-
     }
 
     @Test
@@ -443,18 +371,14 @@ public class UserControllerIT extends AbstractIntegrationTest{
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
-
         List<UserMajorTypeUpdateRequest> requests = List.of(
-                new UserMajorTypeUpdateRequest(1L, MajorType.DOUBLE)
-        );
-
+                new UserMajorTypeUpdateRequest(1L, MajorType.DOUBLE));
 
         mockMvc.perform(patch("/api/users/me/majors/type")
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.writeValueAsString(requests))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
-
     }
 
     @Test
@@ -463,11 +387,8 @@ public class UserControllerIT extends AbstractIntegrationTest{
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
-
         List<UserMajorTypeUpdateRequest> requests = List.of(
-                new UserMajorTypeUpdateRequest(999L, MajorType.DOUBLE)
-        );
-
+                new UserMajorTypeUpdateRequest(999L, MajorType.DOUBLE));
 
         mockMvc.perform(patch("/api/users/me/majors/type")
                         .header("Authorization", "Bearer " + token)
@@ -476,7 +397,6 @@ public class UserControllerIT extends AbstractIntegrationTest{
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value("USER_MAJOR_NOT_FOUND"))
                 .andExpect(jsonPath("$.message").exists());
-
     }
 
     @Test
@@ -485,18 +405,14 @@ public class UserControllerIT extends AbstractIntegrationTest{
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
-
         List<CompletedCourseUpdateRequest> requests = List.of(
-                new CompletedCourseUpdateRequest(1L, Grade.A_PLUS, true)
-        );
-
+                new CompletedCourseUpdateRequest(1L, Grade.A_PLUS, true));
 
         mockMvc.perform(patch("/api/users/me/completed-courses")
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.writeValueAsString(requests))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
-
     }
 
     @Test
@@ -505,11 +421,8 @@ public class UserControllerIT extends AbstractIntegrationTest{
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
-
         List<CompletedCourseUpdateRequest> requests = List.of(
-                new CompletedCourseUpdateRequest(999L, Grade.A_PLUS, true)
-        );
-
+                new CompletedCourseUpdateRequest(999L, Grade.A_PLUS, true));
 
         mockMvc.perform(patch("/api/users/me/completed-courses")
                         .header("Authorization", "Bearer " + token)
@@ -518,7 +431,6 @@ public class UserControllerIT extends AbstractIntegrationTest{
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value("USER_COMPLETED_COURSE_NOT_FOUND"))
                 .andExpect(jsonPath("$.message").exists());
-
     }
 
     @Test
@@ -527,18 +439,14 @@ public class UserControllerIT extends AbstractIntegrationTest{
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
-
         List<UserSubscriptionRequest> requests = List.of(
-                new UserSubscriptionRequest(1L, SubscriptionType.MAJOR)
-        );
-
+                new UserSubscriptionRequest(1L, SubscriptionType.MAJOR));
 
         mockMvc.perform(post("/api/users/me/subscriptions")
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.writeValueAsString(requests))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated());
-
     }
 
     @Test
@@ -547,19 +455,14 @@ public class UserControllerIT extends AbstractIntegrationTest{
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
-
         List<UserSubscriptionRequest> requests = List.of(
-                new UserSubscriptionRequest(1L, SubscriptionType.MAJOR)
-        );
-
+                new UserSubscriptionRequest(1L, SubscriptionType.MAJOR));
 
         mockMvc.perform(put("/api/users/me/subscriptions")
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.writeValueAsString(requests))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
-
-
     }
 
     @Test
@@ -568,13 +471,9 @@ public class UserControllerIT extends AbstractIntegrationTest{
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
-
         mockMvc.perform(delete("/api/users/me")
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
-
     }
-
-
 }

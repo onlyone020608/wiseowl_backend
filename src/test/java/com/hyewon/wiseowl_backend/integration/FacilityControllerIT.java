@@ -9,7 +9,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class FacilityControllerIT extends AbstractIntegrationTest{
+public class FacilityControllerIT extends AbstractIntegrationTest {
     @Test
     @DisplayName("GET /api/facilities - returns facilities grouped by building")
     void getFacilities_success() throws Exception {
@@ -20,7 +20,6 @@ public class FacilityControllerIT extends AbstractIntegrationTest{
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2));
-
     }
 
     @Test

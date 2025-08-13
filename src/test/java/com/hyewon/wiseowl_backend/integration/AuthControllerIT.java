@@ -8,7 +8,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -20,12 +19,10 @@ public class AuthControllerIT extends AbstractIntegrationTest {
     void signUp_success() throws Exception {
         SignUpRequest request = new SignUpRequest("signupTest@email.com", "signupPassword");
 
-
         mockMvc.perform(post("/api/auth")
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated());
-
     }
 
     @Test
@@ -33,37 +30,31 @@ public class AuthControllerIT extends AbstractIntegrationTest {
     void login_success() throws Exception {
         LoginRequest request = new LoginRequest("test@example.com", "encoded-password");
 
-
         mockMvc.perform(post("/api/auth/login")
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-
     }
 
     @Test
     @DisplayName("PATCH /api/auth/password - change password")
     void changePassword_success() throws Exception {
-
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
         ChangePasswordRequest request = new ChangePasswordRequest
                 ("encoded-password", "new-encoded-password");
 
-
         mockMvc.perform(patch("/api/auth/password")
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
-
     }
 
     @Test
     @DisplayName("POST /api/auth/refresh - return new access token using refresh token ")
     void refreshAccessToken_success() throws Exception {
-
         String refreshToken = testDataLoader.getRefreshToken();
 
         mockMvc.perform(post("/api/auth/refresh")
@@ -72,6 +63,5 @@ public class AuthControllerIT extends AbstractIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accessToken").exists())
                 .andExpect(jsonPath("$.refreshToken").exists());
-
     }
 }

@@ -11,7 +11,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class CourseControllerIT extends AbstractIntegrationTest{
+public class CourseControllerIT extends AbstractIntegrationTest {
     @Test
     @DisplayName("GET /api/courses/course-categories- returns course categories grouped by semester")
     void getCourseCategories_success() throws Exception {
@@ -25,7 +25,6 @@ public class CourseControllerIT extends AbstractIntegrationTest{
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.courseCategories").isArray());
-
     }
 
     @Test
@@ -34,14 +33,12 @@ public class CourseControllerIT extends AbstractIntegrationTest{
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
-
         mockMvc.perform(get("/api/courses/course-categories")
                         .param("semesterId", String.valueOf(999L))
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value("COURSE_NOT_FOUND"))
                 .andExpect(jsonPath("$.message").exists());
-
     }
 
     @Test
@@ -60,7 +57,6 @@ public class CourseControllerIT extends AbstractIntegrationTest{
                 .andExpect(jsonPath("$[0].id").exists())
                 .andExpect(jsonPath("$[0].majorId").exists())
                 .andExpect(jsonPath("$[0].courseName").value("자료구조"));
-
     }
 
     @Test
@@ -69,14 +65,12 @@ public class CourseControllerIT extends AbstractIntegrationTest{
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
-
         mockMvc.perform(get("/api/courses/offerings")
                         .param("semesterId", String.valueOf(999L))
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value("COURSE_OFFERING_NOT_FOUND"))
                 .andExpect(jsonPath("$.message").exists());
-
     }
 
     @Test
@@ -90,16 +84,14 @@ public class CourseControllerIT extends AbstractIntegrationTest{
                 .name("사회문명")
                 .courseCodePrefix("CD234")
                 .build();
-        courseRepository.save(liberalCourse);
-
         CourseOffering offering = CourseOffering.builder()
                 .course(liberalCourse)
                 .semester(semester)
                 .professor("홍길동")
                 .build();
 
+        courseRepository.save(liberalCourse);
         courseOfferingRepository.save(offering);
-
 
         mockMvc.perform(get("/api/courses/offerings")
                         .param("semesterId", String.valueOf(semester.getId()))
@@ -107,7 +99,6 @@ public class CourseControllerIT extends AbstractIntegrationTest{
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value("LIBERAL_CATEGORY_NOT_FOUND"))
                 .andExpect(jsonPath("$.message").exists());
-
     }
 
     @Test
@@ -116,14 +107,11 @@ public class CourseControllerIT extends AbstractIntegrationTest{
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
-
         mockMvc.perform(get("/api/courses/colleges-with-majors")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$[0].collegeId").exists())
                 .andExpect(jsonPath("$[0].collegeName").value("공과대학"));
-
     }
-
 }

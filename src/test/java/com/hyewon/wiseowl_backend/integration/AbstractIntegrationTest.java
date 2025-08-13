@@ -28,8 +28,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @ActiveProfiles("test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class AbstractIntegrationTest {
-    @Container
-    static final MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.0.32");
+    @Container static final MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.0.32");
 
     static {
         mysql.start();
@@ -43,29 +42,12 @@ public abstract class AbstractIntegrationTest {
     }
 
     @Autowired protected MockMvc mockMvc;
-
-    @Autowired
-    protected ObjectMapper objectMapper;
-
-    @Autowired
-    protected JwtProvider jwtProvider;
-
+    @Autowired protected ObjectMapper objectMapper;
+    @Autowired protected JwtProvider jwtProvider;
     @Autowired protected TestDataLoader testDataLoader;
-
-    @Autowired
-    protected UserRepository userRepository;
-
-    @Autowired
-    protected UserSubscriptionRepository userSubscriptionRepository;
-
-    @Autowired
-    protected CourseRepository courseRepository;
-
-    @Autowired
-    protected CourseOfferingRepository courseOfferingRepository;
-
-    @Autowired
-    protected UserCompletedCourseRepository userCompletedCourseRepository;
-
-
+    @Autowired protected UserRepository userRepository;
+    @Autowired protected UserSubscriptionRepository userSubscriptionRepository;
+    @Autowired protected CourseRepository courseRepository;
+    @Autowired protected CourseOfferingRepository courseOfferingRepository;
+    @Autowired protected UserCompletedCourseRepository userCompletedCourseRepository;
 }
