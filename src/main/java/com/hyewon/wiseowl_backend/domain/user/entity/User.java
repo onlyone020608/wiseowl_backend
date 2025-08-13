@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseTimeEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -54,7 +53,6 @@ public class User extends BaseTimeEntity {
     }
 
     private User(String email, String password) {
-
         this.email = email;
         this.password = password;
     }
@@ -62,5 +60,4 @@ public class User extends BaseTimeEntity {
     public static User of(String email, String password) {
         return new User(email, password);
     }
-
 }

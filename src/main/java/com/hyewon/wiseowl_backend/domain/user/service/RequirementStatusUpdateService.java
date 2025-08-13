@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional
 public class RequirementStatusUpdateService {
-
     private final UserRequiredCourseStatusRepository statusRepository;
     private final CourseCreditTransferRuleRepository ruleRepository;
     private final RequiredMajorCourseRepository requiredMajorCourseRepository;
@@ -38,20 +37,20 @@ public class RequirementStatusUpdateService {
     private final LiberalCategoryCourseRepository liberalCategoryCourseRepository;
 
     @Transactional
-    public void updateRequirementStatus(Long userId, List<UserCompletedCourse> completedCourses){
+    public void updateRequirementStatus(Long userId, List<UserCompletedCourse> completedCourses) {
         List<UserRequiredCourseStatus> userStatuses = statusRepository.findAllByUserId(userId);
-        if(userStatuses.isEmpty()){
+        if (userStatuses.isEmpty()) {
             throw new UserRequiredCourseStatusNotFoundException(userId);
         }
 
         Map<CourseType, List<UserCompletedCourse>> groupedByType = completedCourses.stream().collect(Collectors.groupingBy(cc -> cc.getCourseOffering().getCourse().getCourseType()));
         List<UserCompletedCourse> majorCompletedCourses = groupedByType.getOrDefault(CourseType.MAJOR, List.of());
-        for(UserRequiredCourseStatus status : userStatuses) {
-            if(status.isFulfilled() || status.getCourseType() != CourseType.MAJOR) continue;
+        for (UserRequiredCourseStatus status : userStatuses) {
+            if (status.isFulfilled() || status.getCourseType() != CourseType.MAJOR) continue;
 
             boolean fulfilled = majorCompletedCourses.stream().anyMatch(cc -> {
                 RequiredMajorCourse requiredMajorCourse = requiredMajorCourseRepository.findById(status.getRequiredCourseId()).orElseThrow(() -> new RequiredMajorCourseNotFoundException(status.getRequiredCourseId()));
-                if(cc.getCourseOffering().getCourse().getId().equals(requiredMajorCourse.getCourse().getId())){
+                if (cc.getCourseOffering().getCourse().getId().equals(requiredMajorCourse.getCourse().getId())) {
                     return true;
                 }
                 int year = cc.getCourseOffering().getSemester().getYear();
@@ -66,14 +65,14 @@ public class RequirementStatusUpdateService {
         }
 
         List<UserCompletedCourse> allCompletedCourses = userCompletedCourseRepository.findByUserId(userId);
-        if(allCompletedCourses.isEmpty()){
+        if (allCompletedCourses.isEmpty()) {
             throw new UserCompletedCourseNotFoundException(userId);
         }
 
         List<UserCompletedCourse> liberalCompletedCourses = allCompletedCourses.stream().filter(ucc -> ucc.getCourseOffering().getCourse().getCourseType().equals(CourseType.GENERAL))
                 .toList();
-        for(UserRequiredCourseStatus status : userStatuses){
-            if(status.isFulfilled() || status.getCourseType() != CourseType.GENERAL) continue;
+        for (UserRequiredCourseStatus status : userStatuses) {
+            if (status.isFulfilled() || status.getCourseType() != CourseType.GENERAL) continue;
             // 현재 갱신해야하는 required status 랑 연결된 교양필수요건 찾음
             RequiredLiberalCategoryByCollege requiredLiberalCategory = requiredLiberalCategoryByCollegeRepository.findById(status.getRequiredCourseId()).orElseThrow(() -> new RequiredLiberalCategoryNotFoundException(status.getRequiredCourseId()));
             int requiredCredit = requiredLiberalCategory.getRequiredCredit();
@@ -85,7 +84,7 @@ public class RequirementStatusUpdateService {
                     .mapToInt(Course::getCredit)
                     .sum();
 
-            if(requiredCredit <= earnedCredit){
+            if (requiredCredit <= earnedCredit) {
                 status.markFulfilled();
             }
         }

@@ -7,6 +7,5 @@ import java.util.List;
 public record UserGraduationRequirementStatusResponse(
         MajorType majorType,
         List<GraduationRequirementItemResponse> graduationRequirementItems
-
 ) {
 }

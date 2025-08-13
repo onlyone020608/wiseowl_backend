@@ -43,8 +43,4 @@ public class UserMajor {
     public static UserMajor of(User user, Major major, MajorType majorType) {
         return new UserMajor(user, major, majorType);
     }
-
-
-
-
 }

@@ -25,7 +25,6 @@ public class UserRequirementStatus {
     private boolean fulfilled;
 
     private UserRequirementStatus(User user, MajorRequirement majorRequirement) {
-
         this.user = user;
         this.majorRequirement = majorRequirement;
     }

@@ -5,7 +5,6 @@ import com.hyewon.wiseowl_backend.domain.course.entity.QCourseOffering;
 import com.hyewon.wiseowl_backend.domain.user.dto.CreditAndGradeDto;
 import com.hyewon.wiseowl_backend.domain.user.entity.QUser;
 import com.hyewon.wiseowl_backend.domain.user.entity.QUserCompletedCourse;
-import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;

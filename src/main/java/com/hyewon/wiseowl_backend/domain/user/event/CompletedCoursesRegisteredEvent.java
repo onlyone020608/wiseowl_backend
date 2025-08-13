@@ -10,10 +10,8 @@ public class CompletedCoursesRegisteredEvent {
     private final Long userId;
     private final List<UserCompletedCourse> completedCourses;
 
-
     public CompletedCoursesRegisteredEvent(Long userId, List<UserCompletedCourse> completedCourses) {
         this.userId = userId;
         this.completedCourses = completedCourses;
-
     }
 }

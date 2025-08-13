@@ -1,6 +1,5 @@
 package com.hyewon.wiseowl_backend.domain.user.dto;
 
-
 import com.hyewon.wiseowl_backend.domain.requirement.entity.Track;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -12,8 +11,5 @@ public record ProfileUpdateRequest(
         @NotNull Integer entranceYear,
         List<UserMajorRequest> majors,
         Track track
-){
-
-
-
+) {
 }

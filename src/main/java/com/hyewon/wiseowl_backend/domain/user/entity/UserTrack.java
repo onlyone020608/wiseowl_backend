@@ -10,7 +10,6 @@ import lombok.*;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserTrack {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

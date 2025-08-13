@@ -5,5 +5,4 @@ import java.util.List;
 public record CompletedCourseInsertRequest(
         List<CompletedCourseInsertItem> courses
 ) {
-
 }

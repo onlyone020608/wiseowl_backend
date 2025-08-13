@@ -7,5 +7,4 @@ public record MainPageGraduationStatusResponse(
         List<RequirementStatusByMajor> requirementStatuses
 
 ) {
-
 }

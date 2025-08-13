@@ -45,7 +45,4 @@ public class UserCompletedCourse {
     public static UserCompletedCourse of(User user, CourseOffering courseOffering, Grade grade, boolean retake) {
         return new UserCompletedCourse(user, courseOffering, grade, retake);
     }
-
-
-
 }

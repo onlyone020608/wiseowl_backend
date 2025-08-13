@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
 @RequestMapping("/api/users")
 @RestController
 @RequiredArgsConstructor
@@ -22,7 +21,7 @@ public class UserController {
 
     @PostMapping("/me/profile")
     public ResponseEntity<Void> updateProfile( @AuthenticationPrincipal UserPrincipal principal,
-                                               @RequestBody @Valid ProfileUpdateRequest request){
+                                               @RequestBody @Valid ProfileUpdateRequest request) {
        userService.updateUserProfile(principal.getId(), request);
         return ResponseEntity.ok().build();
    }
@@ -39,7 +38,7 @@ public class UserController {
     @GetMapping("/me/graduation-requirements")
     public ResponseEntity<List<GraduationRequirementGroupByMajorResponse>> getGraduationRequirements(
             @AuthenticationPrincipal UserPrincipal principal
-    ){
+    ) {
         List<GraduationRequirementGroupByMajorResponse> graduationRequirementsForUser = userService.getGraduationRequirementsForUser(principal.getId());
         return ResponseEntity.ok(graduationRequirementsForUser);
     }
@@ -56,17 +55,14 @@ public class UserController {
     @GetMapping("/me/graduation-info")
     public ResponseEntity<MainPageGraduationStatusResponse> getMainGraduationInfo(
             @AuthenticationPrincipal UserPrincipal principal
-    ){
+    ) {
         MainPageGraduationStatusResponse userGraduationOverview = userService.getUserGraduationOverview(principal.getId());
         return ResponseEntity.ok(userGraduationOverview);
-
     }
 
     @GetMapping("/me/required-courses")
-    public ResponseEntity<UserRequiredCourseStatusResponse> getMyRequiredCourses(
-            @AuthenticationPrincipal UserPrincipal principal,
-            @RequestParam MajorType majorType
-    ) {
+    public ResponseEntity<UserRequiredCourseStatusResponse> getMyRequiredCourses(@AuthenticationPrincipal UserPrincipal principal,
+                                                                                 @RequestParam MajorType majorType) {
         return ResponseEntity.ok(userService.getUserRequiredCourseStatus(principal.getId(), majorType));
     }
 
@@ -76,34 +72,26 @@ public class UserController {
     }
 
     @PatchMapping("/me/majors")
-    public ResponseEntity<Void> updateUserMajor(
-            @AuthenticationPrincipal UserPrincipal principal,
-            @RequestBody @Valid List<UserMajorUpdateRequest> requests
-    ) {
+    public ResponseEntity<Void> updateUserMajor(@AuthenticationPrincipal UserPrincipal principal,
+                                                @RequestBody @Valid List<UserMajorUpdateRequest> requests) {
         userService.updateUserMajor(principal.getId(), requests);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/me/majors/type")
-    public ResponseEntity<Void> updateUserMajorTypes(
-            @RequestBody @Valid List<UserMajorTypeUpdateRequest> requests
-    ) {
+    public ResponseEntity<Void> updateUserMajorTypes(@RequestBody @Valid List<UserMajorTypeUpdateRequest> requests) {
         userService.updateUserMajorTypes(requests);
         return ResponseEntity.noContent().build();
     }
     @PatchMapping("/me/completed-courses")
-    public ResponseEntity<Void> updateCompletedCourses(
-            @AuthenticationPrincipal UserPrincipal principal,
-            @RequestBody @Valid List<CompletedCourseUpdateRequest> requests
-    ) {
+    public ResponseEntity<Void> updateCompletedCourses(@AuthenticationPrincipal UserPrincipal principal,
+                                                       @RequestBody @Valid List<CompletedCourseUpdateRequest> requests) {
         userService.updateCompletedCourses(principal.getId(), requests);
         return ResponseEntity.noContent().build();
     }
     @PostMapping("/me/subscriptions")
-    public ResponseEntity<Void> subscribeOrganizations(
-            @AuthenticationPrincipal UserPrincipal principal,
-            @RequestBody @Valid List<UserSubscriptionRequest> requests
-    ){
+    public ResponseEntity<Void> subscribeOrganizations(@AuthenticationPrincipal UserPrincipal principal,
+                                                       @RequestBody @Valid List<UserSubscriptionRequest> requests) {
         userService.registerUserSubscriptions(principal.getId(), requests);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -120,5 +108,4 @@ public class UserController {
         userService.deleteUser(principal.getId());
         return ResponseEntity.noContent().build();
     }
-
 }

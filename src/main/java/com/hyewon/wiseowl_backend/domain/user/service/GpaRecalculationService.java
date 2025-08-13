@@ -16,12 +16,11 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional
 public class GpaRecalculationService {
-
     private final UserCompletedCourseRepository userCompletedCourseRepository;
     private final ProfileRepository profileRepository;
 
     @Transactional
-    public void recalculateGpa(Long userId){
+    public void recalculateGpa(Long userId) {
         List<CreditAndGradeDto> result = userCompletedCourseRepository.findCourseCreditsAndGradesByUserId(userId);
 
         double totalGradePoints = 0;

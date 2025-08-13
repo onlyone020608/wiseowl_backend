@@ -10,7 +10,6 @@ import lombok.*;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserRequiredCourseStatus {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,18 +25,17 @@ public class UserRequiredCourseStatus {
 
     private boolean fulfilled;
 
-    private UserRequiredCourseStatus(User user, CourseType courseType,  Long requiredCourseId) {
+    private UserRequiredCourseStatus(User user, CourseType courseType, Long requiredCourseId) {
         this.user = user;
         this.courseType = courseType;
         this.requiredCourseId = requiredCourseId;
     }
 
-    public static UserRequiredCourseStatus of(User user, CourseType courseType,  Long requiredCourseId) {
+    public static UserRequiredCourseStatus of(User user, CourseType courseType, Long requiredCourseId) {
         return new UserRequiredCourseStatus(user, courseType, requiredCourseId);
     }
 
     public void markFulfilled() {
         this.fulfilled = true;
     }
-
 }

@@ -6,5 +6,4 @@ public record UserRequirementFulfillmentRequest(
         Long majorId,
         List<RequirementStatusUpdate> requirements
 ) {
-
 }

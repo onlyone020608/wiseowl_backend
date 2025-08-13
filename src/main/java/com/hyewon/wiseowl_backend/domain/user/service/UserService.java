@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -31,7 +30,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional
 public class UserService {
-
     private final UserRepository userRepository;
     private final ProfileRepository profileRepository;
     private final UserMajorRepository userMajorRepository;
@@ -50,7 +48,7 @@ public class UserService {
     private final MajorQueryService majorQueryService;
 
     @Transactional
-    public void updateUserProfile(Long userId, ProfileUpdateRequest request){
+    public void updateUserProfile(Long userId, ProfileUpdateRequest request) {
         User user = userRepository.findById(userId).orElseThrow(()-> new UserNotFoundException(userId));
         Profile profile = profileRepository.findByUserId(userId).orElseThrow(ProfileNotFoundException::new);
         Integer entranceYear = request.entranceYear();
@@ -67,7 +65,7 @@ public class UserService {
             setupRequiredCourseStatusesForMajor(majorRequest, entranceYear, user);
 
             // primary major에 해당할 때만
-            if(majorRequest.majorType().equals(MajorType.PRIMARY)){
+            if (majorRequest.majorType().equals(MajorType.PRIMARY)) {
                 List<UserRequiredCourseStatus> requiredLiberalCourseStatuses = requiredLiberalCategoryQueryService.getApplicableLiberalCategories(major.getCollege().getId(), entranceYear)
                         .stream()
                         .map(requiredLiberal -> UserRequiredCourseStatus.of(user, CourseType.GENERAL, requiredLiberal.getId()))
@@ -97,7 +95,7 @@ public class UserService {
     }
 
     @Transactional
-    public void insertCompletedCourses(Long userId, CompletedCourseInsertRequest request){
+    public void insertCompletedCourses(Long userId, CompletedCourseInsertRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
@@ -117,9 +115,9 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public List<GraduationRequirementGroupByMajorResponse> getGraduationRequirementsForUser(Long userId){
+    public List<GraduationRequirementGroupByMajorResponse> getGraduationRequirementsForUser(Long userId) {
         List<UserRequirementStatus> all = userRequirementStatusRepository.findAllByUserId(userId);
-        if(all.isEmpty()){
+        if (all.isEmpty()) {
             throw new UserRequirementStatusNotFoundException(userId);
         }
 
@@ -140,8 +138,8 @@ public class UserService {
     }
 
     @Transactional
-    public void updateUserRequirementStatus(Long userId, UserRequirementFulfillmentRequest request){
-        for(RequirementStatusUpdate update : request.requirements()){
+    public void updateUserRequirementStatus(Long userId, UserRequirementFulfillmentRequest request) {
+        for (RequirementStatusUpdate update : request.requirements()) {
             UserRequirementStatus status = userRequirementStatusRepository.findById(update.userRequirementStatusId())
                     .orElseThrow(() -> new UserRequirementStatusNotFoundException(userId));
 
@@ -218,7 +216,7 @@ public class UserService {
     }
 
     @Transactional
-    public void updateUserMajor(Long userId, List<UserMajorUpdateRequest> requests){
+    public void updateUserMajor(Long userId, List<UserMajorUpdateRequest> requests) {
         requests.forEach(
                 request -> {
                     UserMajor userMajor = userMajorRepository.findByUserIdAndMajorType(userId, request.majorType());
@@ -238,7 +236,7 @@ public class UserService {
     }
 
     @Transactional
-    public void updateCompletedCourses(Long userId, List<CompletedCourseUpdateRequest> requests){
+    public void updateCompletedCourses(Long userId, List<CompletedCourseUpdateRequest> requests) {
         requests.forEach(request -> {
             UserCompletedCourse userCompletedCourse = userCompletedCourseRepository.findById(request.userCompletedCourseId()).orElseThrow(() -> new UserCompletedCourseNotFoundException(request.userCompletedCourseId()));
             if (request.grade() != null) {
@@ -253,7 +251,7 @@ public class UserService {
     }
 
     @Transactional
-    public void registerUserSubscriptions(Long userId, List<UserSubscriptionRequest> requests){
+    public void registerUserSubscriptions(Long userId, List<UserSubscriptionRequest> requests) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
         List<UserSubscription> toSave = requests.stream().map(
                 request -> {
@@ -264,7 +262,7 @@ public class UserService {
     }
 
     @Transactional
-    public void replaceAllUserSubscriptions(Long userId,  List<UserSubscriptionRequest> requests){
+    public void replaceAllUserSubscriptions(Long userId,  List<UserSubscriptionRequest> requests) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
 
         userSubscriptionRepository.deleteByUserId(userId);

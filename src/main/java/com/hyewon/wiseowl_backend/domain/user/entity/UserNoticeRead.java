@@ -21,6 +21,4 @@ public class UserNoticeRead {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "notice_id")
     private Notice notice;
-
-
 }

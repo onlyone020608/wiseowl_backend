@@ -14,8 +14,5 @@ public class RequirementStatusUpdater {
     @TransactionalEventListener
     public void handle(CompletedCoursesRegisteredEvent event) {
         requirementStatusUpdateService.updateRequirementStatus(event.getUserId(), event.getCompletedCourses());
-
-
     }
-
 }
