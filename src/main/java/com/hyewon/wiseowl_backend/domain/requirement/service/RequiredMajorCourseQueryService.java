@@ -17,14 +17,12 @@ public class RequiredMajorCourseQueryService {
     private final RequiredMajorCourseRepository requiredMajorCourseRepository;
 
     @Transactional(readOnly = true)
-    public List<RequiredMajorCourse> getApplicableMajorCourses(Long majorId, MajorType type, int entranceYear){
+    public List<RequiredMajorCourse> getApplicableMajorCourses(Long majorId, MajorType type, int entranceYear) {
         return requiredMajorCourseRepository.findApplicableMajorCourses(majorId, type, entranceYear);
     }
 
     @Transactional(readOnly = true)
-    public RequiredMajorCourse getRequiredMajorCourse(Long requiredMajorCourseId){
+    public RequiredMajorCourse getRequiredMajorCourse(Long requiredMajorCourseId) {
         return requiredMajorCourseRepository.findById(requiredMajorCourseId).orElseThrow(() -> new RequiredMajorCourseNotFoundException(requiredMajorCourseId));
     }
-
-
 }

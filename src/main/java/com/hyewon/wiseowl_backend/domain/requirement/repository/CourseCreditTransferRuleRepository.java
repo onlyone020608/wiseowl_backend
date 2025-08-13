@@ -4,5 +4,4 @@ import com.hyewon.wiseowl_backend.domain.requirement.entity.CourseCreditTransfer
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CourseCreditTransferRuleRepository extends JpaRepository<CourseCreditTransferRule, Long>, CourseCreditTransferRuleQueryRepository {
-
 }

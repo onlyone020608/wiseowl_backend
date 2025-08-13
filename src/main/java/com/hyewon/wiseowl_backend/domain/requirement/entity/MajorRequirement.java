@@ -30,8 +30,4 @@ public class MajorRequirement {
     private Integer appliesFromYear;
 
     private Integer appliesToYear;
-
-
-
-
 }

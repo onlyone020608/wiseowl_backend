@@ -26,7 +26,6 @@ public class MajorRequirementQueryRepositoryImpl implements MajorRequirementQuer
                         mr.majorType.eq(majorType),
                         mr.appliesFromYear.coalesce(0).loe(entranceYear),
                         mr.appliesToYear.coalesce(Integer.MAX_VALUE).goe(entranceYear)
-
                 )
                 .fetch();
     }

@@ -26,10 +26,7 @@ public class RequiredMajorCourse {
     @Enumerated(EnumType.STRING)
     private MajorType majorType;
 
-
     private Integer appliesFromYear;
 
     private Integer appliesToYear;
-
-
 }

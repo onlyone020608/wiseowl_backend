@@ -13,7 +13,6 @@ import java.util.List;
 public class RequiredMajorCourseQueryRepositoryImpl implements RequiredMajorCourseQueryRepository {
     private final JPAQueryFactory query;
 
-
     @Override
     public List<RequiredMajorCourse> findApplicableMajorCourses(Long majorId, MajorType majorType, Integer entranceYear) {
         QRequiredMajorCourse rmc = QRequiredMajorCourse.requiredMajorCourse;
@@ -27,7 +26,6 @@ public class RequiredMajorCourseQueryRepositoryImpl implements RequiredMajorCour
                         rmc.majorType.eq(majorType),
                         rmc.appliesFromYear.coalesce(0).loe(entranceYear),
                         rmc.appliesToYear.coalesce(Integer.MAX_VALUE).goe(entranceYear)
-
                 )
                 .fetch();
     }

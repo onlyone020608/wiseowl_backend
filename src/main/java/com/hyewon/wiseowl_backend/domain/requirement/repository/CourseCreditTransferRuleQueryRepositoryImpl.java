@@ -5,7 +5,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class CourseCreditTransferRuleQueryRepositoryImpl implements CourseCreditTransferRuleQueryRepository{
+public class CourseCreditTransferRuleQueryRepositoryImpl implements CourseCreditTransferRuleQueryRepository {
     private final JPAQueryFactory query;
 
     @Override
@@ -18,7 +18,6 @@ public class CourseCreditTransferRuleQueryRepositoryImpl implements CourseCredit
                         cctr.toCourse.id.eq(toCourseId),
                         cctr.entryYearFrom.coalesce(0).loe(entryYear),
                         cctr.entryYearTo.coalesce(Integer.MAX_VALUE).goe(entryYear)
-
                 )
                 .fetchFirst() != null;
     }

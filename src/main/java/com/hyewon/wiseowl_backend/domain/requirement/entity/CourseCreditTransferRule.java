@@ -37,8 +37,4 @@ public class CourseCreditTransferRule {
     private Integer entryYearFrom;
 
     private Integer entryYearTo;
-
-
-
-
 }

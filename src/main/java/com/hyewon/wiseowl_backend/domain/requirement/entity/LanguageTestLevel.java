@@ -22,5 +22,4 @@ public class LanguageTestLevel {
     private String levelCode;
 
     private int levelOrder;
-
 }

@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class RequiredLiberalCategoryQueryRepositoryImpl implements RequiredLiberalCategoryQueryRepository{
+public class RequiredLiberalCategoryQueryRepositoryImpl implements RequiredLiberalCategoryQueryRepository {
     private final JPAQueryFactory query;
 
     @Override

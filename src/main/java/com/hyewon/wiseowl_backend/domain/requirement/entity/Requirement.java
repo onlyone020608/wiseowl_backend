@@ -19,6 +19,4 @@ public class Requirement {
 
     @NotBlank
     private String name;
-
-
 }
