@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface UserRequiredCourseStatusRepository extends JpaRepository<UserRequiredCourseStatus, Long> {
+public interface UserRequiredCourseStatusRepository extends JpaRepository<UserRequiredCourseStatus, Long>, UserRequiredCourseStatusQueryRepository {
     List<UserRequiredCourseStatus> findAllByUserId(Long userId);
     List<UserRequiredCourseStatus> findAllByUserIdAndCourseType(Long userId, CourseType courseType);
 }

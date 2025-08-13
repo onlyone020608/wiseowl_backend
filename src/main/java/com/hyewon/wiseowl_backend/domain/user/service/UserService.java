@@ -180,31 +180,8 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public UserRequiredCourseStatusResponse getUserRequiredCourseStatus(Long userId, MajorType majorType) {
-        List<UserRequiredCourseStatus> majorRequiredCourseStatus = userRequiredCourseStatusRepository.findAllByUserIdAndCourseType(userId, CourseType.MAJOR);
-        List<UserRequiredCourseStatus> liberalRequiredCourseStatus = userRequiredCourseStatusRepository.findAllByUserIdAndCourseType(userId, CourseType.GENERAL);
-
-        List<UserRequiredCourseStatus> majorRequiredCourses = majorRequiredCourseStatus.stream().filter(
-                status -> {
-                    RequiredMajorCourse requiredMajorCourse = requiredMajorCourseQueryService.getRequiredMajorCourse(status.getRequiredCourseId());
-                    return requiredMajorCourse.getMajorType().equals(majorType);
-                }
-        ).toList();
-
-        List<MajorRequiredCourseItemResponse> majorRequired = majorRequiredCourses.stream().map(
-                status -> {
-                    RequiredMajorCourse requiredMajorCourse =requiredMajorCourseQueryService.getRequiredMajorCourse(status.getRequiredCourseId());
-                    Course course = requiredMajorCourse.getCourse();
-                    return new MajorRequiredCourseItemResponse(course.getCourseCodePrefix(), course.getName(), status.isFulfilled());
-                }
-        ).toList();
-
-        List<LiberalRequiredCourseItemResponse> liberalRequired = liberalRequiredCourseStatus.stream().map(
-                status -> {
-                    RequiredLiberalCategoryByCollege requiredLiberal = requiredLiberalCategoryQueryService.getRequiredLiberalCategory(status.getRequiredCourseId());
-
-                    return new LiberalRequiredCourseItemResponse(requiredLiberal.getLiberalCategory().getName(), status.isFulfilled(), requiredLiberal.getRequiredCredit());
-                }
-        ).toList();
+        List<MajorRequiredCourseItemResponse> majorRequired = userRequiredCourseStatusRepository.findMajorItems(userId, majorType);
+        List<LiberalRequiredCourseItemResponse> liberalRequired = userRequiredCourseStatusRepository.findLiberalItems(userId);
 
         return new UserRequiredCourseStatusResponse(majorRequired, liberalRequired);
     }

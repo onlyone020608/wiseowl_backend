@@ -467,14 +467,10 @@ public class UserServiceTest {
     void getUserRequiredCourseStatus_success() {
         // given
         Long userId = 1L;
-        given(userRequiredCourseStatusRepository.findAllByUserIdAndCourseType(userId, CourseType.MAJOR))
-                .willReturn(List.of(userRequiredCourseStatus1));
-        given(userRequiredCourseStatusRepository.findAllByUserIdAndCourseType(userId, CourseType.GENERAL))
-                .willReturn(List.of(userRequiredCourseStatus2));
-        given(requiredMajorCourseQueryService.getRequiredMajorCourse(10L))
-                .willReturn(requiredMajorCourse);
-        given(requiredLiberalCategoryQueryService.getRequiredLiberalCategory(20L))
-                .willReturn(rlc);
+        given(userRequiredCourseStatusRepository.findMajorItems(userId, MajorType.PRIMARY))
+                .willReturn(List.of(new MajorRequiredCourseItemResponse(course.getCourseCodePrefix(), course.getName(), userRequiredCourseStatus1.isFulfilled())));
+        given(userRequiredCourseStatusRepository.findLiberalItems(userId))
+                .willReturn(List.of(new LiberalRequiredCourseItemResponse(liberalCategory.getName(), userRequiredCourseStatus2.isFulfilled(), rlc.getRequiredCredit())));
 
         // when
         UserRequiredCourseStatusResponse response = userService.getUserRequiredCourseStatus(userId, MajorType.PRIMARY);
