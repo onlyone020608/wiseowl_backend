@@ -179,7 +179,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public UserRequiredCourseStatusResponse fetchUserRequiredCourseStatus(Long userId, MajorType majorType) {
+    public UserRequiredCourseStatusResponse getUserRequiredCourseStatus(Long userId, MajorType majorType) {
         List<UserRequiredCourseStatus> userRequiredCourseStatuses = userRequiredCourseStatusRepository.findAllByUserId(userId);
         if(userRequiredCourseStatuses.isEmpty()) {
             throw new  UserRequiredCourseStatusNotFoundException(userId);

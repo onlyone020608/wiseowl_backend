@@ -463,7 +463,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("fetchUserRequiredCourseStatus - should return required major and liberal courses status correctly")
-    void fetchUserRequiredCourseStatus_success() {
+    void getUserRequiredCourseStatus_success() {
         // given
         Long userId = 1L;
         given(userRequiredCourseStatusRepository.findAllByUserId(userId))
@@ -474,7 +474,7 @@ public class UserServiceTest {
                 .willReturn(rlc);
 
         // when
-        UserRequiredCourseStatusResponse response = userService.fetchUserRequiredCourseStatus(userId, MajorType.PRIMARY);
+        UserRequiredCourseStatusResponse response = userService.getUserRequiredCourseStatus(userId, MajorType.PRIMARY);
 
         // then
         assertThat(response.majorRequiredCourses().get(0).courseCode()).isEqualTo("V41006");
@@ -488,7 +488,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("fetchUserRequiredCourseStatus - should throw when user required course status not found")
-    void fetchUserRequiredCourseStatus_shouldThrow_whenNoUserRequiredCourseStatus() {
+    void getUserRequiredCourseStatus_shouldThrow_whenNoUserRequiredCourseStatus() {
         // given
         Long userId = 1L;
         given(userRequiredCourseStatusRepository.findAllByUserId(userId))
@@ -496,7 +496,7 @@ public class UserServiceTest {
 
         // when & then
         assertThrows(UserRequiredCourseStatusNotFoundException.class,
-                () -> userService.fetchUserRequiredCourseStatus(userId, MajorType.PRIMARY));
+                () -> userService.getUserRequiredCourseStatus(userId, MajorType.PRIMARY));
     }
 
     @Test
