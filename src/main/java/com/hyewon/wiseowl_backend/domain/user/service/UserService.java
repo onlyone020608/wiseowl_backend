@@ -180,15 +180,10 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public UserRequiredCourseStatusResponse getUserRequiredCourseStatus(Long userId, MajorType majorType) {
-        List<UserRequiredCourseStatus> userRequiredCourseStatuses = userRequiredCourseStatusRepository.findAllByUserId(userId);
-        if(userRequiredCourseStatuses.isEmpty()) {
-            throw new  UserRequiredCourseStatusNotFoundException(userId);
-        }
+        List<UserRequiredCourseStatus> majorRequiredCourseStatus = userRequiredCourseStatusRepository.findAllByUserIdAndCourseType(userId, CourseType.MAJOR);
+        List<UserRequiredCourseStatus> liberalRequiredCourseStatus = userRequiredCourseStatusRepository.findAllByUserIdAndCourseType(userId, CourseType.GENERAL);
 
-        Map<CourseType, List<UserRequiredCourseStatus>> grouped = userRequiredCourseStatuses.stream()
-                .collect(Collectors.groupingBy(UserRequiredCourseStatus::getCourseType));
-
-        List<UserRequiredCourseStatus> majorRequiredCourses = grouped.getOrDefault(CourseType.MAJOR, List.of()).stream().filter(
+        List<UserRequiredCourseStatus> majorRequiredCourses = majorRequiredCourseStatus.stream().filter(
                 status -> {
                     RequiredMajorCourse requiredMajorCourse = requiredMajorCourseQueryService.getRequiredMajorCourse(status.getRequiredCourseId());
                     return requiredMajorCourse.getMajorType().equals(majorType);
@@ -203,8 +198,7 @@ public class UserService {
                 }
         ).toList();
 
-        List<UserRequiredCourseStatus> liberalRequiredCourses = grouped.getOrDefault(CourseType.GENERAL, List.of());
-        List<LiberalRequiredCourseItemResponse> liberalRequired = liberalRequiredCourses.stream().map(
+        List<LiberalRequiredCourseItemResponse> liberalRequired = liberalRequiredCourseStatus.stream().map(
                 status -> {
                     RequiredLiberalCategoryByCollege requiredLiberal = requiredLiberalCategoryQueryService.getRequiredLiberalCategory(status.getRequiredCourseId());
 

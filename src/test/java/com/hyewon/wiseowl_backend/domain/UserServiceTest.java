@@ -97,6 +97,7 @@ public class UserServiceTest {
                 .entranceYear(2024)
                 .build();
         user = User.builder()
+                .id(1L)
                 .username("Test")
                 .profile(profile2)
                 .email("test@test.com")
@@ -466,8 +467,10 @@ public class UserServiceTest {
     void getUserRequiredCourseStatus_success() {
         // given
         Long userId = 1L;
-        given(userRequiredCourseStatusRepository.findAllByUserId(userId))
-                .willReturn(List.of(userRequiredCourseStatus1, userRequiredCourseStatus2));
+        given(userRequiredCourseStatusRepository.findAllByUserIdAndCourseType(userId, CourseType.MAJOR))
+                .willReturn(List.of(userRequiredCourseStatus1));
+        given(userRequiredCourseStatusRepository.findAllByUserIdAndCourseType(userId, CourseType.GENERAL))
+                .willReturn(List.of(userRequiredCourseStatus2));
         given(requiredMajorCourseQueryService.getRequiredMajorCourse(10L))
                 .willReturn(requiredMajorCourse);
         given(requiredLiberalCategoryQueryService.getRequiredLiberalCategory(20L))
@@ -484,19 +487,6 @@ public class UserServiceTest {
         assertThat(response.liberalRequiredCourses().get(0).liberalCategoryName()).isEqualTo("인간과사회");
         assertThat(response.liberalRequiredCourses().get(0).requiredCredit()).isEqualTo(6);
         assertThat(response.liberalRequiredCourses().get(0).fulfilled()).isEqualTo(false);
-    }
-
-    @Test
-    @DisplayName("fetchUserRequiredCourseStatus - should throw when user required course status not found")
-    void getUserRequiredCourseStatus_shouldThrow_whenNoUserRequiredCourseStatus() {
-        // given
-        Long userId = 1L;
-        given(userRequiredCourseStatusRepository.findAllByUserId(userId))
-                .willReturn(List.of());
-
-        // when & then
-        assertThrows(UserRequiredCourseStatusNotFoundException.class,
-                () -> userService.getUserRequiredCourseStatus(userId, MajorType.PRIMARY));
     }
 
     @Test
