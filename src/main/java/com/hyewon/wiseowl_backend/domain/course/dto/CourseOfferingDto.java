@@ -1,6 +1,5 @@
 package com.hyewon.wiseowl_backend.domain.course.dto;
 
-
 import com.hyewon.wiseowl_backend.domain.course.entity.CourseOffering;
 
 public record CourseOfferingDto(Long id, Long majorId, Long liberalCategoryId, String courseName, String professor,
@@ -12,6 +11,4 @@ public record CourseOfferingDto(Long id, Long majorId, Long liberalCategoryId, S
                 offering.getProfessor(), offering.getClassTime(), offering.getCourseCode(), offering.getRoom()
         );
     }
-
-
 }

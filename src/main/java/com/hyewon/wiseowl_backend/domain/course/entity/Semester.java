@@ -17,10 +17,4 @@ public class Semester {
 
     @Enumerated(EnumType.STRING)
     private Term term;
-
-
-
-
-
-
 }

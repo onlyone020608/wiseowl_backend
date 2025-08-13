@@ -9,9 +9,7 @@ public record CourseCategoryDto(Long id, String name, String type) {
         return new CourseCategoryDto(major.getId(), major.getName(),"MAJOR");
     }
 
-    public static CourseCategoryDto fromLiberal(LiberalCategory liberal){
+    public static CourseCategoryDto fromLiberal(LiberalCategory liberal) {
         return new CourseCategoryDto(liberal.getId(), liberal.getName(),"LIBRERAL");
     }
-
-
 }

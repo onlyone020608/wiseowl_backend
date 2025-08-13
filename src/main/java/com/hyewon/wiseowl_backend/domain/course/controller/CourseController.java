@@ -12,24 +12,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/courses")
 public class CourseController {
-
     private final CourseService courseService;
 
     @GetMapping("/course-categories")
-    public CourseCategoryListResponse getCourseCategories(@RequestParam Long semesterId){
+    public CourseCategoryListResponse getCourseCategories(@RequestParam Long semesterId) {
         List<CourseCategoryDto> result = courseService.getCourseCategoriesBySemester(semesterId);
         return new CourseCategoryListResponse(result);
     }
 
     @GetMapping("/offerings")
-    public ResponseEntity<List<CourseOfferingDto>> getOfferings(@RequestParam Long semesterId){
+    public ResponseEntity<List<CourseOfferingDto>> getOfferings(@RequestParam Long semesterId) {
         List<CourseOfferingDto> offerings = courseService.getCourseOfferingsBySemester(semesterId);
         return ResponseEntity.ok(offerings);
     }

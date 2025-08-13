@@ -22,5 +22,4 @@ public class Major {
     private String name;
 
     private boolean onlyDbMajor;
-
 }

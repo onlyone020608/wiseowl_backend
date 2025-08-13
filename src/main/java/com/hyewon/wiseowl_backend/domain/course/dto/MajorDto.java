@@ -4,5 +4,4 @@ public record MajorDto(
         Long majorId,
         String majorName
 ) {
-
 }

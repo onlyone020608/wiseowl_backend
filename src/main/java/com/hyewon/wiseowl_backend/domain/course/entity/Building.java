@@ -22,5 +22,4 @@ public class Building {
 
     @NotBlank
     private Integer buildingNumber;
-
 }

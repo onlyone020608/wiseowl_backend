@@ -28,10 +28,4 @@ public class Course {
 
     @Enumerated(EnumType.STRING)
     private CourseType courseType;
-
-
-
-
-
-
 }

@@ -12,6 +12,5 @@ public interface CourseOfferingRepository extends JpaRepository<CourseOffering, 
 
     @Query("SELECT DISTINCT co.course.major FROM CourseOffering co WHERE co.semester.id = :semesterId")
     List<Major> findDistinctMajorsBySemesterId(@Param("semesterId") Long semesterId);
-
     List<CourseOffering> findAllBySemesterId(Long semesterId);
 }

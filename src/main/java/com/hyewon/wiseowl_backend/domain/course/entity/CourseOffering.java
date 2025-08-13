@@ -28,7 +28,4 @@ public class CourseOffering {
     private String classTime;
 
     private String courseCode;
-
-
-
 }

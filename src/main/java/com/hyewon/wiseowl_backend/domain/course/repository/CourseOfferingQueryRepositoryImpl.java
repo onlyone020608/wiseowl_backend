@@ -8,7 +8,6 @@ import java.util.List;
 
 @RequiredArgsConstructor
 public class CourseOfferingQueryRepositoryImpl implements CourseOfferingQueryRepository {
-
     private final JPAQueryFactory query;
 
     @Override

@@ -32,7 +32,7 @@ public class CourseService {
     private final MajorRepository majorRepository;
 
     @Transactional(readOnly = true)
-    public List<CourseCategoryDto> getCourseCategoriesBySemester(Long semesterId){
+    public List<CourseCategoryDto> getCourseCategoriesBySemester(Long semesterId) {
         List<Major> majors = courseOfferingRepository.findDistinctMajorsBySemesterId(semesterId);
         List<LiberalCategory> liberals = courseOfferingRepository.findDistinctLiberalCategoriesBySemester(semesterId);
 
@@ -47,15 +47,15 @@ public class CourseService {
     }
 
     @Transactional(readOnly = true)
-    public List<CourseOfferingDto> getCourseOfferingsBySemester(Long semesterId){
+    public List<CourseOfferingDto> getCourseOfferingsBySemester(Long semesterId) {
         List<CourseOffering> offerings = courseOfferingRepository.findAllBySemesterId(semesterId);
-        if(offerings.isEmpty()){
+        if (offerings.isEmpty()) {
             throw new CourseOfferingNotFoundException("No course offerings found for semesterId: " + semesterId);
         }
         return offerings.stream()
                 .map(offering -> {
                     Long liberalCategoryId = null;
-                    if(offering.getCourse().getMajor() == null){
+                    if (offering.getCourse().getMajor() == null) {
                         liberalCategoryId = liberalCategoryRepository.findByCourse(offering.getCourse())
                                 .map(LiberalCategory::getId)
                                 .orElseThrow(() -> new LiberalCategoryNotFoundException("No liberal category for courseId: " + offering.getCourse().getId()));
@@ -66,7 +66,7 @@ public class CourseService {
                 .collect(Collectors.toList());
     }
 
-    public List<CollegeWithMajorsDto> getCollegesWithMajors(){
+    public List<CollegeWithMajorsDto> getCollegesWithMajors() {
         List<Major> majors = majorRepository.findAllWithCollege();
 
         Map<College, List<Major>> grouped = majors.stream()

@@ -19,6 +19,4 @@ public class College {
 
     @NotBlank
     private String name;
-
-
 }
