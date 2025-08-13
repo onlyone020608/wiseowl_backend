@@ -412,7 +412,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("fetchUserGraduationOverview - should return overview for each major")
+    @DisplayName("getUserGraduationOverview - should return overview for each major")
     void getUserGraduationOverview_success() {
         //given
         Long userId = 1L;
@@ -438,7 +438,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("fetchUserGraduationOverview - should throw when user not found")
+    @DisplayName("getUserGraduationOverview - should throw when user not found")
     void getUserGraduationOverview_shouldThrow_whenUserNotFound() {
         // given
         Long userId = 1L;
@@ -450,7 +450,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("fetchUserGraduationOverview - should throw when user has no majors")
+    @DisplayName("getUserGraduationOverview - should throw when user has no majors")
     void getUserGraduationOverview_shouldThrow_whenNoMajors() {
         // given
         Long userId = 1L;
@@ -463,7 +463,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("fetchUserRequiredCourseStatus - should return required major and liberal courses status correctly")
+    @DisplayName("getUserRequiredCourseStatus - should return required major and liberal courses status correctly")
     void getUserRequiredCourseStatus_success() {
         // given
         Long userId = 1L;
