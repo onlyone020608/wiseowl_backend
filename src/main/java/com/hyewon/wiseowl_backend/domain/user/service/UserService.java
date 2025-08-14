@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -202,7 +201,7 @@ public class UserService {
             secondMajorDetail = userMajorRepository.findUserMajorWithCollege(userId, MajorType.MINOR).orElse(null);
         }
 
-        return new UserSummaryResponse(user.getUsername(), user.getStudentId(), profile.getGPA(),
+        return new UserSummaryResponse(user.getUsername(), user.getStudentId(), profile.getGpa(),
                 firstMajorDetail, secondMajorDetail);
     }
 

@@ -21,7 +21,7 @@ public class Profile {
 
     private boolean adConsent;
 
-    private Double GPA;
+    private Double gpa;
 
     public void updateEntranceYear(Integer entranceYear) {
         this.entranceYear = entranceYear;
@@ -35,7 +35,7 @@ public class Profile {
         return new Profile();
     }
 
-    public void updateGPA(double GPA){
-        this.GPA = GPA;
+    public void updateGpa(double gpa){
+        this.gpa = gpa;
     }
 }

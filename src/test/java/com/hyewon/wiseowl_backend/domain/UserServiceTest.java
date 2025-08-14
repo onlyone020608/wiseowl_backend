@@ -93,7 +93,7 @@ public class UserServiceTest {
     @BeforeEach
     void setUp() {
         profile2 = Profile.builder()
-                .GPA(3.9)
+                .gpa(3.9)
                 .entranceYear(2024)
                 .build();
         user = User.builder()
@@ -507,7 +507,7 @@ public class UserServiceTest {
         assertThat(response.username()).isEqualTo("Test");
         assertThat(response.primaryMajor().majorName()).isEqualTo("컴퓨터공학과");
         assertThat(response.doubleMajor().majorName()).isEqualTo("철학과");
-        assertThat(response.GPA()).isEqualTo(3.9);
+        assertThat(response.gpa()).isEqualTo(3.9);
     }
 
     @Test

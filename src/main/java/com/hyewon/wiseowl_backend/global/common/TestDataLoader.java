@@ -83,7 +83,7 @@ public class TestDataLoader {
         );
 
         com.hyewon.wiseowl_backend.domain.user.entity.Profile profile = com.hyewon.wiseowl_backend.domain.user.entity.Profile.builder()
-                .GPA(4.1)
+                .gpa(4.1)
                 .build();
 
         testUser =User.builder()

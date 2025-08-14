@@ -43,7 +43,7 @@ public class GpaRecalculationServiceTest {
                 .build();
         profile = Profile.builder()
                 .user(user)
-                .GPA(2.9)
+                .gpa(2.9)
                 .build();
 
 
@@ -67,7 +67,7 @@ public class GpaRecalculationServiceTest {
         // when
         gpaRecalculationService.recalculateGpa(userId);
         // then
-        assertThat(profile.getGPA()).isEqualTo(3.0);
+        assertThat(profile.getGpa()).isEqualTo(3.0);
 
 
 
