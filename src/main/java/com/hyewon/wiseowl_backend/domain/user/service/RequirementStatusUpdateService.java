@@ -37,13 +37,14 @@ public class RequirementStatusUpdateService {
     private final LiberalCategoryCourseRepository liberalCategoryCourseRepository;
 
     @Transactional
-    public void updateRequirementStatus(Long userId, List<UserCompletedCourse> completedCourses) {
+    public void updateUserRequiredCourseStatus(Long userId, List<UserCompletedCourse> completedCourses) {
         List<UserRequiredCourseStatus> userStatuses = statusRepository.findAllByUserId(userId);
         if (userStatuses.isEmpty()) {
             throw new UserRequiredCourseStatusNotFoundException(userId);
         }
 
-        Map<CourseType, List<UserCompletedCourse>> groupedByType = completedCourses.stream().collect(Collectors.groupingBy(cc -> cc.getCourseOffering().getCourse().getCourseType()));
+        Map<CourseType, List<UserCompletedCourse>> groupedByType = completedCourses.stream().collect(Collectors.groupingBy
+                (cc -> cc.getCourseOffering().getCourse().getCourseType()));
         List<UserCompletedCourse> majorCompletedCourses = groupedByType.getOrDefault(CourseType.MAJOR, List.of());
         for (UserRequiredCourseStatus status : userStatuses) {
             if (status.isFulfilled() || status.getCourseType() != CourseType.MAJOR) continue;

@@ -13,6 +13,6 @@ public class RequirementStatusUpdater {
 
     @TransactionalEventListener
     public void handle(CompletedCoursesRegisteredEvent event) {
-        requirementStatusUpdateService.updateRequirementStatus(event.getUserId(), event.getCompletedCourses());
+        requirementStatusUpdateService.updateUserRequiredCourseStatus(event.getUserId(), event.getCompletedCourses());
     }
 }

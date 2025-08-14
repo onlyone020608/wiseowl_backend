@@ -141,7 +141,7 @@ public class RequirementStatusUpdateServiceTest {
 
     @Test
     @DisplayName("updateRequirementStatus - should fulfill both major and liberal requirements when matching")
-    void updateRequirementStatus_whenCourseIdMatches_thenMarkFulfilled() {
+    void updateUserRequiredCourseStatus_whenCourseIdMatches_thenMarkFulfilled() {
         // given
         Long userId = 1L;
         given(statusRepository.findAllByUserId(userId)).willReturn(List.of(userRequiredCourseStatus1, userRequiredCourseStatus2));
@@ -151,7 +151,7 @@ public class RequirementStatusUpdateServiceTest {
         given(liberalCategoryCourseRepository.existsByCourseIdAndLiberalCategoryId(course2.getId(), liberalCategory.getId())).willReturn(true);
 
         // when
-        requirementStatusUpdateService.updateRequirementStatus(userId, List.of(ucc1, ucc2));
+        requirementStatusUpdateService.updateUserRequiredCourseStatus(userId, List.of(ucc1, ucc2));
 
         // then
         assertThat(userRequiredCourseStatus1.isFulfilled()).isEqualTo(true);
@@ -160,7 +160,7 @@ public class RequirementStatusUpdateServiceTest {
 
     @Test
     @DisplayName("updateRequirementStatus - should fulfill major requirement using transfer rule when not directly matched")
-    void updateRequirementStatus_whenNotDirectlyMatched_thenFulfillViaTransferRule() {
+    void updateUserRequiredCourseStatus_whenNotDirectlyMatched_thenFulfillViaTransferRule() {
         // given
         Long userId = 1L;
         given(statusRepository.findAllByUserId(userId)).willReturn(List.of(userRequiredCourseStatus1, userRequiredCourseStatus2));
@@ -173,7 +173,7 @@ public class RequirementStatusUpdateServiceTest {
         given(liberalCategoryCourseRepository.existsByCourseIdAndLiberalCategoryId(course2.getId(), liberalCategory.getId())).willReturn(true);
 
         // when
-        requirementStatusUpdateService.updateRequirementStatus(userId, List.of(ucc2, ucc3));
+        requirementStatusUpdateService.updateUserRequiredCourseStatus(userId, List.of(ucc2, ucc3));
 
         // then
         assertThat(userRequiredCourseStatus1.isFulfilled()).isEqualTo(true);
@@ -182,18 +182,18 @@ public class RequirementStatusUpdateServiceTest {
 
     @Test
     @DisplayName("updateRequirementStatus - should throw when user required course status not found")
-    void updateRequirementStatus_shouldThrow_whenUserRequiredCourseStatusNotFound() {
+    void updateUserRequiredCourseStatus_shouldThrow_whenUserRequiredCourseStatusNotFound() {
         // given
         Long userId = 1L;
         given(statusRepository.findAllByUserId(userId)).willReturn(List.of());
         // when & then
         assertThrows(UserRequiredCourseStatusNotFoundException.class,
-                () -> requirementStatusUpdateService.updateRequirementStatus(userId, List.of(ucc2, ucc3)));
+                () -> requirementStatusUpdateService.updateUserRequiredCourseStatus(userId, List.of(ucc2, ucc3)));
     }
 
     @Test
     @DisplayName("updateRequirementStatus - should throw when required major course not found")
-    void updateRequirementStatus_shouldThrow_whenRequiredMajorCourseNotFound() {
+    void updateUserRequiredCourseStatus_shouldThrow_whenRequiredMajorCourseNotFound() {
         // given
         Long userId = 1L;
         given(statusRepository.findAllByUserId(userId)).willReturn(List.of(userRequiredCourseStatus1, userRequiredCourseStatus2));
@@ -201,12 +201,12 @@ public class RequirementStatusUpdateServiceTest {
 
         // when & then
         assertThrows(RequiredMajorCourseNotFoundException.class,
-                () -> requirementStatusUpdateService.updateRequirementStatus(userId, List.of(ucc2, ucc3)));
+                () -> requirementStatusUpdateService.updateUserRequiredCourseStatus(userId, List.of(ucc2, ucc3)));
     }
 
     @Test
     @DisplayName("updateRequirementStatus - should throw when user completed course not found")
-    void updateRequirementStatus_shouldThrow_whenUserCompletedCourseNotFound() {
+    void updateUserRequiredCourseStatus_shouldThrow_whenUserCompletedCourseNotFound() {
         // given
         Long userId = 1L;
         given(statusRepository.findAllByUserId(userId)).willReturn(List.of(userRequiredCourseStatus1, userRequiredCourseStatus2));
@@ -215,12 +215,12 @@ public class RequirementStatusUpdateServiceTest {
 
         // when & then
         assertThrows(UserCompletedCourseNotFoundException.class,
-                () -> requirementStatusUpdateService.updateRequirementStatus(userId, List.of(ucc2, ucc3)));
+                () -> requirementStatusUpdateService.updateUserRequiredCourseStatus(userId, List.of(ucc2, ucc3)));
     }
 
     @Test
     @DisplayName("updateRequirementStatus - should throw when user completed course not found")
-    void updateRequirementStatus_shouldThrow_whenRequiredLiberalCategoryNotFound() {
+    void updateUserRequiredCourseStatus_shouldThrow_whenRequiredLiberalCategoryNotFound() {
         // given
         Long userId = 1L;
         given(statusRepository.findAllByUserId(userId)).willReturn(List.of(userRequiredCourseStatus1, userRequiredCourseStatus2));
@@ -229,6 +229,6 @@ public class RequirementStatusUpdateServiceTest {
         given(requiredLiberalCategoryByCollegeRepository.findById(userRequiredCourseStatus2.getRequiredCourseId())).willReturn(Optional.empty());
         // when & then
         assertThrows(RequiredLiberalCategoryNotFoundException.class,
-                () -> requirementStatusUpdateService.updateRequirementStatus(userId, List.of(ucc2, ucc3)));
+                () -> requirementStatusUpdateService.updateUserRequiredCourseStatus(userId, List.of(ucc2, ucc3)));
     }
 }
