@@ -106,7 +106,7 @@ public class NoticeServiceTest {
         // when
         List<NoticeResponse> response = noticeService.fetchUserSubscribedNotices(userId).stream()
                 .sorted(Comparator.comparing(NoticeResponse::subscriptionName))
-                .toList();;
+                .toList();
 
         // then
         assertThat(response).hasSize(2);

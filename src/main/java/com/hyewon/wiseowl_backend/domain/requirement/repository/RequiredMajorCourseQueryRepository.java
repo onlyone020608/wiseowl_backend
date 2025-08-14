@@ -6,5 +6,5 @@ import com.hyewon.wiseowl_backend.domain.requirement.entity.RequiredMajorCourse;
 import java.util.List;
 
 public interface RequiredMajorCourseQueryRepository {
-    public List<RequiredMajorCourse> findApplicableMajorCourses(Long majorId, MajorType majorType, Integer entranceYear);
+    List<RequiredMajorCourse> findApplicableMajorCourses(Long majorId, MajorType majorType, Integer entranceYear);
 }

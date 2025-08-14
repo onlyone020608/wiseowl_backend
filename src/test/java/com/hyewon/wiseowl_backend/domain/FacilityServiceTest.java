@@ -1,8 +1,8 @@
 package com.hyewon.wiseowl_backend.domain;
 
 import com.hyewon.wiseowl_backend.domain.course.entity.Building;
-import com.hyewon.wiseowl_backend.domain.facility.entity.Facility;
 import com.hyewon.wiseowl_backend.domain.facility.dto.BuildingFacilityResponse;
+import com.hyewon.wiseowl_backend.domain.facility.entity.Facility;
 import com.hyewon.wiseowl_backend.domain.facility.repository.FacilityRepository;
 import com.hyewon.wiseowl_backend.domain.facility.service.FacilityService;
 import com.hyewon.wiseowl_backend.global.exception.FacilityNotFoundException;
@@ -72,7 +72,7 @@ public class FacilityServiceTest {
         List<BuildingFacilityResponse> response = facilityService.fetchAllFacilities()
                 .stream()
                 .sorted(Comparator.comparing(BuildingFacilityResponse::buildingNumber))
-                .toList();;
+                .toList();
 
         // then
         assertThat(response).hasSize(2);

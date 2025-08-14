@@ -38,7 +38,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForClassTypes.tuple;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
@@ -479,7 +478,7 @@ public class UserServiceTest {
         // then
         assertThat(response.majorRequiredCourses().get(0).courseCode()).isEqualTo("V41006");
         assertThat(response.majorRequiredCourses().get(0).courseName()).isEqualTo("자료구조");
-        assertThat(response.majorRequiredCourses().get(0).fulfilled()).isEqualTo(false);;
+        assertThat(response.majorRequiredCourses().get(0).fulfilled()).isEqualTo(false);
 
         assertThat(response.liberalRequiredCourses().get(0).liberalCategoryName()).isEqualTo("인간과사회");
         assertThat(response.liberalRequiredCourses().get(0).requiredCredit()).isEqualTo(6);
