@@ -12,4 +12,5 @@ public interface UserMajorRepository extends JpaRepository<UserMajor, Long>, Use
     UserMajor findByUserIdAndMajorType(Long userId, MajorType majorType);
     Optional<UserMajor> findByUserIdAndMajorTypeIn(Long userId, List<MajorType> majorTypes);
     boolean existsByUserIdAndMajorType(Long userId, MajorType majorType);
+    void deleteAllByUserIdAndMajorType(Long userId, MajorType majorType);
 }

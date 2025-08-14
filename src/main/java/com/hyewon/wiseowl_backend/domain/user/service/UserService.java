@@ -12,6 +12,7 @@ import com.hyewon.wiseowl_backend.domain.user.dto.*;
 import com.hyewon.wiseowl_backend.domain.user.entity.*;
 import com.hyewon.wiseowl_backend.domain.user.event.CompletedCoursesRegisteredEvent;
 import com.hyewon.wiseowl_backend.domain.user.event.CompletedCoursesUpdateEvent;
+import com.hyewon.wiseowl_backend.domain.user.event.UserMajorUpdateEvent;
 import com.hyewon.wiseowl_backend.domain.user.repository.*;
 import com.hyewon.wiseowl_backend.global.exception.*;
 
@@ -214,6 +215,8 @@ public class UserService {
                     userMajor.updateMajor(major);
                 }
         );
+
+        eventPublisher.publishEvent(new UserMajorUpdateEvent(userId, requests));
     }
 
     @Transactional
