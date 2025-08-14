@@ -23,6 +23,7 @@ public class UserRequirementStatusQueryRepositoryImpl implements UserRequirement
     @Override
     public List<UserRequirementStatus> findByUserAndMajor(Long userId, Major major, MajorType majorType) {
         return query.select(urs)
+                .from(urs)
                 .join(urs.user, user)
                 .join(urs.majorRequirement, mr).fetchJoin()
                 .join(mr.major, m).fetchJoin()
