@@ -29,32 +29,17 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 
-
 @ExtendWith(MockitoExtension.class)
 public class RequirementStatusUpdateServiceTest {
-    @InjectMocks
-    private RequirementStatusUpdateService requirementStatusUpdateService;
-
-    @Mock
-    private UserRequiredCourseStatusRepository statusRepository;
-    @Mock
-    private CourseCreditTransferRuleRepository ruleRepository;
-    @Mock
-    private RequiredMajorCourseRepository requiredMajorCourseRepository;
-    @Mock
-    private RequiredLiberalCategoryByCollegeRepository requiredLiberalCategoryByCollegeRepository;
-    @Mock
-    private UserCompletedCourseRepository userCompletedCourseRepository;
-    @Mock
-    private LiberalCategoryCourseRepository liberalCategoryCourseRepository;
-
+    @InjectMocks private RequirementStatusUpdateService requirementStatusUpdateService;
+    @Mock private UserRequiredCourseStatusRepository statusRepository;
+    @Mock private CourseCreditTransferRuleRepository ruleRepository;
+    @Mock private RequiredMajorCourseRepository requiredMajorCourseRepository;
+    @Mock private RequiredLiberalCategoryByCollegeRepository requiredLiberalCategoryByCollegeRepository;
+    @Mock private UserCompletedCourseRepository userCompletedCourseRepository;
+    @Mock private LiberalCategoryCourseRepository liberalCategoryCourseRepository;
 
     private User user;
-    private UserRequirementStatus urs1;
-    private UserRequirementStatus urs2;
-    private Requirement requirement;
-    private MajorRequirement mr1;
-    private MajorRequirement mr2;
     private UserRequiredCourseStatus userRequiredCourseStatus1;
     private UserRequiredCourseStatus userRequiredCourseStatus2;
     private RequiredMajorCourse requiredMajorCourse;
@@ -77,43 +62,15 @@ public class RequirementStatusUpdateServiceTest {
                 .username("Test")
                 .email("test@test.com")
                 .build();
-
-        requirement = Requirement.builder()
-                .name("졸업시험")
-                .build();
-        mr1 = MajorRequirement.builder()
-                .requirement(requirement)
-                .majorType(MajorType.PRIMARY)
-                .description("다른시험대체가능")
-                .build();
-        mr2 = MajorRequirement.builder()
-                .requirement(requirement)
-                .majorType(MajorType.DOUBLE)
-                .build();
-        urs1 = UserRequirementStatus.builder()
-                .id(20L)
-                .user(user)
-                .majorRequirement(mr1)
-                .fulfilled(false)
-                .build();
-        urs2 = UserRequirementStatus.builder()
-                .id(20L)
-                .user(user)
-                .majorRequirement(mr2)
-                .fulfilled(false)
-                .build();
         liberalCategory = LiberalCategory.builder()
                 .id(1L)
                 .name("인간과사회")
                 .build();
-
-
         rlc = RequiredLiberalCategoryByCollege.builder()
                 .id(20L)
                 .liberalCategory(liberalCategory)
                 .requiredCredit(6)
                 .build();
-
         course = Course.builder()
                 .id(1L)
                 .name("자료구조")
@@ -121,7 +78,6 @@ public class RequirementStatusUpdateServiceTest {
                 .credit(3)
                 .courseType(CourseType.MAJOR)
                 .build();
-
         course2 = Course.builder()
                 .id(2L)
                 .name("국제관계의이해")
@@ -134,11 +90,9 @@ public class RequirementStatusUpdateServiceTest {
                 .name("알고리즘")
                 .courseType(CourseType.MAJOR)
                 .build();
-
         semester = Semester.builder()
                 .year(2020)
                 .build();
-
         offering1 = CourseOffering.builder()
                 .course(course)
                 .semester(semester)
@@ -151,7 +105,6 @@ public class RequirementStatusUpdateServiceTest {
                 .course(course3)
                 .semester(semester)
                 .build();
-
         ucc1 = UserCompletedCourse.builder()
                 .user(user)
                 .courseOffering(offering1)
@@ -166,7 +119,6 @@ public class RequirementStatusUpdateServiceTest {
                 .user(user)
                 .courseOffering(offering3)
                 .build();
-
         requiredMajorCourse = RequiredMajorCourse.builder()
                 .id(10L)
                 .course(course)
@@ -178,7 +130,6 @@ public class RequirementStatusUpdateServiceTest {
                 .requiredCourseId(10L)
                 .fulfilled(false)
                 .build();
-
         userRequiredCourseStatus2 = UserRequiredCourseStatus.builder()
                 .id(20L)
                 .user(user)
@@ -186,9 +137,8 @@ public class RequirementStatusUpdateServiceTest {
                 .requiredCourseId(20L)
                 .fulfilled(false)
                 .build();
-
-
     }
+
     @Test
     @DisplayName("updateRequirementStatus - should fulfill both major and liberal requirements when matching")
     void updateRequirementStatus_whenCourseIdMatches_thenMarkFulfilled() {
@@ -206,8 +156,8 @@ public class RequirementStatusUpdateServiceTest {
         // then
         assertThat(userRequiredCourseStatus1.isFulfilled()).isEqualTo(true);
         assertThat(userRequiredCourseStatus2.isFulfilled()).isEqualTo(true);
-
     }
+
     @Test
     @DisplayName("updateRequirementStatus - should fulfill major requirement using transfer rule when not directly matched")
     void updateRequirementStatus_whenNotDirectlyMatched_thenFulfillViaTransferRule() {
@@ -222,14 +172,12 @@ public class RequirementStatusUpdateServiceTest {
         given(requiredLiberalCategoryByCollegeRepository.findById(userRequiredCourseStatus2.getRequiredCourseId())).willReturn(Optional.of(rlc));
         given(liberalCategoryCourseRepository.existsByCourseIdAndLiberalCategoryId(course2.getId(), liberalCategory.getId())).willReturn(true);
 
-
         // when
         requirementStatusUpdateService.updateRequirementStatus(userId, List.of(ucc2, ucc3));
 
         // then
         assertThat(userRequiredCourseStatus1.isFulfilled()).isEqualTo(true);
         assertThat(userRequiredCourseStatus2.isFulfilled()).isEqualTo(true);
-
     }
 
     @Test
@@ -283,6 +231,4 @@ public class RequirementStatusUpdateServiceTest {
         assertThrows(RequiredLiberalCategoryNotFoundException.class,
                 () -> requirementStatusUpdateService.updateRequirementStatus(userId, List.of(ucc2, ucc3)));
     }
-
-
 }

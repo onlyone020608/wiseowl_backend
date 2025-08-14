@@ -25,13 +25,9 @@ import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 public class GpaRecalculationServiceTest {
-    @InjectMocks
-    private GpaRecalculationService gpaRecalculationService;
-
-    @Mock
-    private UserCompletedCourseRepository userCompletedCourseRepository;
-    @Mock
-    private ProfileRepository profileRepository;
+    @InjectMocks private GpaRecalculationService gpaRecalculationService;
+    @Mock private UserCompletedCourseRepository userCompletedCourseRepository;
+    @Mock private ProfileRepository profileRepository;
 
     private User user;
     private Profile profile;
@@ -45,8 +41,6 @@ public class GpaRecalculationServiceTest {
                 .user(user)
                 .gpa(2.9)
                 .build();
-
-
     }
 
     @Test
@@ -58,19 +52,14 @@ public class GpaRecalculationServiceTest {
         CreditAndGradeDto cag2 = new CreditAndGradeDto(3, Grade.B);
         CreditAndGradeDto cag3 = new CreditAndGradeDto(3, Grade.C);
 
-
         given(userCompletedCourseRepository.findCourseCreditsAndGradesByUserId(userId)).willReturn(
-                List.of(cag1, cag2, cag3)
-        );
+                List.of(cag1, cag2, cag3));
         given(profileRepository.findByUserId(userId)).willReturn(Optional.of(profile));
 
         // when
         gpaRecalculationService.recalculateGpa(userId);
         // then
         assertThat(profile.getGpa()).isEqualTo(3.0);
-
-
-
     }
 
     @Test
@@ -82,16 +71,11 @@ public class GpaRecalculationServiceTest {
         CreditAndGradeDto cag2 = new CreditAndGradeDto(3, Grade.B);
         CreditAndGradeDto cag3 = new CreditAndGradeDto(3, Grade.C);
 
-
         given(userCompletedCourseRepository.findCourseCreditsAndGradesByUserId(userId)).willReturn(
-                List.of(cag1, cag2, cag3)
-        );
+                List.of(cag1, cag2, cag3));
         given(profileRepository.findByUserId(userId)).willReturn(Optional.empty());
 
         // when & then
         assertThrows(ProfileNotFoundException.class, () -> gpaRecalculationService.recalculateGpa(userId) );
-
-
-
     }
 }
