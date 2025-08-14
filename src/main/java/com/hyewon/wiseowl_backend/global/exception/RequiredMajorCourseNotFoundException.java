@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public class RequiredMajorCourseNotFoundException extends RuntimeException {
     private final ErrorCode errorCode = ErrorCode.REQUIRED_MAJOR_COURSE_NOT_FOUND;
+
     public RequiredMajorCourseNotFoundException(String message) {
         super(message);
     }

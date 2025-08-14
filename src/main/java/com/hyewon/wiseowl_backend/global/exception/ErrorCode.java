@@ -26,10 +26,6 @@ public enum ErrorCode {
     ORGANIZATION_NOT_FOUND(HttpStatus.NOT_FOUND, "Organization not found."),
     SEMESTER_NOT_FOUND(HttpStatus.NOT_FOUND, "Semester not found.");
 
-
-
-
-
     private final HttpStatus status;
     private final String message;
 

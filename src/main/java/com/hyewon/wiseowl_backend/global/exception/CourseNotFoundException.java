@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public class CourseNotFoundException extends RuntimeException {
   private final ErrorCode errorCode = ErrorCode.COURSE_NOT_FOUND;
+
   public CourseNotFoundException(Long courseId) {
         super("Course not found with id: " + courseId);
   }

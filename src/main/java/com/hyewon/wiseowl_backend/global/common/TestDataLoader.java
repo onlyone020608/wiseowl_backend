@@ -24,13 +24,10 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.util.List;
 
-
-
 @RequiredArgsConstructor
 @Component
 @Profile("test")
 public class TestDataLoader {
-
     private final UserRepository userRepository;
     private final MajorRepository majorRepository;
     private final OrganizationRepository organizationRepository;
@@ -61,7 +58,6 @@ public class TestDataLoader {
     private Semester testSemester;
     private String refreshToken;
 
-
     @PostConstruct
     public void load() {
         College college = collegeRepository.save(
@@ -69,19 +65,15 @@ public class TestDataLoader {
                         .name("공과대학")
                         .build()
         );
-
         Major major = majorRepository.save(Major.builder()
                         .name("컴퓨터공학과")
                         .college(college)
                 .build());
-
         Organization org = organizationRepository.save(
                 Organization.builder()
                         .name("국제교류원")
                         .build()
-
         );
-
         com.hyewon.wiseowl_backend.domain.user.entity.Profile profile = com.hyewon.wiseowl_backend.domain.user.entity.Profile.builder()
                 .gpa(4.1)
                 .build();
@@ -93,7 +85,6 @@ public class TestDataLoader {
                         .profile(profile)
                 .studentId("2021")
                 .build();
-
         refreshToken = jwtProvider.generateRefreshToken(testUser.getEmail());
         refreshTokenRepository.save(RefreshToken.builder()
                         .email(testUser.getEmail())
@@ -101,7 +92,6 @@ public class TestDataLoader {
                 .build());
 
         profile.assignUser(testUser);
-
         userRepository.save(testUser);
 
         userSubscriptionRepository.saveAll(List.of(
@@ -116,7 +106,6 @@ public class TestDataLoader {
                 .type(SubscriptionType.ORGANIZATION)
                 .build()
         ));
-
         noticeRepository.saveAll(List.of(
                 Notice.builder()
                         .title("졸업시험공지사항")
@@ -131,49 +120,40 @@ public class TestDataLoader {
                         .sourceId(2L)
                         .build()
         ));
-
         Course liberalCourse = courseRepository.save(
                 Course.builder()
                         .name("사회문명")
                         .courseCodePrefix("CD234")
                         .build()
         );
-
         LiberalCategory liberalCategory = liberalCategoryRepository.save(
                 LiberalCategory.builder()
                         .name("인간과사회")
                         .build()
         );
-
         liberalCategoryCourseRepository.save(
                 LiberalCategoryCourse.builder()
                         .liberalCategory(liberalCategory)
                         .course(liberalCourse)
                         .build()
         );
-
         Course majorCourse = courseRepository.save(
                 Course.builder()
                         .major(major)
                         .name("자료구조")
                         .courseCodePrefix("CE153")
                         .build());
-
-
         testSemester = semesterRepository.save(Semester.builder()
                 .year(2023)
                 .build());
-
         Building building1 = buildingRepository.save(Building.builder()
                         .name("백년관")
                         .buildingNumber(0)
                 .build());
-
         Building building2 = buildingRepository.save(Building.builder()
                 .name("공학관")
                         .buildingNumber(1)
                 .build());
-
         facilityRepository.saveAll(List.of(Facility.builder()
                         .name("편의점")
                         .building(building1)
@@ -183,7 +163,6 @@ public class TestDataLoader {
                         .building(building1)
                         .build())
         );
-
         facilityRepository.saveAll(List.of(Facility.builder()
                         .name("편의점")
                         .building(building2)
@@ -193,8 +172,6 @@ public class TestDataLoader {
                         .building(building2)
                         .build())
         );
-
-
         courseOfferingRepository.saveAll(List.of(
                 CourseOffering.builder()
                         .course(majorCourse)
@@ -211,20 +188,16 @@ public class TestDataLoader {
                         .classTime("월금23")
                         .build()
         ));
-
-
         Requirement requirement = requirementRepository.save(
                 Requirement.builder()
                         .name("졸업시험")
                         .build()
         );
-
         userMajorRepository.save(UserMajor.builder()
                         .user(testUser)
                 .majorType(MajorType.PRIMARY)
                         .major(major)
                 .build());
-
         MajorRequirement majorReq = majorRequirementRepository.save(
                 MajorRequirement.builder()
                         .major(major)
@@ -233,7 +206,6 @@ public class TestDataLoader {
                         .description("레포트대체가능")
                         .build()
         );
-
         userRequirementStatusRepository.saveAll(List.of(
                 UserRequirementStatus.builder()
                         .user(testUser)
@@ -241,7 +213,6 @@ public class TestDataLoader {
                         .fulfilled(false)
                         .build()
         ));
-
         creditRequirementRepository.save(
                 CreditRequirement.builder()
                         .major(major)
@@ -250,7 +221,6 @@ public class TestDataLoader {
                         .requiredCredits(130)
                         .build()
         );
-
         RequiredMajorCourse requiredMajorCourse = requiredMajorCourseRepository.save(
                 RequiredMajorCourse.builder()
                         .major(major)
@@ -258,7 +228,6 @@ public class TestDataLoader {
                         .majorType(MajorType.PRIMARY)
                         .build()
         );
-
         RequiredLiberalCategoryByCollege liberalCategoryByCollege = requiredLiberalCategoryByCollegeRepository.save(
                 RequiredLiberalCategoryByCollege.builder()
                         .college(college)
@@ -266,7 +235,6 @@ public class TestDataLoader {
                         .liberalCategory(liberalCategory)
                         .build()
         );
-
         userRequiredCourseStatusRepository.saveAll(List.of(
                 UserRequiredCourseStatus.builder()
                         .user(testUser)
@@ -280,17 +248,12 @@ public class TestDataLoader {
                         .requiredCourseId(liberalCategoryByCollege.getId())
                         .build()
         ));
-
         userCompletedCourseRepository.saveAll(List.of(
                 UserCompletedCourse.builder()
                         .grade(Grade.B_PLUS)
                         .retake(false)
                         .build()
         ));
-
-
-
-
     }
 
     public User getTestUser() {

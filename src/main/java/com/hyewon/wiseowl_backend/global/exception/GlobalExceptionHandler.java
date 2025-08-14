@@ -25,7 +25,6 @@ public class GlobalExceptionHandler {
             FacilityNotFoundException.class,
             OrganizationNotFoundException.class,
             SemesterNotFoundException.class
-
     })
     public ResponseEntity<CustomErrorResponse> handleDomainExceptions(RuntimeException ex) {
         if (ex instanceof CourseNotFoundException e) {
@@ -69,9 +68,7 @@ public class GlobalExceptionHandler {
         return buildResponse(ErrorCode.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler({
-            InvalidCurrentPasswordException.class,
-    })
+    @ExceptionHandler(InvalidCurrentPasswordException.class)
     public ResponseEntity<CustomErrorResponse> handleBusinessExceptions(RuntimeException ex) {
         if (ex instanceof InvalidCurrentPasswordException e) {
             return buildResponse(e.getErrorCode());
@@ -88,6 +85,4 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(errorCode.getStatus())
                 .body(new CustomErrorResponse(errorCode));
     }
-
-
 }

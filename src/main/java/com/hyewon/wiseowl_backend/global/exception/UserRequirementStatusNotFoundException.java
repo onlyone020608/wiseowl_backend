@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public class UserRequirementStatusNotFoundException extends RuntimeException {
     private final ErrorCode errorCode = ErrorCode.USER_REQUIREMENT_STATUS_NOT_FOUND;
+
     public UserRequirementStatusNotFoundException(String message) {
         super(message);
     }
@@ -14,5 +15,4 @@ public class UserRequirementStatusNotFoundException extends RuntimeException {
     public UserRequirementStatusNotFoundException() {
         super("User's requirement status not found." );
     }
-
 }

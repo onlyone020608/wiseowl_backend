@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public class CourseOfferingNotFoundException extends RuntimeException {
   private final ErrorCode errorCode = ErrorCode.COURSE_OFFERING_NOT_FOUND;
+
   public CourseOfferingNotFoundException(String message) {
     super(message);
   }

@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public class OrganizationNotFoundException extends RuntimeException {
     private final ErrorCode errorCode = ErrorCode.ORGANIZATION_NOT_FOUND;
+
     public OrganizationNotFoundException(String message) {
         super(message);
     }

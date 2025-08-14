@@ -7,6 +7,7 @@ import lombok.Getter;
 @Getter
 public class CreditRequirementNotFoundException extends RuntimeException {
     private final ErrorCode errorCode =  ErrorCode.CREDIT_REQUIREMENT_NOT_FOUND;
+
     public CreditRequirementNotFoundException(String message) {
         super(message);
     }

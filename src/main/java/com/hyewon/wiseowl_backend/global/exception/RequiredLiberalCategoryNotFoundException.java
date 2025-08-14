@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public class RequiredLiberalCategoryNotFoundException extends RuntimeException {
     private final ErrorCode errorCode = ErrorCode.REQUIRED_LIBERAL_CATEGORY_NOT_FOUND;
+
     public RequiredLiberalCategoryNotFoundException(String message) {
         super(message);
     }

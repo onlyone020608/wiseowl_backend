@@ -23,7 +23,6 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class DataInitializer implements CommandLineRunner {
-
     private final BuildingRepository buildingRepository;
     private final SemesterRepository semesterRepository;
     private final LiberalCategoryRepository liberalCategoryRepository;
@@ -35,7 +34,6 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-
         if (buildingRepository.count() == 0) {
             loadBuildings();
         }
@@ -60,7 +58,6 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void loadBuildings() throws IOException {
-
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream("data/building.csv");
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
@@ -84,7 +81,6 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void loadSemesters() throws IOException {
-
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream("data/semester.csv");
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
@@ -107,7 +103,6 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void loadLiberalCategory() throws IOException {
-
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream("data/liberal_category.csv");
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
@@ -115,7 +110,10 @@ public class DataInitializer implements CommandLineRunner {
         boolean isFirst = true;
 
         while ((line = reader.readLine()) != null) {
-            if (isFirst) { isFirst = false; continue; }
+            if (isFirst) {
+                isFirst = false;
+                continue;
+            }
 
             String[] tokens = line.split(",");
             String name = tokens[0].trim();
@@ -129,7 +127,6 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void loadCourse() throws IOException {
-
         List<String> files = List.of(
                 "data/course_2024_1_liberal.csv",
                 "data/course_2024_1_major.csv"
@@ -173,7 +170,6 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void loadCourseOffering() throws IOException {
-
         List<String> files = List.of(
                 "data/course_offering_2024_1_liberal.csv",
                 "data/course_offering_2024_1_major.csv"
@@ -222,7 +218,6 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void loadLiberalCategoryCourse() throws IOException {
-
         List<String> files = List.of(
                 "data/liberal_category_course_2024_1.csv"
         );
@@ -302,7 +297,6 @@ public class DataInitializer implements CommandLineRunner {
                         .build();
 
                 creditRequirementRepository.save(creditRequirement);
-
             }
         }
     }

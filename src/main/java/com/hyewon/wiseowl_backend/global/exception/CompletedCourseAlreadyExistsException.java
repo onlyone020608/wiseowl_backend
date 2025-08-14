@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public class CompletedCourseAlreadyExistsException extends RuntimeException {
   private final ErrorCode errorCode = ErrorCode.COMPLETED_COURSE_ALREADY_EXISTS;
+
     public CompletedCourseAlreadyExistsException(String message) {
         super(message);
     }

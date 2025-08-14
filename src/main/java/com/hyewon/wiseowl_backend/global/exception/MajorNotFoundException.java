@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public class MajorNotFoundException extends RuntimeException {
   private final ErrorCode errorCode = ErrorCode.MAJOR_NOT_FOUND;
+
   public MajorNotFoundException(String message) {
     super(message);
   }
