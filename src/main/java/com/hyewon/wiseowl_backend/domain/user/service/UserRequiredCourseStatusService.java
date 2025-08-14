@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class RequirementStatusUpdateService {
+public class UserRequiredCourseStatusService {
     private final UserRequiredCourseStatusRepository statusRepository;
     private final CourseCreditTransferRuleRepository ruleRepository;
     private final RequiredMajorCourseRepository requiredMajorCourseRepository;

@@ -9,7 +9,7 @@ import com.hyewon.wiseowl_backend.domain.requirement.repository.RequiredMajorCou
 import com.hyewon.wiseowl_backend.domain.user.entity.*;
 import com.hyewon.wiseowl_backend.domain.user.repository.UserCompletedCourseRepository;
 import com.hyewon.wiseowl_backend.domain.user.repository.UserRequiredCourseStatusRepository;
-import com.hyewon.wiseowl_backend.domain.user.service.RequirementStatusUpdateService;
+import com.hyewon.wiseowl_backend.domain.user.service.UserRequiredCourseStatusService;
 import com.hyewon.wiseowl_backend.global.exception.RequiredLiberalCategoryNotFoundException;
 import com.hyewon.wiseowl_backend.global.exception.RequiredMajorCourseNotFoundException;
 import com.hyewon.wiseowl_backend.global.exception.UserCompletedCourseNotFoundException;
@@ -30,8 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
-public class RequirementStatusUpdateServiceTest {
-    @InjectMocks private RequirementStatusUpdateService requirementStatusUpdateService;
+public class UserRequiredCourseStatusServiceTest {
+    @InjectMocks private UserRequiredCourseStatusService userRequiredCourseStatusService;
     @Mock private UserRequiredCourseStatusRepository statusRepository;
     @Mock private CourseCreditTransferRuleRepository ruleRepository;
     @Mock private RequiredMajorCourseRepository requiredMajorCourseRepository;
@@ -151,7 +151,7 @@ public class RequirementStatusUpdateServiceTest {
         given(liberalCategoryCourseRepository.existsByCourseIdAndLiberalCategoryId(course2.getId(), liberalCategory.getId())).willReturn(true);
 
         // when
-        requirementStatusUpdateService.updateUserRequiredCourseStatus(userId, List.of(ucc1, ucc2));
+        userRequiredCourseStatusService.updateUserRequiredCourseStatus(userId, List.of(ucc1, ucc2));
 
         // then
         assertThat(userRequiredCourseStatus1.isFulfilled()).isEqualTo(true);
@@ -173,7 +173,7 @@ public class RequirementStatusUpdateServiceTest {
         given(liberalCategoryCourseRepository.existsByCourseIdAndLiberalCategoryId(course2.getId(), liberalCategory.getId())).willReturn(true);
 
         // when
-        requirementStatusUpdateService.updateUserRequiredCourseStatus(userId, List.of(ucc2, ucc3));
+        userRequiredCourseStatusService.updateUserRequiredCourseStatus(userId, List.of(ucc2, ucc3));
 
         // then
         assertThat(userRequiredCourseStatus1.isFulfilled()).isEqualTo(true);
@@ -188,7 +188,7 @@ public class RequirementStatusUpdateServiceTest {
         given(statusRepository.findAllByUserId(userId)).willReturn(List.of());
         // when & then
         assertThrows(UserRequiredCourseStatusNotFoundException.class,
-                () -> requirementStatusUpdateService.updateUserRequiredCourseStatus(userId, List.of(ucc2, ucc3)));
+                () -> userRequiredCourseStatusService.updateUserRequiredCourseStatus(userId, List.of(ucc2, ucc3)));
     }
 
     @Test
@@ -201,7 +201,7 @@ public class RequirementStatusUpdateServiceTest {
 
         // when & then
         assertThrows(RequiredMajorCourseNotFoundException.class,
-                () -> requirementStatusUpdateService.updateUserRequiredCourseStatus(userId, List.of(ucc2, ucc3)));
+                () -> userRequiredCourseStatusService.updateUserRequiredCourseStatus(userId, List.of(ucc2, ucc3)));
     }
 
     @Test
@@ -215,7 +215,7 @@ public class RequirementStatusUpdateServiceTest {
 
         // when & then
         assertThrows(UserCompletedCourseNotFoundException.class,
-                () -> requirementStatusUpdateService.updateUserRequiredCourseStatus(userId, List.of(ucc2, ucc3)));
+                () -> userRequiredCourseStatusService.updateUserRequiredCourseStatus(userId, List.of(ucc2, ucc3)));
     }
 
     @Test
@@ -229,6 +229,6 @@ public class RequirementStatusUpdateServiceTest {
         given(requiredLiberalCategoryByCollegeRepository.findById(userRequiredCourseStatus2.getRequiredCourseId())).willReturn(Optional.empty());
         // when & then
         assertThrows(RequiredLiberalCategoryNotFoundException.class,
-                () -> requirementStatusUpdateService.updateUserRequiredCourseStatus(userId, List.of(ucc2, ucc3)));
+                () -> userRequiredCourseStatusService.updateUserRequiredCourseStatus(userId, List.of(ucc2, ucc3)));
     }
 }
