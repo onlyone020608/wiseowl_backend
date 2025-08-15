@@ -14,14 +14,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserCompletedCourseQueryRepositoryImpl implements UserCompletedCourseQueryRepository {
     private final JPAQueryFactory query;
+    private final QUserCompletedCourse ucc = QUserCompletedCourse.userCompletedCourse;
+    private final QCourseOffering co = QCourseOffering.courseOffering;
+    private final QCourse c = QCourse.course;
+    private final QUser user = QUser.user;
 
     @Override
     public List<CreditAndGradeDto> findCourseCreditsAndGradesByUserId(Long userId) {
-        QUserCompletedCourse ucc = QUserCompletedCourse.userCompletedCourse;
-        QCourseOffering co = QCourseOffering.courseOffering;
-        QCourse c = QCourse.course;
-        QUser user = QUser.user;
-
         return query
                 .select(Projections.constructor(CreditAndGradeDto.class, c.credit, ucc.grade))
                 .from(ucc)
@@ -34,11 +33,6 @@ public class UserCompletedCourseQueryRepositoryImpl implements UserCompletedCour
 
     @Override
     public int sumCreditsByUser(Long userId) {
-        QUserCompletedCourse ucc = QUserCompletedCourse.userCompletedCourse;
-        QCourseOffering co = QCourseOffering.courseOffering;
-        QCourse c = QCourse.course;
-        QUser user = QUser.user;
-
         Integer sum = query
                 .select(c.credit.sum())
                 .from(ucc)

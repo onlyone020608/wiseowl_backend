@@ -15,13 +15,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserRequirementStatusQueryRepositoryImpl implements UserRequirementStatusQueryRepository {
     private final JPAQueryFactory query;
-    private final QUserRequirementStatus urs = QUserRequirementStatus.userRequirementStatus;
-    private final QMajorRequirement mr =  QMajorRequirement.majorRequirement;
-    private final QMajor m = QMajor.major;
-    private final QUser user = QUser.user;
 
     @Override
     public List<UserRequirementStatus> findByUserAndMajor(Long userId, Major major, MajorType majorType) {
+        QUserRequirementStatus urs = QUserRequirementStatus.userRequirementStatus;
+        QMajorRequirement mr =  QMajorRequirement.majorRequirement;
+        QMajor m = QMajor.major;
+        QUser user = QUser.user;
         return query.select(urs)
                 .from(urs)
                 .join(urs.user, user)

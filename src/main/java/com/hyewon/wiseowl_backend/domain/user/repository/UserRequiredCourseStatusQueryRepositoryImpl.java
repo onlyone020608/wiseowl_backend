@@ -19,12 +19,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserRequiredCourseStatusQueryRepositoryImpl implements UserRequiredCourseStatusQueryRepository {
     private final JPAQueryFactory query;
-    QUserRequiredCourseStatus urs = QUserRequiredCourseStatus.userRequiredCourseStatus;
-    QRequiredMajorCourse requiredMajorCourse = QRequiredMajorCourse.requiredMajorCourse;
-    QRequiredLiberalCategoryByCollege requiredLiberal = QRequiredLiberalCategoryByCollege.requiredLiberalCategoryByCollege;
-    QLiberalCategory liberalCategory = QLiberalCategory.liberalCategory;
-    QCourse c = QCourse.course;
-    QUser user = QUser.user;
+    private final QUserRequiredCourseStatus urs = QUserRequiredCourseStatus.userRequiredCourseStatus;
+    private final QRequiredMajorCourse requiredMajorCourse = QRequiredMajorCourse.requiredMajorCourse;
+    private final QRequiredLiberalCategoryByCollege requiredLiberal = QRequiredLiberalCategoryByCollege.requiredLiberalCategoryByCollege;
+    private final QLiberalCategory liberalCategory = QLiberalCategory.liberalCategory;
+    private final QCourse c = QCourse.course;
+    private final QUser user = QUser.user;
 
     @Override
     public List<MajorRequiredCourseItemResponse> findMajorItems(Long userId, MajorType majorType) {

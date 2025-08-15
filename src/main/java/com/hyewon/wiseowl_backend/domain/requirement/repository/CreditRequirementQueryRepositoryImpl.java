@@ -11,11 +11,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CreditRequirementQueryRepositoryImpl implements CreditRequirementQueryRepository {
     private final JPAQueryFactory query;
-    private final QCreditRequirement cr = QCreditRequirement.creditRequirement;
-    private final QMajor m = QMajor.major;
 
     @Override
     public int sumRequiredCredits(Major major, MajorType majorType, Track track, Integer entranceYear) {
+        QCreditRequirement cr = QCreditRequirement.creditRequirement;
+        QMajor m = QMajor.major;
         Integer credit = query.select(cr.requiredCredits)
                 .join(cr.major, m)
                 .where(
