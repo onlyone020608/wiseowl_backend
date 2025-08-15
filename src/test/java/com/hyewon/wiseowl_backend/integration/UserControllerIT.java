@@ -335,7 +335,7 @@ public class UserControllerIT extends AbstractIntegrationTest {
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
         List<UserMajorUpdateRequest> requests = List.of(
-                new UserMajorUpdateRequest(MajorType.PRIMARY, 1L));
+                new UserMajorUpdateRequest(MajorType.PRIMARY, 2L,1L));
 
         mockMvc.perform(patch("/api/users/me/majors")
                         .header("Authorization", "Bearer " + token)
@@ -351,7 +351,7 @@ public class UserControllerIT extends AbstractIntegrationTest {
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
         List<UserMajorUpdateRequest> requests = List.of(
-                new UserMajorUpdateRequest(MajorType.PRIMARY, 999L));
+                new UserMajorUpdateRequest(MajorType.PRIMARY, 2L, 999L));
 
         mockMvc.perform(patch("/api/users/me/majors")
                         .header("Authorization", "Bearer " + token)
@@ -369,7 +369,7 @@ public class UserControllerIT extends AbstractIntegrationTest {
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
         List<UserMajorTypeUpdateRequest> requests = List.of(
-                new UserMajorTypeUpdateRequest(1L, MajorType.DOUBLE));
+                new UserMajorTypeUpdateRequest(1L, MajorType.PRIMARY, MajorType.DOUBLE));
 
         mockMvc.perform(patch("/api/users/me/majors/type")
                         .header("Authorization", "Bearer " + token)
@@ -385,7 +385,7 @@ public class UserControllerIT extends AbstractIntegrationTest {
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
         List<UserMajorTypeUpdateRequest> requests = List.of(
-                new UserMajorTypeUpdateRequest(999L, MajorType.DOUBLE));
+                new UserMajorTypeUpdateRequest(999L, MajorType.PRIMARY, MajorType.DOUBLE));
 
         mockMvc.perform(patch("/api/users/me/majors/type")
                         .header("Authorization", "Bearer " + token)

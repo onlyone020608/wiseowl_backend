@@ -1,9 +1,13 @@
 package com.hyewon.wiseowl_backend.domain.user.service;
 
-import com.hyewon.wiseowl_backend.domain.course.entity.*;
+import com.hyewon.wiseowl_backend.domain.course.entity.CourseOffering;
+import com.hyewon.wiseowl_backend.domain.course.entity.CourseType;
+import com.hyewon.wiseowl_backend.domain.course.entity.Major;
 import com.hyewon.wiseowl_backend.domain.course.service.CourseOfferingQueryService;
 import com.hyewon.wiseowl_backend.domain.course.service.MajorQueryService;
-import com.hyewon.wiseowl_backend.domain.requirement.entity.*;
+import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorRequirement;
+import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorType;
+import com.hyewon.wiseowl_backend.domain.requirement.entity.RequiredMajorCourse;
 import com.hyewon.wiseowl_backend.domain.requirement.service.CreditRequirementQueryService;
 import com.hyewon.wiseowl_backend.domain.requirement.service.MajorRequirementQueryService;
 import com.hyewon.wiseowl_backend.domain.requirement.service.RequiredLiberalCategoryQueryService;
@@ -12,10 +16,10 @@ import com.hyewon.wiseowl_backend.domain.user.dto.*;
 import com.hyewon.wiseowl_backend.domain.user.entity.*;
 import com.hyewon.wiseowl_backend.domain.user.event.CompletedCoursesRegisteredEvent;
 import com.hyewon.wiseowl_backend.domain.user.event.CompletedCoursesUpdateEvent;
+import com.hyewon.wiseowl_backend.domain.user.event.UserMajorTypeUpdateEvent;
 import com.hyewon.wiseowl_backend.domain.user.event.UserMajorUpdateEvent;
 import com.hyewon.wiseowl_backend.domain.user.repository.*;
 import com.hyewon.wiseowl_backend.global.exception.*;
-
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -211,7 +215,7 @@ public class UserService {
         requests.forEach(
                 request -> {
                     UserMajor userMajor = userMajorRepository.findByUserIdAndMajorType(userId, request.majorType());
-                    Major major = majorQueryService.getMajor(request.majorId());
+                    Major major = majorQueryService.getMajor(request.newMajorId());
                     userMajor.updateMajor(major);
                 }
         );
@@ -220,12 +224,14 @@ public class UserService {
     }
 
     @Transactional
-    public void updateUserMajorTypes(List<UserMajorTypeUpdateRequest> requests) {
+    public void updateUserMajorTypes(Long userId, List<UserMajorTypeUpdateRequest> requests) {
         requests.forEach(request -> {
             UserMajor userMajor = userMajorRepository.findById(request.userMajorId())
                     .orElseThrow(() -> new UserMajorNotFoundException(request.userMajorId()));
-            userMajor.updateMajorType(request.majorType());
+            userMajor.updateMajorType(request.newMajorType());
         });
+
+        eventPublisher.publishEvent(new UserMajorTypeUpdateEvent(userId, requests));
     }
 
     @Transactional

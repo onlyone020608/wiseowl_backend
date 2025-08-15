@@ -11,7 +11,12 @@ public class UserRequirementStatusHandler {
     private final UserRequirementStatusService userRequirementStatusService;
 
     @TransactionalEventListener
-    public void onUpdated(UserMajorUpdateEvent event) {
-        userRequirementStatusService.replaceUserRequirementStatus(event.getUserId(), event.getRequests());
+    public void onMajorUpdated(UserMajorUpdateEvent event) {
+        userRequirementStatusService.replaceUserRequirementStatusWithMajor(event.getUserId(), event.getRequests());
+    }
+
+    @TransactionalEventListener
+    public void onMajorTypeUpdated(UserMajorTypeUpdateEvent event) {
+        userRequirementStatusService.replaceUserRequirementStatusWithMajorType(event.getUserId(), event.getRequests());
     }
 }

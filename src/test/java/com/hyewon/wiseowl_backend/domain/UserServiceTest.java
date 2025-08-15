@@ -13,6 +13,7 @@ import com.hyewon.wiseowl_backend.domain.user.dto.*;
 import com.hyewon.wiseowl_backend.domain.user.entity.*;
 import com.hyewon.wiseowl_backend.domain.user.event.CompletedCoursesRegisteredEvent;
 import com.hyewon.wiseowl_backend.domain.user.event.CompletedCoursesUpdateEvent;
+import com.hyewon.wiseowl_backend.domain.user.event.UserMajorTypeUpdateEvent;
 import com.hyewon.wiseowl_backend.domain.user.event.UserMajorUpdateEvent;
 import com.hyewon.wiseowl_backend.domain.user.repository.*;
 import com.hyewon.wiseowl_backend.domain.user.service.UserService;
@@ -535,8 +536,8 @@ public class UserServiceTest {
         given(majorQueryService.getMajor(2L)).willReturn(major2);
 
         // when
-        UserMajorUpdateRequest rq1 = new UserMajorUpdateRequest(MajorType.PRIMARY, 2L);
-        UserMajorUpdateRequest rq2 = new UserMajorUpdateRequest(MajorType.DOUBLE, 1L);
+        UserMajorUpdateRequest rq1 = new UserMajorUpdateRequest(MajorType.PRIMARY, 1L, 2L);
+        UserMajorUpdateRequest rq2 = new UserMajorUpdateRequest(MajorType.DOUBLE, 2L, 1L);
         userService.updateUserMajor(userId, List.of(rq1, rq2));
 
         // then
@@ -549,34 +550,37 @@ public class UserServiceTest {
     @DisplayName("updateUserMajorTypes -  should update user major types")
     void updateUserMajorTypes_success() {
         // given
+        Long userId = 1L;
         given(userMajorRepository.findById(userMajor.getId()))
                 .willReturn(Optional.of(userMajor));
         given(userMajorRepository.findById(userMajor2.getId()))
                 .willReturn(Optional.of(userMajor2));
 
         // when
-        UserMajorTypeUpdateRequest rq1 = new UserMajorTypeUpdateRequest(1L, MajorType.DOUBLE);
-        UserMajorTypeUpdateRequest rq2 = new UserMajorTypeUpdateRequest(2L, MajorType.PRIMARY);
-        userService.updateUserMajorTypes(List.of(rq1, rq2));
+        UserMajorTypeUpdateRequest rq1 = new UserMajorTypeUpdateRequest(1L, MajorType.PRIMARY, MajorType.DOUBLE);
+        UserMajorTypeUpdateRequest rq2 = new UserMajorTypeUpdateRequest(2L, MajorType.DOUBLE, MajorType.PRIMARY);
+        userService.updateUserMajorTypes(userId, List.of(rq1, rq2));
 
         // then
         assertThat(userMajor.getMajorType()).isEqualTo(MajorType.DOUBLE);
         assertThat(userMajor2.getMajorType()).isEqualTo(MajorType.PRIMARY);
+        verify(eventPublisher).publishEvent(any(UserMajorTypeUpdateEvent.class));
     }
 
     @Test
     @DisplayName("updateUserMajorTypes - should throw UserMajorNotFoundException when user major does not exist")
     void updateUserMajorTypes_shouldThrowException_whenUserMajorNotFound() {
         // given
+        Long userId = 1L;
         given(userMajorRepository.findById(userMajor.getId()))
                 .willReturn(Optional.empty());
 
-        UserMajorTypeUpdateRequest rq1 = new UserMajorTypeUpdateRequest(1L, MajorType.DOUBLE);
-        UserMajorTypeUpdateRequest rq2 = new UserMajorTypeUpdateRequest(2L, MajorType.PRIMARY);
+        UserMajorTypeUpdateRequest rq1 = new UserMajorTypeUpdateRequest(1L, MajorType.PRIMARY, MajorType.DOUBLE);
+        UserMajorTypeUpdateRequest rq2 = new UserMajorTypeUpdateRequest(2L, MajorType.DOUBLE, MajorType.PRIMARY);
 
         // when & then
         assertThrows(UserMajorNotFoundException.class,
-                () -> userService.updateUserMajorTypes(List.of(rq1, rq2)));
+                () -> userService.updateUserMajorTypes(userId, List.of(rq1, rq2)));
     }
 
     @Test

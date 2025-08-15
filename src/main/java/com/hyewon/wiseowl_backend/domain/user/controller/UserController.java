@@ -79,8 +79,9 @@ public class UserController {
     }
 
     @PatchMapping("/me/majors/type")
-    public ResponseEntity<Void> updateUserMajorTypes(@RequestBody @Valid List<UserMajorTypeUpdateRequest> requests) {
-        userService.updateUserMajorTypes(requests);
+    public ResponseEntity<Void> updateUserMajorTypes(@AuthenticationPrincipal UserPrincipal principal,
+                                                     @RequestBody @Valid List<UserMajorTypeUpdateRequest> requests) {
+        userService.updateUserMajorTypes(principal.getId(), requests);
         return ResponseEntity.noContent().build();
     }
     @PatchMapping("/me/completed-courses")
