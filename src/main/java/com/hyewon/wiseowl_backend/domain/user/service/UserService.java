@@ -253,9 +253,7 @@ public class UserService {
     public void registerUserSubscriptions(Long userId, List<UserSubscriptionRequest> requests) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
         List<UserSubscription> toSave = requests.stream().map(
-                request -> {
-                    return UserSubscription.of(user, request.targetId(), request.type());
-                }
+                request -> UserSubscription.of(user, request.targetId(), request.type())
         ).toList();
         userSubscriptionRepository.saveAll(toSave);
     }
@@ -268,9 +266,7 @@ public class UserService {
         entityManager.flush();
 
         List<UserSubscription> toSave = requests.stream().map(
-                request -> {
-                    return UserSubscription.of(user, request.targetId(), request.type());
-                }
+                request -> UserSubscription.of(user, request.targetId(), request.type())
         ).toList();
 
         userSubscriptionRepository.saveAll(toSave);
