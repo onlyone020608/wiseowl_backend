@@ -4,6 +4,7 @@ import com.hyewon.wiseowl_backend.domain.course.entity.Major;
 import com.hyewon.wiseowl_backend.domain.course.repository.MajorRepository;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorRequirement;
 import com.hyewon.wiseowl_backend.domain.requirement.service.MajorRequirementQueryService;
+import com.hyewon.wiseowl_backend.domain.user.dto.UserMajorRequest;
 import com.hyewon.wiseowl_backend.domain.user.dto.UserMajorTypeUpdateRequest;
 import com.hyewon.wiseowl_backend.domain.user.dto.UserMajorUpdateRequest;
 import com.hyewon.wiseowl_backend.domain.user.entity.Profile;
@@ -80,6 +81,26 @@ public class UserRequirementStatusService {
                             userMajor.getMajor().getId(),
                             req.newMajorType(),
                             profile.getEntranceYear()
+                    );
+            List<UserRequirementStatus> toSave = applicable.stream()
+                    .map(ar -> UserRequirementStatus.of(user, ar))
+                    .toList();
+
+            userRequirementStatusRepository.saveAll(toSave);
+        });
+    }
+
+    @Transactional
+    public void insertUserRequirementStatus(Long userId, List<UserMajorRequest> requests, Integer entranceYear) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+
+        requests.forEach(req -> {
+            List<MajorRequirement> applicable =
+                    majorRequirementQueryService.getApplicableRequirements(
+                            req.majorId(),
+                            req.majorType(),
+                            entranceYear
                     );
             List<UserRequirementStatus> toSave = applicable.stream()
                     .map(ar -> UserRequirementStatus.of(user, ar))

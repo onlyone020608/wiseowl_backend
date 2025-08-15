@@ -14,10 +14,7 @@ import com.hyewon.wiseowl_backend.domain.requirement.service.RequiredLiberalCate
 import com.hyewon.wiseowl_backend.domain.requirement.service.RequiredMajorCourseQueryService;
 import com.hyewon.wiseowl_backend.domain.user.dto.*;
 import com.hyewon.wiseowl_backend.domain.user.entity.*;
-import com.hyewon.wiseowl_backend.domain.user.event.CompletedCoursesRegisteredEvent;
-import com.hyewon.wiseowl_backend.domain.user.event.CompletedCoursesUpdateEvent;
-import com.hyewon.wiseowl_backend.domain.user.event.UserMajorTypeUpdateEvent;
-import com.hyewon.wiseowl_backend.domain.user.event.UserMajorUpdateEvent;
+import com.hyewon.wiseowl_backend.domain.user.event.*;
 import com.hyewon.wiseowl_backend.domain.user.repository.*;
 import com.hyewon.wiseowl_backend.global.exception.*;
 import jakarta.persistence.EntityManager;
@@ -65,7 +62,6 @@ public class UserService {
             Major major = majorQueryService.getMajor(majorRequest.majorId());
             userMajorRepository.save(UserMajor.of(user, major, majorRequest.majorType()));
 
-            setupRequirementStatusesForMajor(majorRequest, entranceYear, major, user);
             setupRequiredCourseStatusesForMajor(majorRequest, entranceYear, user);
 
             // primary major에 해당할 때만
@@ -78,6 +74,7 @@ public class UserService {
                 userRequiredCourseStatusRepository.saveAll(requiredLiberalCourseStatuses);
             }
         }
+        eventPublisher.publishEvent(new UserMajorRegisteredEvent(userId, request.majors(), entranceYear));
     }
 
     private void setupRequiredCourseStatusesForMajor(UserMajorRequest majorRequest, Integer entranceYear, User user) {
@@ -87,15 +84,6 @@ public class UserService {
                 .toList();
 
         userRequiredCourseStatusRepository.saveAll(requiredMajorCourseStatuses);
-    }
-
-    private void setupRequirementStatusesForMajor(UserMajorRequest majorRequest,Integer entranceYear, Major major, User user) {
-        List<MajorRequirement> applicable = majorRequirementQueryService.getApplicableRequirements(major.getId(), majorRequest.majorType(), entranceYear);
-        List<UserRequirementStatus> toSave = applicable.stream()
-                .map(req -> UserRequirementStatus.of(user, req))
-                .toList();
-
-        userRequirementStatusRepository.saveAll(toSave);
     }
 
     @Transactional

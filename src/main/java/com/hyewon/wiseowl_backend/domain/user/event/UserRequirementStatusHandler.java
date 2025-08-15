@@ -19,4 +19,9 @@ public class UserRequirementStatusHandler {
     public void onMajorTypeUpdated(UserMajorTypeUpdateEvent event) {
         userRequirementStatusService.replaceUserRequirementStatusWithMajorType(event.getUserId(), event.getRequests());
     }
+
+    @TransactionalEventListener
+    public void onRegistered(UserMajorRegisteredEvent event){
+        userRequirementStatusService.insertUserRequirementStatus(event.getUserId(), event.getRequests(), event.getEntranceYear());
+    }
 }
