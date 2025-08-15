@@ -27,7 +27,7 @@ public class NoticeService {
     private final OrganizationRepository organizationRepository;
 
     @Transactional(readOnly = true)
-    public List<NoticeResponse> fetchUserSubscribedNotices(Long userId) {
+    public List<NoticeResponse> getUserSubscribedNotices(Long userId) {
         List<UserSubscription> subscriptions = userSubscriptionService.getSubscriptions(userId);
         return subscriptions.stream().map(
                 subscription -> {

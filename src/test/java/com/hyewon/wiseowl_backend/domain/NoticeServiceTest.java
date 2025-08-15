@@ -91,8 +91,8 @@ public class NoticeServiceTest {
     }
 
     @Test
-    @DisplayName("fetchAllFacilities - should return up to 6 recent notices for each subscribed target")
-    void fetchAllFacilities_success() {
+    @DisplayName("getAllFacilities - should return up to 6 recent notices for each subscribed target")
+    void getAllFacilities_success() {
         // given
         Long userId = 1L;
         given(userSubscriptionService.getSubscriptions(userId))
@@ -104,7 +104,7 @@ public class NoticeServiceTest {
         given(noticeRepository.findTop6BySourceIdOrderByPostedAtDesc(3L)).willReturn(List.of(notice3));
 
         // when
-        List<NoticeResponse> response = noticeService.fetchUserSubscribedNotices(userId).stream()
+        List<NoticeResponse> response = noticeService.getUserSubscribedNotices(userId).stream()
                 .sorted(Comparator.comparing(NoticeResponse::subscriptionName))
                 .toList();
 
@@ -119,8 +119,8 @@ public class NoticeServiceTest {
     }
 
     @Test
-    @DisplayName("fetchAllFacilities - should throw OrganizationNotFoundException when organization does not exist")
-    void fetchAllFacilities_shouldThrowException_whenOrganizationNotFound() {
+    @DisplayName("getAllFacilities - should throw OrganizationNotFoundException when organization does not exist")
+    void getAllFacilities_shouldThrowException_whenOrganizationNotFound() {
         // given
         Long userId = 1L;
         given(userSubscriptionService.getSubscriptions(userId))
@@ -131,6 +131,6 @@ public class NoticeServiceTest {
 
         // when & then
         assertThrows(OrganizationNotFoundException.class,
-                () ->  noticeService.fetchUserSubscribedNotices(userId));
+                () ->  noticeService.getUserSubscribedNotices(userId));
     }
 }

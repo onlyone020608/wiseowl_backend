@@ -22,7 +22,7 @@ public class NoticeController {
     public ResponseEntity<List<NoticeResponse>> getSubscribedNotices(
             @AuthenticationPrincipal UserPrincipal principal
     ) {
-        List<NoticeResponse> notices = noticeService.fetchUserSubscribedNotices(principal.getId());
+        List<NoticeResponse> notices = noticeService.getUserSubscribedNotices(principal.getId());
         return ResponseEntity.ok(notices);
     }
 }
