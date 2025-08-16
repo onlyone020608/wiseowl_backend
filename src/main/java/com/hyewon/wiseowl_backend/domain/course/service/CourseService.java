@@ -1,8 +1,8 @@
 package com.hyewon.wiseowl_backend.domain.course.service;
 
 import com.hyewon.wiseowl_backend.domain.course.dto.CollegeWithMajorsDto;
+import com.hyewon.wiseowl_backend.domain.course.dto.CourseCategoryResponse;
 import com.hyewon.wiseowl_backend.domain.course.dto.CourseOfferingDto;
-import com.hyewon.wiseowl_backend.domain.course.dto.CourseCategoryDto;
 import com.hyewon.wiseowl_backend.domain.course.dto.MajorDto;
 import com.hyewon.wiseowl_backend.domain.course.entity.College;
 import com.hyewon.wiseowl_backend.domain.course.entity.CourseOffering;
@@ -32,7 +32,7 @@ public class CourseService {
     private final MajorRepository majorRepository;
 
     @Transactional(readOnly = true)
-    public List<CourseCategoryDto> getCourseCategoriesBySemester(Long semesterId) {
+    public List<CourseCategoryResponse> getCourseCategoriesBySemester(Long semesterId) {
         List<Major> majors = courseOfferingRepository.findDistinctMajorsBySemesterId(semesterId);
         List<LiberalCategory> liberals = courseOfferingRepository.findDistinctLiberalCategoriesBySemester(semesterId);
 
@@ -40,9 +40,9 @@ public class CourseService {
             throw new CourseNotFoundException("No course categories found for semesterId: " + semesterId);
         }
 
-        List<CourseCategoryDto> result = new ArrayList<>();
-        result.addAll(majors.stream().map(CourseCategoryDto::fromMajor).toList());
-        result.addAll(liberals.stream().map(CourseCategoryDto::fromLiberal).toList());
+        List<CourseCategoryResponse> result = new ArrayList<>();
+        result.addAll(majors.stream().map(CourseCategoryResponse::fromMajor).toList());
+        result.addAll(liberals.stream().map(CourseCategoryResponse::fromLiberal).toList());
         return result;
     }
 

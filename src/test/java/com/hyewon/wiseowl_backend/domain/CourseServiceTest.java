@@ -1,13 +1,13 @@
 package com.hyewon.wiseowl_backend.domain;
 
 import com.hyewon.wiseowl_backend.domain.course.dto.CollegeWithMajorsDto;
-import com.hyewon.wiseowl_backend.domain.course.repository.MajorRepository;
-import com.hyewon.wiseowl_backend.domain.course.service.CourseService;
-import com.hyewon.wiseowl_backend.domain.course.dto.CourseCategoryDto;
+import com.hyewon.wiseowl_backend.domain.course.dto.CourseCategoryResponse;
 import com.hyewon.wiseowl_backend.domain.course.dto.CourseOfferingDto;
 import com.hyewon.wiseowl_backend.domain.course.entity.*;
 import com.hyewon.wiseowl_backend.domain.course.repository.CourseOfferingRepository;
 import com.hyewon.wiseowl_backend.domain.course.repository.LiberalCategoryRepository;
+import com.hyewon.wiseowl_backend.domain.course.repository.MajorRepository;
+import com.hyewon.wiseowl_backend.domain.course.service.CourseService;
 import com.hyewon.wiseowl_backend.global.exception.CourseNotFoundException;
 import com.hyewon.wiseowl_backend.global.exception.CourseOfferingNotFoundException;
 import com.hyewon.wiseowl_backend.global.exception.LiberalCategoryNotFoundException;
@@ -103,7 +103,7 @@ public class CourseServiceTest {
                 .willReturn(List.of(liberal));
 
         // when
-        List<CourseCategoryDto> result = courseService.getCourseCategoriesBySemester(semesterId);
+        List<CourseCategoryResponse> result = courseService.getCourseCategoriesBySemester(semesterId);
 
         // then
         assertThat(result).hasSize(2);
