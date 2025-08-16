@@ -18,6 +18,6 @@ public class FacilityController {
 
     @GetMapping
     public ResponseEntity<List<BuildingFacilityResponse>> getFacilities() {
-        return ResponseEntity.ok(facilityService.fetchAllFacilities());
+        return ResponseEntity.ok(facilityService.getAllFacilities());
     }
 }

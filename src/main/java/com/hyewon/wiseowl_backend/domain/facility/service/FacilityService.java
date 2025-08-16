@@ -1,9 +1,9 @@
 package com.hyewon.wiseowl_backend.domain.facility.service;
 
 import com.hyewon.wiseowl_backend.domain.course.entity.Building;
-import com.hyewon.wiseowl_backend.domain.facility.entity.Facility;
 import com.hyewon.wiseowl_backend.domain.facility.dto.BuildingFacilityResponse;
 import com.hyewon.wiseowl_backend.domain.facility.dto.FacilityResponse;
+import com.hyewon.wiseowl_backend.domain.facility.entity.Facility;
 import com.hyewon.wiseowl_backend.domain.facility.repository.FacilityRepository;
 import com.hyewon.wiseowl_backend.global.exception.FacilityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class FacilityService {
     private final FacilityRepository facilityRepository;
 
     @Transactional(readOnly = true)
-    public List<BuildingFacilityResponse> fetchAllFacilities() {
+    public List<BuildingFacilityResponse> getAllFacilities() {
         List<Facility> all = facilityRepository.findAll();
         if (all.isEmpty()) {
             throw new FacilityNotFoundException();

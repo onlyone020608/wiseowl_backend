@@ -63,13 +63,13 @@ public class FacilityServiceTest {
     }
 
     @Test
-    @DisplayName("fetchAllFacilities - should return all facilities")
-    void fetchAllFacilities_success() {
+    @DisplayName("getAllFacilities - should return all facilities")
+    void getAllFacilities_success() {
         // given
         given(facilityRepository.findAll()).willReturn(List.of(facility1, facility2, facility3));
 
         // when
-        List<BuildingFacilityResponse> response = facilityService.fetchAllFacilities()
+        List<BuildingFacilityResponse> response = facilityService.getAllFacilities()
                 .stream()
                 .sorted(Comparator.comparing(BuildingFacilityResponse::buildingNumber))
                 .toList();
@@ -82,13 +82,13 @@ public class FacilityServiceTest {
     }
 
     @Test
-    @DisplayName("fetchAllFacilities - should throw FacilityNotFoundException when facility does not exist")
-    void fetchAllFacilities_shouldThrowException_whenFacilityNotFound() {
+    @DisplayName("getAllFacilities - should throw FacilityNotFoundException when facility does not exist")
+    void getAllFacilities_shouldThrowException_whenFacilityNotFound() {
         // given
         given(facilityRepository.findAll()).willReturn(List.of());
 
         // when & then
         assertThrows(FacilityNotFoundException.class,
-                () -> facilityService.fetchAllFacilities());
+                () -> facilityService.getAllFacilities());
     }
 }
