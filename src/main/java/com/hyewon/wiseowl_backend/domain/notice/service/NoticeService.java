@@ -3,7 +3,6 @@ package com.hyewon.wiseowl_backend.domain.notice.service;
 import com.hyewon.wiseowl_backend.domain.course.service.MajorQueryService;
 import com.hyewon.wiseowl_backend.domain.notice.dto.NoticeDetailResponse;
 import com.hyewon.wiseowl_backend.domain.notice.dto.NoticeResponse;
-import com.hyewon.wiseowl_backend.domain.notice.entity.Notice;
 import com.hyewon.wiseowl_backend.domain.notice.entity.Organization;
 import com.hyewon.wiseowl_backend.domain.notice.repository.NoticeRepository;
 import com.hyewon.wiseowl_backend.domain.notice.repository.OrganizationRepository;
@@ -34,15 +33,14 @@ public class NoticeService {
                     String subscriptionName = null;
                     if (subscription.getType().equals(SubscriptionType.MAJOR)) {
                         subscriptionName = majorQueryService.getMajorName(subscription.getTargetId());
-
                     }
                     if (subscription.getType().equals(SubscriptionType.ORGANIZATION)) {
                         Organization organization = organizationRepository.findById(subscription.getTargetId()).orElseThrow(
                                 () -> new OrganizationNotFoundException(subscription.getTargetId()));
                         subscriptionName = organization.getName();
                     }
-                    List<Notice> notices = noticeRepository.findTop6BySourceIdAndTypeOrderByPostedAtDesc(subscription.getTargetId(), subscription.getType());
-                    List<NoticeDetailResponse> noticeDetailResponses = notices.stream().map(NoticeDetailResponse::from).toList();
+
+                    List<NoticeDetailResponse> noticeDetailResponses = noticeRepository.findTop6BySourceIdAndTypeOrderByPostedAtDesc(subscription.getTargetId(), subscription.getType());
 
                     return new NoticeResponse(
                             subscriptionName,

@@ -2,6 +2,7 @@ package com.hyewon.wiseowl_backend.domain;
 
 import com.hyewon.wiseowl_backend.domain.course.entity.Major;
 import com.hyewon.wiseowl_backend.domain.course.service.MajorQueryService;
+import com.hyewon.wiseowl_backend.domain.notice.dto.NoticeDetailResponse;
 import com.hyewon.wiseowl_backend.domain.notice.dto.NoticeResponse;
 import com.hyewon.wiseowl_backend.domain.notice.entity.Notice;
 import com.hyewon.wiseowl_backend.domain.notice.entity.Organization;
@@ -98,13 +99,15 @@ public class NoticeServiceTest {
     void getAllFacilities_success() {
         // given
         Long userId = 1L;
+        List<NoticeDetailResponse> responses1 = List.of(NoticeDetailResponse.from(notice), NoticeDetailResponse.from(notice2));
+        List<NoticeDetailResponse> responses2 = List.of(NoticeDetailResponse.from(notice3));
         given(userSubscriptionService.getSubscriptions(userId))
                 .willReturn(List.of(userSubscription, userSubscription2));
         given(majorQueryService.getMajorName(2L))
                 .willReturn("컴퓨터공학과");
         given(organizationRepository.findById(3L)).willReturn(Optional.of(organization));
-        given(noticeRepository.findTop6BySourceIdAndTypeOrderByPostedAtDesc(2L, SubscriptionType.MAJOR)).willReturn(List.of(notice, notice2));
-        given(noticeRepository.findTop6BySourceIdAndTypeOrderByPostedAtDesc(3L, SubscriptionType.ORGANIZATION)).willReturn(List.of(notice3));
+        given(noticeRepository.findTop6BySourceIdAndTypeOrderByPostedAtDesc(2L, SubscriptionType.MAJOR)).willReturn(responses1);
+        given(noticeRepository.findTop6BySourceIdAndTypeOrderByPostedAtDesc(3L, SubscriptionType.ORGANIZATION)).willReturn(responses2);
 
         // when
         List<NoticeResponse> response = noticeService.getUserSubscribedNotices(userId).stream()
