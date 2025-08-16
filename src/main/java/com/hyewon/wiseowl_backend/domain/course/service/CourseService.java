@@ -2,7 +2,7 @@ package com.hyewon.wiseowl_backend.domain.course.service;
 
 import com.hyewon.wiseowl_backend.domain.course.dto.CollegeWithMajorsDto;
 import com.hyewon.wiseowl_backend.domain.course.dto.CourseCategoryResponse;
-import com.hyewon.wiseowl_backend.domain.course.dto.CourseOfferingDto;
+import com.hyewon.wiseowl_backend.domain.course.dto.CourseOfferingResponse;
 import com.hyewon.wiseowl_backend.domain.course.dto.MajorDto;
 import com.hyewon.wiseowl_backend.domain.course.entity.College;
 import com.hyewon.wiseowl_backend.domain.course.entity.CourseOffering;
@@ -47,7 +47,7 @@ public class CourseService {
     }
 
     @Transactional(readOnly = true)
-    public List<CourseOfferingDto> getCourseOfferingsBySemester(Long semesterId) {
+    public List<CourseOfferingResponse> getCourseOfferingsBySemester(Long semesterId) {
         List<CourseOffering> offerings = courseOfferingRepository.findAllBySemesterId(semesterId);
         if (offerings.isEmpty()) {
             throw new CourseOfferingNotFoundException("No course offerings found for semesterId: " + semesterId);
@@ -61,7 +61,7 @@ public class CourseService {
                                 .orElseThrow(() -> new LiberalCategoryNotFoundException("No liberal category for courseId: " + offering.getCourse().getId()));
 
                     }
-                    return CourseOfferingDto.from(offering, liberalCategoryId);
+                    return CourseOfferingResponse.from(offering, liberalCategoryId);
                 })
                 .collect(Collectors.toList());
     }

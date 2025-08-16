@@ -3,7 +3,7 @@ package com.hyewon.wiseowl_backend.domain.course.controller;
 import com.hyewon.wiseowl_backend.domain.course.dto.CollegeWithMajorsDto;
 import com.hyewon.wiseowl_backend.domain.course.dto.CourseCategoryListResponse;
 import com.hyewon.wiseowl_backend.domain.course.dto.CourseCategoryResponse;
-import com.hyewon.wiseowl_backend.domain.course.dto.CourseOfferingDto;
+import com.hyewon.wiseowl_backend.domain.course.dto.CourseOfferingResponse;
 import com.hyewon.wiseowl_backend.domain.course.service.CourseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -27,8 +27,8 @@ public class CourseController {
     }
 
     @GetMapping("/offerings")
-    public ResponseEntity<List<CourseOfferingDto>> getOfferings(@RequestParam Long semesterId) {
-        List<CourseOfferingDto> offerings = courseService.getCourseOfferingsBySemester(semesterId);
+    public ResponseEntity<List<CourseOfferingResponse>> getOfferings(@RequestParam Long semesterId) {
+        List<CourseOfferingResponse> offerings = courseService.getCourseOfferingsBySemester(semesterId);
         return ResponseEntity.ok(offerings);
     }
 
