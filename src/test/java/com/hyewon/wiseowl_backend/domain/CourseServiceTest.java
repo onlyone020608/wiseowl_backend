@@ -1,6 +1,6 @@
 package com.hyewon.wiseowl_backend.domain;
 
-import com.hyewon.wiseowl_backend.domain.course.dto.CollegeWithMajorsDto;
+import com.hyewon.wiseowl_backend.domain.course.dto.CollegeWithMajorsResponse;
 import com.hyewon.wiseowl_backend.domain.course.dto.CourseCategoryResponse;
 import com.hyewon.wiseowl_backend.domain.course.dto.CourseOfferingResponse;
 import com.hyewon.wiseowl_backend.domain.course.entity.*;
@@ -182,11 +182,11 @@ public class CourseServiceTest {
                 .willReturn(List.of(major1, major2));
 
         // when
-        List<CollegeWithMajorsDto> result =
+        List<CollegeWithMajorsResponse> result =
                 courseService.getCollegesWithMajors();
 
         // then
-        CollegeWithMajorsDto dto = result.get(0);
+        CollegeWithMajorsResponse dto = result.get(0);
 
         assertThat(result).hasSize(1);
         assertThat(dto.collegeId()).isEqualTo(1L);
@@ -204,7 +204,7 @@ public class CourseServiceTest {
                 .willReturn(List.of());
 
         // when
-        List<CollegeWithMajorsDto> result = courseService.getCollegesWithMajors();
+        List<CollegeWithMajorsResponse> result = courseService.getCollegesWithMajors();
 
         // then
         assertThat(result).isEmpty();

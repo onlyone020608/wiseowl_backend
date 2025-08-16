@@ -1,6 +1,6 @@
 package com.hyewon.wiseowl_backend.domain.course.controller;
 
-import com.hyewon.wiseowl_backend.domain.course.dto.CollegeWithMajorsDto;
+import com.hyewon.wiseowl_backend.domain.course.dto.CollegeWithMajorsResponse;
 import com.hyewon.wiseowl_backend.domain.course.dto.CourseCategoryListResponse;
 import com.hyewon.wiseowl_backend.domain.course.dto.CourseCategoryResponse;
 import com.hyewon.wiseowl_backend.domain.course.dto.CourseOfferingResponse;
@@ -33,8 +33,8 @@ public class CourseController {
     }
 
     @GetMapping("/colleges-with-majors")
-    public ResponseEntity<List<CollegeWithMajorsDto>> getCollegesWithMajors() {
-        List<CollegeWithMajorsDto> result = courseService.getCollegesWithMajors();
+    public ResponseEntity<List<CollegeWithMajorsResponse>> getCollegesWithMajors() {
+        List<CollegeWithMajorsResponse> result = courseService.getCollegesWithMajors();
         return ResponseEntity.ok(result);
     }
 }

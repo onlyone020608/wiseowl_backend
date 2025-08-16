@@ -1,6 +1,6 @@
 package com.hyewon.wiseowl_backend.domain.course.service;
 
-import com.hyewon.wiseowl_backend.domain.course.dto.CollegeWithMajorsDto;
+import com.hyewon.wiseowl_backend.domain.course.dto.CollegeWithMajorsResponse;
 import com.hyewon.wiseowl_backend.domain.course.dto.CourseCategoryResponse;
 import com.hyewon.wiseowl_backend.domain.course.dto.CourseOfferingResponse;
 import com.hyewon.wiseowl_backend.domain.course.dto.MajorDto;
@@ -66,7 +66,7 @@ public class CourseService {
                 .collect(Collectors.toList());
     }
 
-    public List<CollegeWithMajorsDto> getCollegesWithMajors() {
+    public List<CollegeWithMajorsResponse> getCollegesWithMajors() {
         List<Major> majors = majorRepository.findAllWithCollege();
 
         Map<College, List<Major>> grouped = majors.stream()
@@ -79,7 +79,7 @@ public class CourseService {
                             .map(m -> new MajorDto(m.getId(), m.getName()))
                             .toList();
 
-                    return new CollegeWithMajorsDto(
+                    return new CollegeWithMajorsResponse(
                             college.getId(),
                             college.getName(),
                             majorDtos
