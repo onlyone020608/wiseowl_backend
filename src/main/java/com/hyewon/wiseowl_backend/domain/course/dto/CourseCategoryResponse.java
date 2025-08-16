@@ -10,6 +10,6 @@ public record CourseCategoryResponse(Long id, String name, String type) {
     }
 
     public static CourseCategoryResponse fromLiberal(LiberalCategory liberal) {
-        return new CourseCategoryResponse(liberal.getId(), liberal.getName(),"LIBRERAL");
+        return new CourseCategoryResponse(liberal.getId(), liberal.getName(),"LIBERAL");
     }
 }
