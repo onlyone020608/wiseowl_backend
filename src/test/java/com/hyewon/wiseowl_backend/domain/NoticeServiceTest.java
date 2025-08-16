@@ -65,11 +65,13 @@ public class NoticeServiceTest {
                 .postedAt(LocalDate.of(2025, 7, 14))
                 .url("www.example.com")
                 .sourceId(2L)
+                .type(SubscriptionType.MAJOR)
                 .build();
         notice2 = Notice.builder()
                 .title("졸업시험공지사항2")
                 .postedAt(LocalDate.of(2025, 7, 10))
                 .url("www.example.com")
+                .type(SubscriptionType.MAJOR)
                 .sourceId(2L)
                 .build();
         notice3 = Notice.builder()
@@ -77,6 +79,7 @@ public class NoticeServiceTest {
                 .postedAt(LocalDate.of(2025, 7, 10))
                 .url("www.example.com")
                 .sourceId(3L)
+                .type(SubscriptionType.ORGANIZATION)
                 .build();
         userSubscription = UserSubscription.builder()
                 .user(user)
@@ -100,8 +103,8 @@ public class NoticeServiceTest {
         given(majorQueryService.getMajorName(2L))
                 .willReturn("컴퓨터공학과");
         given(organizationRepository.findById(3L)).willReturn(Optional.of(organization));
-        given(noticeRepository.findTop6BySourceIdOrderByPostedAtDesc(2L)).willReturn(List.of(notice, notice2));
-        given(noticeRepository.findTop6BySourceIdOrderByPostedAtDesc(3L)).willReturn(List.of(notice3));
+        given(noticeRepository.findTop6BySourceIdAndTypeOrderByPostedAtDesc(2L, SubscriptionType.MAJOR)).willReturn(List.of(notice, notice2));
+        given(noticeRepository.findTop6BySourceIdAndTypeOrderByPostedAtDesc(3L, SubscriptionType.ORGANIZATION)).willReturn(List.of(notice3));
 
         // when
         List<NoticeResponse> response = noticeService.getUserSubscribedNotices(userId).stream()

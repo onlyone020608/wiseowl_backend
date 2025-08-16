@@ -41,7 +41,7 @@ public class NoticeService {
                                 () -> new OrganizationNotFoundException(subscription.getTargetId()));
                         subscriptionName = organization.getName();
                     }
-                    List<Notice> notices = noticeRepository.findTop6BySourceIdOrderByPostedAtDesc(subscription.getTargetId());
+                    List<Notice> notices = noticeRepository.findTop6BySourceIdAndTypeOrderByPostedAtDesc(subscription.getTargetId(), subscription.getType());
                     List<NoticeDetailResponse> noticeDetailResponses = notices.stream().map(NoticeDetailResponse::from).toList();
 
                     return new NoticeResponse(
