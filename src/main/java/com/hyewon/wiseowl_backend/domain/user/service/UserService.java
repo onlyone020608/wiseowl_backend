@@ -1,17 +1,12 @@
 package com.hyewon.wiseowl_backend.domain.user.service;
 
 import com.hyewon.wiseowl_backend.domain.course.entity.CourseOffering;
-import com.hyewon.wiseowl_backend.domain.course.entity.CourseType;
 import com.hyewon.wiseowl_backend.domain.course.entity.Major;
 import com.hyewon.wiseowl_backend.domain.course.service.CourseOfferingQueryService;
 import com.hyewon.wiseowl_backend.domain.course.service.MajorQueryService;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorRequirement;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorType;
-import com.hyewon.wiseowl_backend.domain.requirement.entity.RequiredMajorCourse;
 import com.hyewon.wiseowl_backend.domain.requirement.service.CreditRequirementQueryService;
-import com.hyewon.wiseowl_backend.domain.requirement.service.MajorRequirementQueryService;
-import com.hyewon.wiseowl_backend.domain.requirement.service.RequiredLiberalCategoryQueryService;
-import com.hyewon.wiseowl_backend.domain.requirement.service.RequiredMajorCourseQueryService;
 import com.hyewon.wiseowl_backend.domain.user.dto.*;
 import com.hyewon.wiseowl_backend.domain.user.entity.*;
 import com.hyewon.wiseowl_backend.domain.user.event.*;
@@ -36,11 +31,8 @@ public class UserService {
     private final UserMajorRepository userMajorRepository;
     private final UserCompletedCourseRepository userCompletedCourseRepository;
     private final CourseOfferingQueryService courseOfferingQueryService;
-    private final MajorRequirementQueryService majorRequirementQueryService;
     private final UserRequirementStatusRepository userRequirementStatusRepository;
     private final CreditRequirementQueryService creditRequirementQueryService;
-    private final RequiredMajorCourseQueryService requiredMajorCourseQueryService;
-    private final RequiredLiberalCategoryQueryService requiredLiberalCategoryQueryService;
     private final UserRequiredCourseStatusRepository userRequiredCourseStatusRepository;
     private final UserTrackRepository userTrackRepository;
     private final UserSubscriptionRepository userSubscriptionRepository;
@@ -61,29 +53,8 @@ public class UserService {
         for (UserMajorRequest majorRequest : request.majors()) {
             Major major = majorQueryService.getMajor(majorRequest.majorId());
             userMajorRepository.save(UserMajor.of(user, major, majorRequest.majorType()));
-
-            setupRequiredCourseStatusesForMajor(majorRequest, entranceYear, user);
-
-            // primary major에 해당할 때만
-            if (majorRequest.majorType().equals(MajorType.PRIMARY)) {
-                List<UserRequiredCourseStatus> requiredLiberalCourseStatuses = requiredLiberalCategoryQueryService.getApplicableLiberalCategories(major.getCollege().getId(), entranceYear)
-                        .stream()
-                        .map(requiredLiberal -> UserRequiredCourseStatus.of(user, CourseType.GENERAL, requiredLiberal.getId()))
-                        .toList();
-
-                userRequiredCourseStatusRepository.saveAll(requiredLiberalCourseStatuses);
-            }
         }
         eventPublisher.publishEvent(new UserMajorRegisteredEvent(userId, request.majors(), entranceYear));
-    }
-
-    private void setupRequiredCourseStatusesForMajor(UserMajorRequest majorRequest, Integer entranceYear, User user) {
-        List<RequiredMajorCourse> majorCourseList= requiredMajorCourseQueryService.getApplicableMajorCourses(majorRequest.majorId(), majorRequest.majorType(), entranceYear);
-        List<UserRequiredCourseStatus> requiredMajorCourseStatuses = majorCourseList.stream()
-                .map(requiredMajorCourse -> UserRequiredCourseStatus.of(user, CourseType.MAJOR, requiredMajorCourse.getId()))
-                .toList();
-
-        userRequiredCourseStatusRepository.saveAll(requiredMajorCourseStatuses);
     }
 
     @Transactional

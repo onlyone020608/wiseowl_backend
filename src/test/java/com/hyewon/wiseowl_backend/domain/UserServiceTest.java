@@ -1,20 +1,13 @@
 package com.hyewon.wiseowl_backend.domain;
 
 import com.hyewon.wiseowl_backend.domain.course.entity.*;
-import com.hyewon.wiseowl_backend.domain.course.repository.MajorRepository;
 import com.hyewon.wiseowl_backend.domain.course.service.CourseOfferingQueryService;
 import com.hyewon.wiseowl_backend.domain.course.service.MajorQueryService;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.*;
 import com.hyewon.wiseowl_backend.domain.requirement.service.CreditRequirementQueryService;
-import com.hyewon.wiseowl_backend.domain.requirement.service.MajorRequirementQueryService;
-import com.hyewon.wiseowl_backend.domain.requirement.service.RequiredLiberalCategoryQueryService;
-import com.hyewon.wiseowl_backend.domain.requirement.service.RequiredMajorCourseQueryService;
 import com.hyewon.wiseowl_backend.domain.user.dto.*;
 import com.hyewon.wiseowl_backend.domain.user.entity.*;
-import com.hyewon.wiseowl_backend.domain.user.event.CompletedCoursesRegisteredEvent;
-import com.hyewon.wiseowl_backend.domain.user.event.CompletedCoursesUpdateEvent;
-import com.hyewon.wiseowl_backend.domain.user.event.UserMajorTypeUpdateEvent;
-import com.hyewon.wiseowl_backend.domain.user.event.UserMajorUpdateEvent;
+import com.hyewon.wiseowl_backend.domain.user.event.*;
 import com.hyewon.wiseowl_backend.domain.user.repository.*;
 import com.hyewon.wiseowl_backend.domain.user.service.UserService;
 import com.hyewon.wiseowl_backend.global.exception.*;
@@ -49,16 +42,12 @@ public class UserServiceTest {
     @InjectMocks UserService userService;
     @Mock private UserRepository userRepository;
     @Mock private ProfileRepository profileRepository;
-    @Mock private MajorRepository majorRepository;
     @Mock private MajorQueryService majorQueryService;
     @Mock private UserMajorRepository userMajorRepository;
     @Mock private UserCompletedCourseRepository userCompletedCourseRepository;
     @Mock private CourseOfferingQueryService courseOfferingQueryService;
-    @Mock private MajorRequirementQueryService majorRequirementQueryService;
     @Mock private UserRequirementStatusRepository userRequirementStatusRepository;
     @Mock private CreditRequirementQueryService creditRequirementQueryService;
-    @Mock private RequiredMajorCourseQueryService requiredMajorCourseQueryService;
-    @Mock private RequiredLiberalCategoryQueryService requiredLiberalCategoryQueryService;
     @Mock private UserRequiredCourseStatusRepository userRequiredCourseStatusRepository;
     @Mock private UserSubscriptionRepository userSubscriptionRepository;
     @Mock private UserTrackRepository userTrackRepository;
@@ -231,12 +220,6 @@ public class UserServiceTest {
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
         given(profileRepository.findByUserId(userId)).willReturn(Optional.of(profile));
         given(majorQueryService.getMajor(1L)).willReturn(major);
-        given(majorRequirementQueryService.getApplicableRequirements(major.getId(), MajorType.PRIMARY, profileUpdateRequest.entranceYear()))
-                .willReturn(List.of(mr1));
-        given(requiredMajorCourseQueryService.getApplicableMajorCourses(major.getId(), MajorType.PRIMARY, profileUpdateRequest.entranceYear()))
-                .willReturn(List.of(requiredMajorCourse));
-        given(requiredLiberalCategoryQueryService.getApplicableLiberalCategories(major.getCollege().getId(),  profileUpdateRequest.entranceYear()))
-                .willReturn(List.of(rlc));
 
         // when
         userService.updateUserProfile(userId, profileUpdateRequest);
@@ -259,31 +242,7 @@ public class UserServiceTest {
         assertThat(savedUserTrack.getUser()).isEqualTo(user);
         assertThat(savedUserTrack.getTrack()).isEqualTo(Track.PRIMARY_WITH_DOUBLE);
 
-        verify(userRequirementStatusRepository).saveAll(argThat(iterable -> {
-            List<UserRequirementStatus> list = StreamSupport
-                    .stream(iterable.spliterator(), false)
-                    .toList();
-
-            return list.size() == 1 &&
-                    list.get(0).getMajorRequirement().equals(mr1) &&
-                    list.get(0).getUser().equals(user);
-        }));
-
-        verify(userRequiredCourseStatusRepository).saveAll(argThat(iterable -> {
-            List<UserRequiredCourseStatus> list = StreamSupport.stream(iterable.spliterator(), false).toList();
-
-            return list.size() == 1 &&
-                    list.get(0).getCourseType() == CourseType.MAJOR &&
-                    list.get(0).getUser().equals(user);
-        }));
-
-        verify(userRequiredCourseStatusRepository).saveAll(argThat(iterable -> {
-            List<UserRequiredCourseStatus> list = StreamSupport.stream(iterable.spliterator(), false).toList();
-
-            return list.size() == 1 &&
-                    list.get(0).getCourseType() == CourseType.GENERAL &&
-                    list.get(0).getUser().equals(user);
-        }));
+        verify(eventPublisher).publishEvent(any(UserMajorRegisteredEvent.class));
     }
 
     @Test
