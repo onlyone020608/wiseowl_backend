@@ -6,10 +6,12 @@ import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorType;
 import com.hyewon.wiseowl_backend.domain.user.dto.UserMajorDetail;
 import com.hyewon.wiseowl_backend.domain.user.entity.QUser;
 import com.hyewon.wiseowl_backend.domain.user.entity.QUserMajor;
+import com.hyewon.wiseowl_backend.domain.user.entity.UserMajor;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -33,5 +35,15 @@ public class UserMajorQueryRepositoryImpl implements UserMajorQueryRepository {
                         user.id.eq(userId),
                         userMajor.majorType.eq(majorType)
                 ).fetchOne());
+    }
+
+    @Override
+    public List<UserMajor> findAllByUserIdWithMajorAndCollege(Long userId) {
+        return query
+                .selectFrom(userMajor)
+                .join(userMajor.major, major).fetchJoin()
+                .join(major.college, college).fetchJoin()
+                .where(userMajor.user.id.eq(userId))
+                .fetch();
     }
 }

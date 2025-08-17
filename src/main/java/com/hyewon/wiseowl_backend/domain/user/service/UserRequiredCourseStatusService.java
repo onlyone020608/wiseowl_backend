@@ -15,12 +15,11 @@ import com.hyewon.wiseowl_backend.domain.requirement.repository.RequiredMajorCou
 import com.hyewon.wiseowl_backend.domain.requirement.service.RequiredLiberalCategoryQueryService;
 import com.hyewon.wiseowl_backend.domain.requirement.service.RequiredMajorCourseQueryService;
 import com.hyewon.wiseowl_backend.domain.user.dto.UserMajorRequest;
+import com.hyewon.wiseowl_backend.domain.user.entity.Profile;
 import com.hyewon.wiseowl_backend.domain.user.entity.User;
 import com.hyewon.wiseowl_backend.domain.user.entity.UserCompletedCourse;
 import com.hyewon.wiseowl_backend.domain.user.entity.UserRequiredCourseStatus;
-import com.hyewon.wiseowl_backend.domain.user.repository.UserCompletedCourseRepository;
-import com.hyewon.wiseowl_backend.domain.user.repository.UserRepository;
-import com.hyewon.wiseowl_backend.domain.user.repository.UserRequiredCourseStatusRepository;
+import com.hyewon.wiseowl_backend.domain.user.repository.*;
 import com.hyewon.wiseowl_backend.global.exception.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -44,6 +43,8 @@ public class UserRequiredCourseStatusService {
     private final UserRepository userRepository;
     private final RequiredLiberalCategoryQueryService requiredLiberalCategoryQueryService;
     private final MajorQueryService majorQueryService;
+    private final UserMajorRepository userMajorRepository;
+    private final ProfileRepository profileRepository;
 
     @Transactional
     public void updateUserRequiredCourseStatus(Long userId, List<UserCompletedCourse> completedCourses) {
@@ -118,6 +119,36 @@ public class UserRequiredCourseStatusService {
             // primary major에 해당할 때만
             if (req.majorType().equals(MajorType.PRIMARY)) {
                 List<UserRequiredCourseStatus> requiredLiberalCourseStatuses = requiredLiberalCategoryQueryService.getApplicableLiberalCategories(major.getCollege().getId(), entranceYear)
+                        .stream()
+                        .map(requiredLiberal -> UserRequiredCourseStatus.of(user, CourseType.GENERAL, requiredLiberal.getId()))
+                        .toList();
+
+                userRequiredCourseStatusRepository.saveAll(requiredLiberalCourseStatuses);
+            }
+        });
+    }
+
+    @Transactional
+    public void replaceUserRequiredCourseStatus(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+        Profile profile = profileRepository.findByUserId(userId).orElseThrow(ProfileNotFoundException::new);
+
+        userRequiredCourseStatusRepository.deleteAllByUserId(userId);
+
+        userMajorRepository.findAllByUserIdWithMajorAndCollege(userId).forEach(userMajor -> {
+            List<RequiredMajorCourse> majorCourseList= requiredMajorCourseQueryService.getApplicableMajorCourses(userMajor.getMajor().getId(),
+                    userMajor.getMajorType(), profile.getEntranceYear());
+            List<UserRequiredCourseStatus> requiredMajorCourseStatuses = majorCourseList.stream()
+                    .map(requiredMajorCourse -> UserRequiredCourseStatus.of(user, CourseType.MAJOR, requiredMajorCourse.getId()))
+                    .toList();
+
+            userRequiredCourseStatusRepository.saveAll(requiredMajorCourseStatuses);
+
+            // primary major에 해당할 때만
+            if (userMajor.getMajorType().equals(MajorType.PRIMARY)) {
+                List<UserRequiredCourseStatus> requiredLiberalCourseStatuses = requiredLiberalCategoryQueryService.getApplicableLiberalCategories(userMajor.getMajor().getCollege().getId(),
+                                profile.getEntranceYear())
                         .stream()
                         .map(requiredLiberal -> UserRequiredCourseStatus.of(user, CourseType.GENERAL, requiredLiberal.getId()))
                         .toList();

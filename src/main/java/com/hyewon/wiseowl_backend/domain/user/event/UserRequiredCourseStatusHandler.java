@@ -19,4 +19,9 @@ public class UserRequiredCourseStatusHandler {
     public void onMajorRegistered(UserMajorRegisteredEvent event) {
         userRequiredCourseStatusService.insertUserRequiredCourseStatus(event.getUserId(), event.getRequests(), event.getEntranceYear());
     }
+
+    @TransactionalEventListener
+    public void onMajorUpdated(UserMajorUpdateEvent event) {
+        userRequiredCourseStatusService.replaceUserRequiredCourseStatus(event.getUserId());
+    }
 }
