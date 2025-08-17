@@ -24,4 +24,9 @@ public class UserRequiredCourseStatusHandler {
     public void onMajorUpdated(UserMajorUpdateEvent event) {
         userRequiredCourseStatusService.replaceUserRequiredCourseStatus(event.getUserId());
     }
+
+    @TransactionalEventListener
+    public void onMajorTypeUpdated(UserMajorTypeUpdateEvent event) {
+        userRequiredCourseStatusService.replaceUserRequiredCourseStatus(event.getUserId());
+    }
 }
