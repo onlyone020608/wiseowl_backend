@@ -8,12 +8,10 @@ import com.hyewon.wiseowl_backend.domain.requirement.entity.RequiredMajorCourse;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.CourseCreditTransferRuleRepository;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.RequiredLiberalCategoryByCollegeRepository;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.RequiredMajorCourseRepository;
-import com.hyewon.wiseowl_backend.domain.user.entity.Grade;
-import com.hyewon.wiseowl_backend.domain.user.entity.User;
-import com.hyewon.wiseowl_backend.domain.user.entity.UserCompletedCourse;
-import com.hyewon.wiseowl_backend.domain.user.entity.UserRequiredCourseStatus;
-import com.hyewon.wiseowl_backend.domain.user.repository.UserCompletedCourseRepository;
-import com.hyewon.wiseowl_backend.domain.user.repository.UserRequiredCourseStatusRepository;
+import com.hyewon.wiseowl_backend.domain.requirement.service.RequiredLiberalCategoryQueryService;
+import com.hyewon.wiseowl_backend.domain.requirement.service.RequiredMajorCourseQueryService;
+import com.hyewon.wiseowl_backend.domain.user.entity.*;
+import com.hyewon.wiseowl_backend.domain.user.repository.*;
 import com.hyewon.wiseowl_backend.domain.user.service.UserRequiredCourseStatusService;
 import com.hyewon.wiseowl_backend.global.exception.RequiredLiberalCategoryNotFoundException;
 import com.hyewon.wiseowl_backend.global.exception.RequiredMajorCourseNotFoundException;
@@ -32,7 +30,10 @@ import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 public class UserRequiredCourseStatusServiceTest {
@@ -43,6 +44,11 @@ public class UserRequiredCourseStatusServiceTest {
     @Mock private RequiredLiberalCategoryByCollegeRepository requiredLiberalCategoryByCollegeRepository;
     @Mock private UserCompletedCourseRepository userCompletedCourseRepository;
     @Mock private LiberalCategoryCourseRepository liberalCategoryCourseRepository;
+    @Mock private UserRepository userRepository;
+    @Mock private ProfileRepository profileRepository;
+    @Mock private UserMajorRepository userMajorRepository;
+    @Mock private RequiredMajorCourseQueryService requiredMajorCourseQueryService;
+    @Mock private RequiredLiberalCategoryQueryService requiredLiberalCategoryQueryService;
 
     private User user;
     private UserRequiredCourseStatus userRequiredCourseStatus1;
@@ -62,12 +68,18 @@ public class UserRequiredCourseStatusServiceTest {
     private Semester semester;
     private Major major;
     private College college;
+    private Profile profile;
+    private UserMajor userMajor;
 
     @BeforeEach
     void setUp() {
         user = User.builder()
                 .username("Test")
                 .email("test@test.com")
+                .build();
+        profile = Profile.builder()
+                .user(user)
+                .entranceYear(2025)
                 .build();
         liberalCategory = LiberalCategory.builder()
                 .id(1L)
@@ -150,6 +162,11 @@ public class UserRequiredCourseStatusServiceTest {
         major = Major.builder()
                 .id(1L)
                 .college(college)
+                .build();
+        userMajor = UserMajor.builder()
+                .major(major)
+                .user(user)
+                .majorType(MajorType.PRIMARY)
                 .build();
     }
 
@@ -245,4 +262,24 @@ public class UserRequiredCourseStatusServiceTest {
         assertThrows(RequiredLiberalCategoryNotFoundException.class,
                 () -> userRequiredCourseStatusService.updateUserRequiredCourseStatus(userId, List.of(ucc2, ucc3)));
     }
+
+    @Test
+    @DisplayName("replaceUserRequiredCourseStatus - should throw when user completed course not found")
+    void replaceUserRequiredCourseStatus_shouldSucceed() {
+        // given
+        Long userId = 1L;
+        given(userRepository.findById(userId)).willReturn(Optional.of(user));
+        given(profileRepository.findByUserId(userId)).willReturn(Optional.of(profile));
+        given(userMajorRepository.findAllByUserIdWithMajorAndCollege(userId)).willReturn(List.of(userMajor));
+        given(requiredMajorCourseQueryService.getApplicableMajorCourses(1L, MajorType.PRIMARY, 2025)).willReturn(List.of(requiredMajorCourse));
+        given(requiredLiberalCategoryQueryService.getApplicableLiberalCategories(1L, 2025)).willReturn(List.of(rlc));
+
+        // when
+        userRequiredCourseStatusService.replaceUserRequiredCourseStatus(userId);
+
+        // then
+        verify(userRequiredCourseStatusRepository).deleteAllByUserId(userId);
+        verify(userRequiredCourseStatusRepository, times(2)).saveAll(anyList());
+    }
+
 }
