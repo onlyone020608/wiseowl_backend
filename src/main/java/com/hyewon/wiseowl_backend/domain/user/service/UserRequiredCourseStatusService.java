@@ -44,6 +44,28 @@ public class UserRequiredCourseStatusService {
             throw new UserRequiredCourseStatusNotFoundException(userId);
         }
 
+        updateMajorCourseStatuses(completedCourses, userStatuses);
+        updateLiberalCourseStatuses(userId, userStatuses);
+    }
+
+    private void updateLiberalCourseStatuses(Long userId, List<UserRequiredCourseStatus> userStatuses) {
+        for (UserRequiredCourseStatus status : userStatuses) {
+            if (status.isFulfilled() || status.getCourseType() != CourseType.GENERAL) continue;
+
+            // 현재 갱신해야하는 required status 랑 연결된 교양필수요건 찾음
+            RequiredLiberalCategoryByCollege requiredLiberalCategory = requiredLiberalCategoryByCollegeRepository.findByIdWithLiberalCategory(status.getRequiredCourseId()).orElseThrow(() -> new RequiredLiberalCategoryNotFoundException(status.getRequiredCourseId()));
+            int requiredCredit = requiredLiberalCategory.getRequiredCredit();
+            LiberalCategory liberalCategory = requiredLiberalCategory.getLiberalCategory();
+
+            int earnedCredit = userCompletedCourseRepository.sumCreditsByUserAndLiberalCategory(userId, liberalCategory.getId());
+
+            if (requiredCredit <= earnedCredit) {
+                status.markFulfilled();
+            }
+        }
+    }
+
+    private void updateMajorCourseStatuses(List<UserCompletedCourse> completedCourses, List<UserRequiredCourseStatus> userStatuses) {
         List<UserCompletedCourse> majorCompletedCourses = completedCourses.stream()
                 .filter(cc -> cc.getCourseOffering().getCourse().getCourseType() == CourseType.MAJOR)
                 .toList();
@@ -62,21 +84,6 @@ public class UserRequiredCourseStatusService {
             });
 
             if (fulfilled) {
-                status.markFulfilled();
-            }
-        }
-
-        for (UserRequiredCourseStatus status : userStatuses) {
-            if (status.isFulfilled() || status.getCourseType() != CourseType.GENERAL) continue;
-
-            // 현재 갱신해야하는 required status 랑 연결된 교양필수요건 찾음
-            RequiredLiberalCategoryByCollege requiredLiberalCategory = requiredLiberalCategoryByCollegeRepository.findByIdWithLiberalCategory(status.getRequiredCourseId()).orElseThrow(() -> new RequiredLiberalCategoryNotFoundException(status.getRequiredCourseId()));
-            int requiredCredit = requiredLiberalCategory.getRequiredCredit();
-            LiberalCategory liberalCategory = requiredLiberalCategory.getLiberalCategory();
-
-            int earnedCredit = userCompletedCourseRepository.sumCreditsByUserAndLiberalCategory(userId, liberalCategory.getId());
-
-            if (requiredCredit <= earnedCredit) {
                 status.markFulfilled();
             }
         }
