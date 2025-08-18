@@ -74,7 +74,7 @@ public class UserRequirementStatusServiceTest {
         Long userId = 1L;
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
         given(profileRepository.findByUserId(userId)).willReturn(Optional.of(profile));
-        given(userMajorRepository.findAllByUserId(userId)).willReturn(List.of(userMajor));
+        given(userMajorRepository.findAllByUserIdWithMajor(userId)).willReturn(List.of(userMajor));
         given(majorRequirementQueryService.getApplicableRequirements(major.getId(), majorRequirement.getMajorType(), 2025))
                 .willReturn(List.of(majorRequirement));
 

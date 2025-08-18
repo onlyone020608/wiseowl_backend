@@ -36,15 +36,17 @@ public class UserRequirementStatusService {
 
         userRequirementStatusRepository.deleteAllByUserId(userId);
 
-        userMajorRepository.findAllByUserId(userId).forEach(
+        userMajorRepository.findAllByUserIdWithMajor(userId).forEach(
                 userMajor -> {
                     List<MajorRequirement> applicableRequirements = majorRequirementQueryService.getApplicableRequirements(
                             userMajor.getMajor().getId(),
                             userMajor.getMajorType(),
                             profile.getEntranceYear());
+
                     List<UserRequirementStatus> toSave = applicableRequirements.stream()
                             .map(requirement -> UserRequirementStatus.of(user, requirement))
                             .toList();
+
                     userRequirementStatusRepository.saveAll(toSave);
                 }
         );
