@@ -5,7 +5,6 @@ import com.hyewon.wiseowl_backend.domain.course.entity.LiberalCategory;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorType;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.RequiredLiberalCategoryByCollege;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.RequiredMajorCourse;
-import com.hyewon.wiseowl_backend.domain.requirement.repository.RequiredLiberalCategoryByCollegeRepository;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.RequiredMajorCourseRepository;
 import com.hyewon.wiseowl_backend.domain.requirement.service.CourseCreditTransferRuleService;
 import com.hyewon.wiseowl_backend.domain.requirement.service.RequiredLiberalCategoryQueryService;
@@ -15,7 +14,10 @@ import com.hyewon.wiseowl_backend.domain.user.entity.User;
 import com.hyewon.wiseowl_backend.domain.user.entity.UserCompletedCourse;
 import com.hyewon.wiseowl_backend.domain.user.entity.UserRequiredCourseStatus;
 import com.hyewon.wiseowl_backend.domain.user.repository.*;
-import com.hyewon.wiseowl_backend.global.exception.*;
+import com.hyewon.wiseowl_backend.global.exception.ProfileNotFoundException;
+import com.hyewon.wiseowl_backend.global.exception.RequiredMajorCourseNotFoundException;
+import com.hyewon.wiseowl_backend.global.exception.UserNotFoundException;
+import com.hyewon.wiseowl_backend.global.exception.UserRequiredCourseStatusNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +31,6 @@ public class UserRequiredCourseStatusService {
     private final UserRequiredCourseStatusRepository userRequiredCourseStatusRepository;
     private final CourseCreditTransferRuleService courseCreditTransferRuleService;
     private final RequiredMajorCourseRepository requiredMajorCourseRepository;
-    private final RequiredLiberalCategoryByCollegeRepository requiredLiberalCategoryByCollegeRepository;
     private final UserCompletedCourseRepository userCompletedCourseRepository;
     private final RequiredMajorCourseQueryService requiredMajorCourseQueryService;
     private final UserRepository userRepository;
@@ -53,7 +54,8 @@ public class UserRequiredCourseStatusService {
             if (status.isFulfilled() || status.getCourseType() != CourseType.GENERAL) continue;
 
             // 현재 갱신해야하는 required status 랑 연결된 교양필수요건 찾음
-            RequiredLiberalCategoryByCollege requiredLiberalCategory = requiredLiberalCategoryByCollegeRepository.findByIdWithLiberalCategory(status.getRequiredCourseId()).orElseThrow(() -> new RequiredLiberalCategoryNotFoundException(status.getRequiredCourseId()));
+            RequiredLiberalCategoryByCollege requiredLiberalCategory = requiredLiberalCategoryQueryService.getRequiredLiberalWithCategory(status.getRequiredCourseId());
+
             int requiredCredit = requiredLiberalCategory.getRequiredCredit();
             LiberalCategory liberalCategory = requiredLiberalCategory.getLiberalCategory();
 

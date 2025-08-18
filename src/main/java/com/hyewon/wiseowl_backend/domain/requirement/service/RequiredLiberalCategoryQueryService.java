@@ -25,4 +25,9 @@ public class RequiredLiberalCategoryQueryService {
     public RequiredLiberalCategoryByCollege getRequiredLiberalCategory(Long requiredLiberalCategoryId) {
         return requiredLiberalCategoryByCollegeRepository.findById(requiredLiberalCategoryId).orElseThrow(() -> new RequiredLiberalCategoryNotFoundException(requiredLiberalCategoryId));
     }
+
+    @Transactional(readOnly = true)
+    public RequiredLiberalCategoryByCollege getRequiredLiberalWithCategory(Long requiredLiberalCategoryId) {
+        return requiredLiberalCategoryByCollegeRepository.findByIdWithLiberalCategory(requiredLiberalCategoryId).orElseThrow(() -> new RequiredLiberalCategoryNotFoundException(requiredLiberalCategoryId));
+    }
 }
