@@ -132,7 +132,7 @@ public class CourseServiceTest {
     void getCourseOfferings_success() {
         // given
         Long semesterId = 1L;
-        given(courseOfferingRepository.findAllBySemesterId(semesterId))
+        given(courseOfferingRepository.findAllWithCourseAndMajorBySemesterId(semesterId))
                 .willReturn(List.of(courseOffering, liberalCourseOffering));
         given(liberalCategoryRepository.findByCourse(liberalCourse))
                 .willReturn(Optional.of(liberal));
@@ -150,7 +150,7 @@ public class CourseServiceTest {
     void getCourseOfferings_shouldThrow_whenEmpty() {
         // given
         Long semesterId = 1L;
-        given(courseOfferingRepository.findAllBySemesterId(semesterId))
+        given(courseOfferingRepository.findAllWithCourseAndMajorBySemesterId(semesterId))
                 .willReturn(List.of());
 
         // when & then
@@ -163,7 +163,7 @@ public class CourseServiceTest {
     @DisplayName("getCourseOfferingsBySemester - liberal category not found")
     void getCourseOfferings_shouldThrow_whenLiberalNotFound() {
         // given
-        given(courseOfferingRepository.findAllBySemesterId(1L))
+        given(courseOfferingRepository.findAllWithCourseAndMajorBySemesterId(1L))
                 .willReturn(List.of(liberalCourseOffering));
         given(liberalCategoryRepository.findByCourse(liberalCourse))
                 .willReturn(Optional.empty());

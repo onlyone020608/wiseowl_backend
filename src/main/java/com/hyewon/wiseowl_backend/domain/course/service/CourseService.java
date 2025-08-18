@@ -48,7 +48,7 @@ public class CourseService {
 
     @Transactional(readOnly = true)
     public List<CourseOfferingResponse> getCourseOfferingsBySemester(Long semesterId) {
-        List<CourseOffering> offerings = courseOfferingRepository.findAllBySemesterId(semesterId);
+        List<CourseOffering> offerings = courseOfferingRepository.findAllWithCourseAndMajorBySemesterId(semesterId);
         if (offerings.isEmpty()) {
             throw new CourseOfferingNotFoundException("No course offerings found for semesterId: " + semesterId);
         }
@@ -59,7 +59,6 @@ public class CourseService {
                         liberalCategoryId = liberalCategoryRepository.findByCourse(offering.getCourse())
                                 .map(LiberalCategory::getId)
                                 .orElseThrow(() -> new LiberalCategoryNotFoundException("No liberal category for courseId: " + offering.getCourse().getId()));
-
                     }
                     return CourseOfferingResponse.from(offering, liberalCategoryId);
                 })
