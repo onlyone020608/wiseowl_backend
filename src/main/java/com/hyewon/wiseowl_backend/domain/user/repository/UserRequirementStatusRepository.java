@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface UserRequirementStatusRepository extends JpaRepository<UserRequirementStatus, Long>, UserRequirementStatusQueryRepository {
     List<UserRequirementStatus> findAllByUserId(Long userId);
+    void deleteAllByUserId(Long userId);
 }
