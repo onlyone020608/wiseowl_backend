@@ -4,14 +4,12 @@ import com.hyewon.wiseowl_backend.domain.course.entity.*;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorType;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.RequiredLiberalCategoryByCollege;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.RequiredMajorCourse;
-import com.hyewon.wiseowl_backend.domain.requirement.repository.RequiredMajorCourseRepository;
 import com.hyewon.wiseowl_backend.domain.requirement.service.CourseCreditTransferRuleService;
 import com.hyewon.wiseowl_backend.domain.requirement.service.RequiredLiberalCategoryQueryService;
 import com.hyewon.wiseowl_backend.domain.requirement.service.RequiredMajorCourseQueryService;
 import com.hyewon.wiseowl_backend.domain.user.entity.*;
 import com.hyewon.wiseowl_backend.domain.user.repository.*;
 import com.hyewon.wiseowl_backend.domain.user.service.UserRequiredCourseStatusService;
-import com.hyewon.wiseowl_backend.global.exception.RequiredMajorCourseNotFoundException;
 import com.hyewon.wiseowl_backend.global.exception.UserRequiredCourseStatusNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -35,7 +33,6 @@ import static org.mockito.Mockito.verify;
 public class UserRequiredCourseStatusServiceTest {
     @InjectMocks private UserRequiredCourseStatusService userRequiredCourseStatusService;
     @Mock private UserRequiredCourseStatusRepository userRequiredCourseStatusRepository;
-    @Mock private RequiredMajorCourseRepository requiredMajorCourseRepository;
     @Mock private UserCompletedCourseRepository userCompletedCourseRepository;
     @Mock private UserRepository userRepository;
     @Mock private ProfileRepository profileRepository;
@@ -170,8 +167,8 @@ public class UserRequiredCourseStatusServiceTest {
         // given
         Long userId = 1L;
         given(userRequiredCourseStatusRepository.findAllByUserId(userId)).willReturn(List.of(userRequiredCourseStatus1, userRequiredCourseStatus2));
-        given(requiredMajorCourseRepository.findByIdWithCourse(userRequiredCourseStatus1.getRequiredCourseId())).willReturn(Optional.of(requiredMajorCourse));
-        given(requiredMajorCourseRepository.matchesCourseOf(userRequiredCourseStatus1.getRequiredCourseId(), ucc1.getId())).willReturn(true);
+        given(requiredMajorCourseQueryService.getRequiredMajorCourseWithCourse(userRequiredCourseStatus1.getRequiredCourseId())).willReturn(requiredMajorCourse);
+        given(requiredMajorCourseQueryService.isCourseMatched(userRequiredCourseStatus1.getRequiredCourseId(), ucc1.getId())).willReturn(true);
         given(requiredLiberalCategoryQueryService.getRequiredLiberalWithCategory(userRequiredCourseStatus2.getRequiredCourseId())).willReturn(rlc);
         given(userCompletedCourseRepository.sumCreditsByUserAndLiberalCategory(userId, liberalCategory.getId())).willReturn(6);
 
@@ -189,7 +186,7 @@ public class UserRequiredCourseStatusServiceTest {
         // given
         Long userId = 1L;
         given(userRequiredCourseStatusRepository.findAllByUserId(userId)).willReturn(List.of(userRequiredCourseStatus1, userRequiredCourseStatus2));
-        given(requiredMajorCourseRepository.findByIdWithCourse(userRequiredCourseStatus1.getRequiredCourseId())).willReturn(Optional.of(requiredMajorCourse));
+        given(requiredMajorCourseQueryService.getRequiredMajorCourseWithCourse(userRequiredCourseStatus1.getRequiredCourseId())).willReturn(requiredMajorCourse);
         given(courseCreditTransferRuleService.isTransferable(ucc3, requiredMajorCourse)).willReturn(true);
         given(requiredLiberalCategoryQueryService.getRequiredLiberalWithCategory(userRequiredCourseStatus2.getRequiredCourseId())).willReturn(rlc);
         given(userCompletedCourseRepository.sumCreditsByUserAndLiberalCategory(userId, liberalCategory.getId())).willReturn(6);
@@ -210,19 +207,6 @@ public class UserRequiredCourseStatusServiceTest {
         given(userRequiredCourseStatusRepository.findAllByUserId(userId)).willReturn(List.of());
         // when & then
         assertThrows(UserRequiredCourseStatusNotFoundException.class,
-                () -> userRequiredCourseStatusService.updateUserRequiredCourseStatus(userId, List.of(ucc2, ucc3)));
-    }
-
-    @Test
-    @DisplayName("updateRequirementStatus - should throw when required major course not found")
-    void updateUserRequiredCourseStatus_shouldThrow_whenRequiredMajorCourseNotFound() {
-        // given
-        Long userId = 1L;
-        given(userRequiredCourseStatusRepository.findAllByUserId(userId)).willReturn(List.of(userRequiredCourseStatus1, userRequiredCourseStatus2));
-        given(requiredMajorCourseRepository.findByIdWithCourse(userRequiredCourseStatus1.getRequiredCourseId())).willReturn(Optional.empty());
-
-        // when & then
-        assertThrows(RequiredMajorCourseNotFoundException.class,
                 () -> userRequiredCourseStatusService.updateUserRequiredCourseStatus(userId, List.of(ucc2, ucc3)));
     }
 

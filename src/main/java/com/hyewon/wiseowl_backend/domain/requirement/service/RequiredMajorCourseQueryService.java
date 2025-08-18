@@ -25,4 +25,14 @@ public class RequiredMajorCourseQueryService {
     public RequiredMajorCourse getRequiredMajorCourse(Long requiredMajorCourseId) {
         return requiredMajorCourseRepository.findById(requiredMajorCourseId).orElseThrow(() -> new RequiredMajorCourseNotFoundException(requiredMajorCourseId));
     }
+
+    @Transactional(readOnly = true)
+    public RequiredMajorCourse getRequiredMajorCourseWithCourse(Long requiredMajorCourseId) {
+        return requiredMajorCourseRepository.findByIdWithCourse(requiredMajorCourseId).orElseThrow(() -> new RequiredMajorCourseNotFoundException(requiredMajorCourseId));
+    }
+
+    @Transactional(readOnly = true)
+    public boolean isCourseMatched(Long requiredCourseId, Long courseId){
+        return requiredMajorCourseRepository.matchesCourseOf(requiredCourseId, courseId);
+    }
 }
