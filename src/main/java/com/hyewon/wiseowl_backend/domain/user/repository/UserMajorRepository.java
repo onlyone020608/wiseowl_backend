@@ -7,14 +7,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface UserMajorRepository extends JpaRepository<UserMajor, Long>, UserMajorQueryRepository {
     List<UserMajor> findAllByUserId(Long userId);
     @Query("select um from UserMajor um join fetch um.major where um.user.id = :userId")
     List<UserMajor> findAllByUserIdWithMajor(@Param("userId") Long userId);
     UserMajor findByUserIdAndMajorType(Long userId, MajorType majorType);
-    Optional<UserMajor> findByUserIdAndMajorTypeIn(Long userId, List<MajorType> majorTypes);
     boolean existsByUserIdAndMajorType(Long userId, MajorType majorType);
-    void deleteAllByUserIdAndMajorType(Long userId, MajorType majorType);
 }
