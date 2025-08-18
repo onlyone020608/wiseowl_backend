@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface RequiredMajorCourseQueryRepository {
     List<RequiredMajorCourse> findApplicableMajorCourses(Long majorId, MajorType majorType, Integer entranceYear);
+    boolean matchesCourseOf(Long requiredCourseId, Long completedCourseId);
 }

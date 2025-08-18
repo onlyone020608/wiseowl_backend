@@ -1,7 +1,9 @@
 package com.hyewon.wiseowl_backend.domain.user.repository;
 
+import com.hyewon.wiseowl_backend.domain.course.entity.CourseType;
 import com.hyewon.wiseowl_backend.domain.course.entity.QCourse;
 import com.hyewon.wiseowl_backend.domain.course.entity.QCourseOffering;
+import com.hyewon.wiseowl_backend.domain.course.entity.QLiberalCategoryCourse;
 import com.hyewon.wiseowl_backend.domain.user.dto.CreditAndGradeDto;
 import com.hyewon.wiseowl_backend.domain.user.entity.QUser;
 import com.hyewon.wiseowl_backend.domain.user.entity.QUserCompletedCourse;
@@ -18,6 +20,7 @@ public class UserCompletedCourseQueryRepositoryImpl implements UserCompletedCour
     private final QCourseOffering co = QCourseOffering.courseOffering;
     private final QCourse c = QCourse.course;
     private final QUser user = QUser.user;
+    private final QLiberalCategoryCourse liberalCategoryCourse = QLiberalCategoryCourse.liberalCategoryCourse;
 
     @Override
     public List<CreditAndGradeDto> findCourseCreditsAndGradesByUserId(Long userId) {
@@ -43,5 +46,25 @@ public class UserCompletedCourseQueryRepositoryImpl implements UserCompletedCour
                 .fetchOne();
 
         return sum != null ? 0 : sum;
+    }
+
+    @Override
+    public int sumCreditsByUserAndLiberalCategory(Long userId, Long liberalCategoryId) {
+        QCourse courseFromOffering = new QCourse("courseFromOffering");
+        QCourse courseFromCategory = new QCourse("courseFromCategory");
+
+        Integer result = query.select(courseFromOffering.credit.sum())
+                .from(ucc)
+                .join(ucc.courseOffering, co)
+                .join(co.course, courseFromOffering)
+                .join(liberalCategoryCourse).on(liberalCategoryCourse.liberalCategory.id.eq(liberalCategoryId))
+                .join(liberalCategoryCourse.course, courseFromCategory)
+                .where(
+                        user.id.eq(userId),
+                        courseFromOffering.id.eq(courseFromCategory.id),
+                        courseFromOffering.courseType.eq(CourseType.GENERAL)
+                ).fetchOne();
+
+        return result != null ? result : 0;
     }
 }
