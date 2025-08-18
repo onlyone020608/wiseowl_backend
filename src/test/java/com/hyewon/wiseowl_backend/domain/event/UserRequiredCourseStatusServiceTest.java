@@ -177,9 +177,9 @@ public class UserRequiredCourseStatusServiceTest {
         // given
         Long userId = 1L;
         given(userRequiredCourseStatusRepository.findAllByUserId(userId)).willReturn(List.of(userRequiredCourseStatus1, userRequiredCourseStatus2));
-        given(requiredMajorCourseRepository.findById(userRequiredCourseStatus1.getRequiredCourseId())).willReturn(Optional.of(requiredMajorCourse));
+        given(requiredMajorCourseRepository.findByIdWithCourse(userRequiredCourseStatus1.getRequiredCourseId())).willReturn(Optional.of(requiredMajorCourse));
         given(requiredMajorCourseRepository.matchesCourseOf(userRequiredCourseStatus1.getRequiredCourseId(), ucc1.getId())).willReturn(true);
-        given(requiredLiberalCategoryByCollegeRepository.findById(userRequiredCourseStatus2.getRequiredCourseId())).willReturn(Optional.of(rlc));
+        given(requiredLiberalCategoryByCollegeRepository.findByIdWithLiberalCategory(userRequiredCourseStatus2.getRequiredCourseId())).willReturn(Optional.of(rlc));
         given(userCompletedCourseRepository.sumCreditsByUserAndLiberalCategory(userId, liberalCategory.getId())).willReturn(6);
 
         // when
@@ -196,9 +196,9 @@ public class UserRequiredCourseStatusServiceTest {
         // given
         Long userId = 1L;
         given(userRequiredCourseStatusRepository.findAllByUserId(userId)).willReturn(List.of(userRequiredCourseStatus1, userRequiredCourseStatus2));
-        given(requiredMajorCourseRepository.findById(userRequiredCourseStatus1.getRequiredCourseId())).willReturn(Optional.of(requiredMajorCourse));
+        given(requiredMajorCourseRepository.findByIdWithCourse(userRequiredCourseStatus1.getRequiredCourseId())).willReturn(Optional.of(requiredMajorCourse));
         given(courseCreditTransferRuleService.isTransferable(ucc3, requiredMajorCourse)).willReturn(true);
-        given(requiredLiberalCategoryByCollegeRepository.findById(userRequiredCourseStatus2.getRequiredCourseId())).willReturn(Optional.of(rlc));
+        given(requiredLiberalCategoryByCollegeRepository.findByIdWithLiberalCategory(userRequiredCourseStatus2.getRequiredCourseId())).willReturn(Optional.of(rlc));
         given(userCompletedCourseRepository.sumCreditsByUserAndLiberalCategory(userId, liberalCategory.getId())).willReturn(6);
 
         // when
@@ -226,7 +226,7 @@ public class UserRequiredCourseStatusServiceTest {
         // given
         Long userId = 1L;
         given(userRequiredCourseStatusRepository.findAllByUserId(userId)).willReturn(List.of(userRequiredCourseStatus1, userRequiredCourseStatus2));
-        given(requiredMajorCourseRepository.findById(userRequiredCourseStatus1.getRequiredCourseId())).willReturn(Optional.empty());
+        given(requiredMajorCourseRepository.findByIdWithCourse(userRequiredCourseStatus1.getRequiredCourseId())).willReturn(Optional.empty());
 
         // when & then
         assertThrows(RequiredMajorCourseNotFoundException.class,
@@ -239,9 +239,9 @@ public class UserRequiredCourseStatusServiceTest {
         // given
         Long userId = 1L;
         given(userRequiredCourseStatusRepository.findAllByUserId(userId)).willReturn(List.of(userRequiredCourseStatus1, userRequiredCourseStatus2));
-        given(requiredMajorCourseRepository.findById(userRequiredCourseStatus1.getRequiredCourseId())).willReturn(Optional.of(requiredMajorCourse));
+        given(requiredMajorCourseRepository.findByIdWithCourse(userRequiredCourseStatus1.getRequiredCourseId())).willReturn(Optional.of(requiredMajorCourse));
         given(requiredMajorCourseRepository.matchesCourseOf(userRequiredCourseStatus1.getRequiredCourseId(), ucc1.getId())).willReturn(true);
-        given(requiredLiberalCategoryByCollegeRepository.findById(userRequiredCourseStatus2.getRequiredCourseId())).willReturn(Optional.empty());
+        given(requiredLiberalCategoryByCollegeRepository.findByIdWithLiberalCategory(userRequiredCourseStatus2.getRequiredCourseId())).willReturn(Optional.empty());
         // when & then
         assertThrows(RequiredLiberalCategoryNotFoundException.class,
                 () -> userRequiredCourseStatusService.updateUserRequiredCourseStatus(userId, List.of(ucc2, ucc3)));

@@ -52,9 +52,9 @@ public class UserRequiredCourseStatusService {
             if (status.isFulfilled() || status.getCourseType() != CourseType.MAJOR) continue;
 
             boolean fulfilled = majorCompletedCourses.stream().anyMatch(cc -> {
-                RequiredMajorCourse requiredMajorCourse = requiredMajorCourseRepository.findById(status.getRequiredCourseId()).orElseThrow(() -> new RequiredMajorCourseNotFoundException(status.getRequiredCourseId()));
+                RequiredMajorCourse requiredMajorCourse = requiredMajorCourseRepository.findByIdWithCourse(status.getRequiredCourseId()).orElseThrow(() -> new RequiredMajorCourseNotFoundException(status.getRequiredCourseId()));
 
-                if(requiredMajorCourseRepository.matchesCourseOf(status.getRequiredCourseId(), cc.getId())){
+                if (requiredMajorCourseRepository.matchesCourseOf(status.getRequiredCourseId(), cc.getId())) {
                     return true;
                 }
 
@@ -70,7 +70,7 @@ public class UserRequiredCourseStatusService {
             if (status.isFulfilled() || status.getCourseType() != CourseType.GENERAL) continue;
 
             // 현재 갱신해야하는 required status 랑 연결된 교양필수요건 찾음
-            RequiredLiberalCategoryByCollege requiredLiberalCategory = requiredLiberalCategoryByCollegeRepository.findById(status.getRequiredCourseId()).orElseThrow(() -> new RequiredLiberalCategoryNotFoundException(status.getRequiredCourseId()));
+            RequiredLiberalCategoryByCollege requiredLiberalCategory = requiredLiberalCategoryByCollegeRepository.findByIdWithLiberalCategory(status.getRequiredCourseId()).orElseThrow(() -> new RequiredLiberalCategoryNotFoundException(status.getRequiredCourseId()));
             int requiredCredit = requiredLiberalCategory.getRequiredCredit();
             LiberalCategory liberalCategory = requiredLiberalCategory.getLiberalCategory();
 
