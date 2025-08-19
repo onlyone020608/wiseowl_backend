@@ -25,7 +25,10 @@ public enum ErrorCode {
     FACILITY_NOT_FOUND(HttpStatus.NOT_FOUND, "No facilities are registered in the system."),
     ORGANIZATION_NOT_FOUND(HttpStatus.NOT_FOUND, "Organization not found."),
     SEMESTER_NOT_FOUND(HttpStatus.NOT_FOUND, "Semester not found."),
-    LANGUAGE_TEST_NOT_FOUND(HttpStatus.NOT_FOUND, "Language test not found.");
+    LANGUAGE_TEST_NOT_FOUND(HttpStatus.NOT_FOUND, "Language test not found."),
+    REQUIREMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "Requirement not found."),
+    MAJOR_REQUIREMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "Major requirement not found."),
+    LANGUAGE_TEST_LEVEL_NOT_FOUND(HttpStatus.NOT_FOUND, "Language test level not found.");
 
     private final HttpStatus status;
     private final String message;

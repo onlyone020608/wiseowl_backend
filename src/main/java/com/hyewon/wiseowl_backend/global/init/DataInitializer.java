@@ -3,10 +3,7 @@ package com.hyewon.wiseowl_backend.global.init;
 import com.hyewon.wiseowl_backend.domain.course.entity.*;
 import com.hyewon.wiseowl_backend.domain.course.repository.*;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.*;
-import com.hyewon.wiseowl_backend.domain.requirement.repository.CreditRequirementRepository;
-import com.hyewon.wiseowl_backend.domain.requirement.repository.LanguageTestLevelRepository;
-import com.hyewon.wiseowl_backend.domain.requirement.repository.LanguageTestRepository;
-import com.hyewon.wiseowl_backend.domain.requirement.repository.RequirementRepository;
+import com.hyewon.wiseowl_backend.domain.requirement.repository.*;
 import com.hyewon.wiseowl_backend.global.exception.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
@@ -32,6 +29,8 @@ public class DataInitializer implements CommandLineRunner {
     private final RequirementRepository requirementRepository;
     private final LanguageTestRepository languageTestRepository;
     private final LanguageTestLevelRepository languageTestLevelRepository;
+    private final MajorRequirementRepository majorRequirementRepository;
+    private final LanguageTestRequirementRepository languageTestRequirementRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -64,6 +63,12 @@ public class DataInitializer implements CommandLineRunner {
         }
         if (languageTestLevelRepository.count() == 0) {
             loadLanguageTestLevels();
+        }
+        if (majorRequirementRepository.count() == 0) {
+            loadMajorRequirements();
+        }
+        if (languageTestRequirementRepository.count() == 0) {
+            loadLanguageTestRequirements();
         }
     }
 
@@ -377,6 +382,71 @@ public class DataInitializer implements CommandLineRunner {
                     .build();
 
             languageTestLevelRepository.save(languageTestLevel);
+        }
+    }
+
+    private void loadMajorRequirements() throws IOException {
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("data/major_requirement.csv");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+
+        String line;
+        boolean isFirst = true;
+
+        while ((line = reader.readLine()) != null) {
+            if (isFirst) { isFirst = false; continue; }
+
+            String[] tokens = line.split(",");
+            Long requirementId = Long.parseLong(tokens[0].trim());
+            Long majorId = Long.parseLong(tokens[1].trim());
+            MajorType majorType = MajorType.valueOf(tokens[2].trim().toUpperCase());
+            String description = tokens[3].trim();
+            Integer appliesFromYear = Integer.parseInt(tokens[4].trim());
+            Integer appliesToYear = Integer.parseInt(tokens[5].trim());
+
+            Requirement requirement = requirementRepository.findById(requirementId).orElseThrow(() -> new RequirementNotFoundException(requirementId));
+            Major major = majorRepository.findById(majorId).orElseThrow(() -> new MajorNotFoundException(majorId));
+
+            MajorRequirement majorRequirement = MajorRequirement.builder()
+                    .requirement(requirement)
+                    .major(major)
+                    .majorType(majorType)
+                    .description(description)
+                    .appliesFromYear(appliesFromYear)
+                    .appliesToYear(appliesToYear)
+                    .build();
+
+            majorRequirementRepository.save(majorRequirement);
+        }
+    }
+
+    private void loadLanguageTestRequirements() throws IOException {
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("data/language_test_requirement.csv");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+
+        String line;
+        boolean isFirst = true;
+
+        while ((line = reader.readLine()) != null) {
+            if (isFirst) { isFirst = false; continue; }
+
+            String[] tokens = line.split(",");
+            Integer minScore = Integer.parseInt(tokens[0].trim());
+            Long majorRequirementId = Long.parseLong(tokens[1].trim());
+            Long languageTestId = Long.parseLong(tokens[2].trim());
+            Long languageTestLevelId = Long.parseLong(tokens[3].trim());
+
+            MajorRequirement majorRequirement = majorRequirementRepository.findById(majorRequirementId).orElseThrow(() -> new MajorRequirementNotFoundException(majorRequirementId));
+            LanguageTest languageTest = languageTestRepository.findById(languageTestId).orElseThrow(() -> new LanguageTestNotFoundException(languageTestId));
+            LanguageTestLevel languageTestLevel = languageTestLevelRepository.findById(languageTestLevelId).orElseThrow(() -> new LanguageTestLevelNotFoundException(languageTestLevelId));
+
+            LanguageTestRequirement languageTestRequirement = LanguageTestRequirement.builder()
+                    .minScore(minScore)
+                    .majorRequirement(majorRequirement)
+                    .languageTest(languageTest)
+                    .languageTestLevel(languageTestLevel)
+                    .build();
+
+            languageTestRequirementRepository.save(languageTestRequirement);
         }
     }
 }
