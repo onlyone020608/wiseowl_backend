@@ -8,6 +8,7 @@ public class LiberalCategoryNotFoundException extends RuntimeException {
 
     public LiberalCategoryNotFoundException(Long liberalCategoryId) {
         super("LiberalCategory not found with id: " + liberalCategoryId);
+
     }
 
     public LiberalCategoryNotFoundException(String message) {

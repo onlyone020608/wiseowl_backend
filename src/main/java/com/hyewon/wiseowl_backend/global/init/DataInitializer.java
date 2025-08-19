@@ -2,14 +2,12 @@ package com.hyewon.wiseowl_backend.global.init;
 
 import com.hyewon.wiseowl_backend.domain.course.entity.*;
 import com.hyewon.wiseowl_backend.domain.course.repository.*;
-import com.hyewon.wiseowl_backend.domain.requirement.entity.CreditRequirement;
-import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorType;
-import com.hyewon.wiseowl_backend.domain.requirement.entity.Track;
+import com.hyewon.wiseowl_backend.domain.requirement.entity.*;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.CreditRequirementRepository;
-import com.hyewon.wiseowl_backend.global.exception.CourseNotFoundException;
-import com.hyewon.wiseowl_backend.global.exception.LiberalCategoryNotFoundException;
-import com.hyewon.wiseowl_backend.global.exception.MajorNotFoundException;
-import com.hyewon.wiseowl_backend.global.exception.SemesterNotFoundException;
+import com.hyewon.wiseowl_backend.domain.requirement.repository.LanguageTestLevelRepository;
+import com.hyewon.wiseowl_backend.domain.requirement.repository.LanguageTestRepository;
+import com.hyewon.wiseowl_backend.domain.requirement.repository.RequirementRepository;
+import com.hyewon.wiseowl_backend.global.exception.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -31,29 +29,41 @@ public class DataInitializer implements CommandLineRunner {
     private final CourseOfferingRepository courseOfferingRepository;
     private final LiberalCategoryCourseRepository liberalCategoryCourseRepository;
     private final CreditRequirementRepository creditRequirementRepository;
+    private final RequirementRepository requirementRepository;
+    private final LanguageTestRepository languageTestRepository;
+    private final LanguageTestLevelRepository languageTestLevelRepository;
 
     @Override
     public void run(String... args) throws Exception {
         if (buildingRepository.count() == 0) {
             loadBuildings();
         }
-        if(semesterRepository.count() == 0) {
+        if (semesterRepository.count() == 0) {
             loadSemesters();
         }
-        if(liberalCategoryRepository.count() ==0){
+        if (liberalCategoryRepository.count() ==0){
             loadLiberalCategory();
         }
-        if(courseRepository.count() == 0) {
+        if (courseRepository.count() == 0) {
             loadCourse();
         }
-        if(courseOfferingRepository.count() == 0) {
+        if (courseOfferingRepository.count() == 0) {
             loadCourseOffering();
         }
-        if(liberalCategoryCourseRepository.count() == 0 ){
+        if (liberalCategoryCourseRepository.count() == 0 ) {
             loadLiberalCategoryCourse();
         }
-        if(creditRequirementRepository.count() == 0) {
+        if (creditRequirementRepository.count() == 0) {
             loadCreditRequirement();
+        }
+        if (requirementRepository.count() == 0) {
+            loadRequirements();
+        }
+        if (languageTestRepository.count() == 0) {
+            loadLanguageTests();
+        }
+        if (languageTestLevelRepository.count() == 0) {
+            loadLanguageTestLevels();
         }
     }
 
@@ -298,6 +308,75 @@ public class DataInitializer implements CommandLineRunner {
 
                 creditRequirementRepository.save(creditRequirement);
             }
+        }
+    }
+
+    private void loadRequirements() throws IOException {
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("data/requirement.csv");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+
+        String line;
+        boolean isFirst = true;
+
+        while ((line = reader.readLine()) != null) {
+            if (isFirst) { isFirst = false; continue; }
+
+            String[] tokens = line.split(",");
+            String name = tokens[0].trim();
+
+            Requirement requirement = Requirement.builder()
+                    .name(name)
+                    .build();
+
+            requirementRepository.save(requirement);
+        }
+    }
+
+    private void loadLanguageTests() throws IOException {
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("data/language_test.csv");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+
+        String line;
+        boolean isFirst = true;
+
+        while ((line = reader.readLine()) != null) {
+            if (isFirst) { isFirst = false; continue; }
+
+            String[] tokens = line.split(",");
+            String name = tokens[0].trim();
+
+            LanguageTest languageTest = LanguageTest.builder()
+                    .name(name)
+                    .build();
+
+            languageTestRepository.save(languageTest);
+        }
+    }
+
+    private void loadLanguageTestLevels() throws IOException {
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("data/language_test_level.csv");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+
+        String line;
+        boolean isFirst = true;
+
+        while ((line = reader.readLine()) != null) {
+            if (isFirst) { isFirst = false; continue; }
+
+            String[] tokens = line.split(",");
+            Long languageTestId = Long.parseLong(tokens[0].trim());
+            String levelCode = tokens[1].trim();
+            int levelOrder = Integer.parseInt(tokens[2].trim());
+
+            LanguageTest languageTest = languageTestRepository.findById(languageTestId).orElseThrow(() -> new LanguageTestNotFoundException(languageTestId));
+
+            LanguageTestLevel languageTestLevel = LanguageTestLevel.builder()
+                    .languageTest(languageTest)
+                    .levelOrder(levelOrder)
+                    .levelCode(levelCode)
+                    .build();
+
+            languageTestLevelRepository.save(languageTestLevel);
         }
     }
 }

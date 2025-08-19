@@ -24,7 +24,8 @@ public enum ErrorCode {
     INVALID_CURRENT_PASSWORD(HttpStatus.BAD_REQUEST, "Current password is incorrect."),
     FACILITY_NOT_FOUND(HttpStatus.NOT_FOUND, "No facilities are registered in the system."),
     ORGANIZATION_NOT_FOUND(HttpStatus.NOT_FOUND, "Organization not found."),
-    SEMESTER_NOT_FOUND(HttpStatus.NOT_FOUND, "Semester not found.");
+    SEMESTER_NOT_FOUND(HttpStatus.NOT_FOUND, "Semester not found."),
+    LANGUAGE_TEST_NOT_FOUND(HttpStatus.NOT_FOUND, "Language test not found.");
 
     private final HttpStatus status;
     private final String message;
