@@ -5,15 +5,11 @@ import com.hyewon.wiseowl_backend.domain.course.dto.CourseCategoryResponse;
 import com.hyewon.wiseowl_backend.domain.course.dto.CourseOfferingResponse;
 import com.hyewon.wiseowl_backend.domain.course.dto.MajorDto;
 import com.hyewon.wiseowl_backend.domain.course.entity.College;
-import com.hyewon.wiseowl_backend.domain.course.entity.CourseOffering;
 import com.hyewon.wiseowl_backend.domain.course.entity.LiberalCategory;
 import com.hyewon.wiseowl_backend.domain.course.entity.Major;
 import com.hyewon.wiseowl_backend.domain.course.repository.CourseOfferingRepository;
-import com.hyewon.wiseowl_backend.domain.course.repository.LiberalCategoryRepository;
 import com.hyewon.wiseowl_backend.domain.course.repository.MajorRepository;
 import com.hyewon.wiseowl_backend.global.exception.CourseNotFoundException;
-import com.hyewon.wiseowl_backend.global.exception.CourseOfferingNotFoundException;
-import com.hyewon.wiseowl_backend.global.exception.LiberalCategoryNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +24,6 @@ import java.util.stream.Collectors;
 @Transactional
 public class CourseService {
     private final CourseOfferingRepository courseOfferingRepository;
-    private final LiberalCategoryRepository liberalCategoryRepository;
     private final MajorRepository majorRepository;
 
     @Transactional(readOnly = true)
@@ -48,21 +43,7 @@ public class CourseService {
 
     @Transactional(readOnly = true)
     public List<CourseOfferingResponse> getCourseOfferingsBySemester(Long semesterId) {
-        List<CourseOffering> offerings = courseOfferingRepository.findAllWithCourseAndMajorBySemesterId(semesterId);
-        if (offerings.isEmpty()) {
-            throw new CourseOfferingNotFoundException("No course offerings found for semesterId: " + semesterId);
-        }
-        return offerings.stream()
-                .map(offering -> {
-                    Long liberalCategoryId = null;
-                    if (offering.getCourse().getMajor() == null) {
-                        liberalCategoryId = liberalCategoryRepository.findByCourse(offering.getCourse())
-                                .map(LiberalCategory::getId)
-                                .orElseThrow(() -> new LiberalCategoryNotFoundException("No liberal category for courseId: " + offering.getCourse().getId()));
-                    }
-                    return CourseOfferingResponse.from(offering, liberalCategoryId);
-                })
-                .collect(Collectors.toList());
+        return courseOfferingRepository.findCourseOfferingsBySemester(semesterId);
     }
 
     public List<CollegeWithMajorsResponse> getCollegesWithMajors() {

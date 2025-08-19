@@ -5,12 +5,9 @@ import com.hyewon.wiseowl_backend.domain.course.dto.CourseCategoryResponse;
 import com.hyewon.wiseowl_backend.domain.course.dto.CourseOfferingResponse;
 import com.hyewon.wiseowl_backend.domain.course.entity.*;
 import com.hyewon.wiseowl_backend.domain.course.repository.CourseOfferingRepository;
-import com.hyewon.wiseowl_backend.domain.course.repository.LiberalCategoryRepository;
 import com.hyewon.wiseowl_backend.domain.course.repository.MajorRepository;
 import com.hyewon.wiseowl_backend.domain.course.service.CourseService;
 import com.hyewon.wiseowl_backend.global.exception.CourseNotFoundException;
-import com.hyewon.wiseowl_backend.global.exception.CourseOfferingNotFoundException;
-import com.hyewon.wiseowl_backend.global.exception.LiberalCategoryNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,17 +17,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 public class CourseServiceTest {
     @Mock private CourseOfferingRepository courseOfferingRepository;
-    @Mock private LiberalCategoryRepository liberalCategoryRepository;
     @Mock private MajorRepository majorRepository;
     @InjectMocks private CourseService courseService;
 
@@ -132,10 +126,10 @@ public class CourseServiceTest {
     void getCourseOfferings_success() {
         // given
         Long semesterId = 1L;
-        given(courseOfferingRepository.findAllWithCourseAndMajorBySemesterId(semesterId))
-                .willReturn(List.of(courseOffering, liberalCourseOffering));
-        given(liberalCategoryRepository.findByCourse(liberalCourse))
-                .willReturn(Optional.of(liberal));
+        CourseOfferingResponse response1 = CourseOfferingResponse.from(courseOffering, null);
+        CourseOfferingResponse response2 = CourseOfferingResponse.from(liberalCourseOffering, 1L);
+        given(courseOfferingRepository.findCourseOfferingsBySemester(semesterId))
+                .willReturn(List.of(response1, response2));
 
         // when
         List<CourseOfferingResponse> result = courseService.getCourseOfferingsBySemester(semesterId);
@@ -143,35 +137,6 @@ public class CourseServiceTest {
         // then
         assertThat(result).hasSize(2);
         assertThat(result).extracting("courseName").containsExactlyInAnyOrder("자료구조", "글쓰기");
-    }
-
-    @Test
-    @DisplayName("getCourseOfferingsBySemester - no courses found")
-    void getCourseOfferings_shouldThrow_whenEmpty() {
-        // given
-        Long semesterId = 1L;
-        given(courseOfferingRepository.findAllWithCourseAndMajorBySemesterId(semesterId))
-                .willReturn(List.of());
-
-        // when & then
-        assertThrows(CourseOfferingNotFoundException.class, () -> {
-            courseService.getCourseOfferingsBySemester(1L);
-        });
-    }
-
-    @Test
-    @DisplayName("getCourseOfferingsBySemester - liberal category not found")
-    void getCourseOfferings_shouldThrow_whenLiberalNotFound() {
-        // given
-        given(courseOfferingRepository.findAllWithCourseAndMajorBySemesterId(1L))
-                .willReturn(List.of(liberalCourseOffering));
-        given(liberalCategoryRepository.findByCourse(liberalCourse))
-                .willReturn(Optional.empty());
-
-        // when & then
-        assertThrows(LiberalCategoryNotFoundException.class, () -> {
-            courseService.getCourseOfferingsBySemester(1L);
-        });
     }
 
     @Test
