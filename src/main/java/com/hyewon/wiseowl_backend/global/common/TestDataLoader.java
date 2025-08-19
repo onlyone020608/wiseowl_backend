@@ -49,7 +49,7 @@ public class TestDataLoader {
     private final UserMajorRepository userMajorRepository;
     private final UserRequiredCourseStatusRepository userRequiredCourseStatusRepository;
     private final RequiredMajorCourseRepository requiredMajorCourseRepository;
-    private final RequiredLiberalCategoryByCollegeRepository requiredLiberalCategoryByCollegeRepository;
+    private final RequiredLiberalCategoryRepository requiredLiberalCategoryRepository;
     private final UserCompletedCourseRepository userCompletedCourseRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
@@ -228,9 +228,9 @@ public class TestDataLoader {
                         .majorType(MajorType.PRIMARY)
                         .build()
         );
-        RequiredLiberalCategoryByCollege liberalCategoryByCollege = requiredLiberalCategoryByCollegeRepository.save(
-                RequiredLiberalCategoryByCollege.builder()
-                        .college(college)
+        RequiredLiberalCategory liberalCategoryByCollege = requiredLiberalCategoryRepository.save(
+                RequiredLiberalCategory.builder()
+                        .major(major)
                         .requiredCredit(3)
                         .liberalCategory(liberalCategory)
                         .build()

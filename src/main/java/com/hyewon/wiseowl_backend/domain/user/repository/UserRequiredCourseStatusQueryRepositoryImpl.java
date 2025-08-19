@@ -4,7 +4,7 @@ import com.hyewon.wiseowl_backend.domain.course.entity.CourseType;
 import com.hyewon.wiseowl_backend.domain.course.entity.QCourse;
 import com.hyewon.wiseowl_backend.domain.course.entity.QLiberalCategory;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorType;
-import com.hyewon.wiseowl_backend.domain.requirement.entity.QRequiredLiberalCategoryByCollege;
+import com.hyewon.wiseowl_backend.domain.requirement.entity.QRequiredLiberalCategory;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.QRequiredMajorCourse;
 import com.hyewon.wiseowl_backend.domain.user.dto.LiberalRequiredCourseItemResponse;
 import com.hyewon.wiseowl_backend.domain.user.dto.MajorRequiredCourseItemResponse;
@@ -21,7 +21,7 @@ public class UserRequiredCourseStatusQueryRepositoryImpl implements UserRequired
     private final JPAQueryFactory query;
     private final QUserRequiredCourseStatus urs = QUserRequiredCourseStatus.userRequiredCourseStatus;
     private final QRequiredMajorCourse requiredMajorCourse = QRequiredMajorCourse.requiredMajorCourse;
-    private final QRequiredLiberalCategoryByCollege requiredLiberal = QRequiredLiberalCategoryByCollege.requiredLiberalCategoryByCollege;
+    private final QRequiredLiberalCategory requiredLiberal = QRequiredLiberalCategory.requiredLiberalCategory;
     private final QLiberalCategory liberalCategory = QLiberalCategory.liberalCategory;
     private final QCourse c = QCourse.course;
     private final QUser user = QUser.user;

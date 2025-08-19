@@ -2,7 +2,7 @@ package com.hyewon.wiseowl_backend.domain.event;
 
 import com.hyewon.wiseowl_backend.domain.course.entity.*;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorType;
-import com.hyewon.wiseowl_backend.domain.requirement.entity.RequiredLiberalCategoryByCollege;
+import com.hyewon.wiseowl_backend.domain.requirement.entity.RequiredLiberalCategory;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.RequiredMajorCourse;
 import com.hyewon.wiseowl_backend.domain.requirement.service.CourseCreditTransferRuleService;
 import com.hyewon.wiseowl_backend.domain.requirement.service.RequiredLiberalCategoryQueryService;
@@ -45,7 +45,7 @@ public class UserRequiredCourseStatusServiceTest {
     private UserRequiredCourseStatus userRequiredCourseStatus1;
     private UserRequiredCourseStatus userRequiredCourseStatus2;
     private RequiredMajorCourse requiredMajorCourse;
-    private RequiredLiberalCategoryByCollege rlc;
+    private RequiredLiberalCategory rlc;
     private LiberalCategory liberalCategory;
     private UserCompletedCourse ucc1;
     private UserCompletedCourse ucc2;
@@ -76,7 +76,7 @@ public class UserRequiredCourseStatusServiceTest {
                 .id(1L)
                 .name("인간과사회")
                 .build();
-        rlc = RequiredLiberalCategoryByCollege.builder()
+        rlc = RequiredLiberalCategory.builder()
                 .id(20L)
                 .liberalCategory(liberalCategory)
                 .requiredCredit(6)

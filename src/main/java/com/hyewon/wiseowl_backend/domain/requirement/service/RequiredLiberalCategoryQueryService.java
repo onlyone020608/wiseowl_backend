@@ -1,7 +1,7 @@
 package com.hyewon.wiseowl_backend.domain.requirement.service;
 
-import com.hyewon.wiseowl_backend.domain.requirement.entity.RequiredLiberalCategoryByCollege;
-import com.hyewon.wiseowl_backend.domain.requirement.repository.RequiredLiberalCategoryByCollegeRepository;
+import com.hyewon.wiseowl_backend.domain.requirement.entity.RequiredLiberalCategory;
+import com.hyewon.wiseowl_backend.domain.requirement.repository.RequiredLiberalCategoryRepository;
 import com.hyewon.wiseowl_backend.global.exception.RequiredLiberalCategoryNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,21 +13,21 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional
 public class RequiredLiberalCategoryQueryService {
-    private final RequiredLiberalCategoryByCollegeRepository requiredLiberalCategoryByCollegeRepository;
+    private final RequiredLiberalCategoryRepository requiredLiberalCategoryRepository;
 
     @Transactional(readOnly = true)
-    public List<RequiredLiberalCategoryByCollege> getApplicableLiberalCategories(Long collegeId, int entranceYear) {
-        return requiredLiberalCategoryByCollegeRepository.findApplicableLiberalCategories
-                (collegeId, entranceYear);
+    public List<RequiredLiberalCategory> getApplicableLiberalCategories(Long majorId, int entranceYear) {
+        return requiredLiberalCategoryRepository.findApplicableLiberalCategories
+                (majorId, entranceYear);
     }
 
     @Transactional(readOnly = true)
-    public RequiredLiberalCategoryByCollege getRequiredLiberalCategory(Long requiredLiberalCategoryId) {
-        return requiredLiberalCategoryByCollegeRepository.findById(requiredLiberalCategoryId).orElseThrow(() -> new RequiredLiberalCategoryNotFoundException(requiredLiberalCategoryId));
+    public RequiredLiberalCategory getRequiredLiberalCategory(Long requiredLiberalCategoryId) {
+        return requiredLiberalCategoryRepository.findById(requiredLiberalCategoryId).orElseThrow(() -> new RequiredLiberalCategoryNotFoundException(requiredLiberalCategoryId));
     }
 
     @Transactional(readOnly = true)
-    public RequiredLiberalCategoryByCollege getRequiredLiberalWithCategory(Long requiredLiberalCategoryId) {
-        return requiredLiberalCategoryByCollegeRepository.findByIdWithLiberalCategory(requiredLiberalCategoryId).orElseThrow(() -> new RequiredLiberalCategoryNotFoundException(requiredLiberalCategoryId));
+    public RequiredLiberalCategory getRequiredLiberalWithCategory(Long requiredLiberalCategoryId) {
+        return requiredLiberalCategoryRepository.findByIdWithLiberalCategory(requiredLiberalCategoryId).orElseThrow(() -> new RequiredLiberalCategoryNotFoundException(requiredLiberalCategoryId));
     }
 }

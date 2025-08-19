@@ -1,8 +1,8 @@
 package com.hyewon.wiseowl_backend.domain.requirement.repository;
 
-import com.hyewon.wiseowl_backend.domain.course.entity.QCollege;
-import com.hyewon.wiseowl_backend.domain.requirement.entity.QRequiredLiberalCategoryByCollege;
-import com.hyewon.wiseowl_backend.domain.requirement.entity.RequiredLiberalCategoryByCollege;
+import com.hyewon.wiseowl_backend.domain.course.entity.QMajor;
+import com.hyewon.wiseowl_backend.domain.requirement.entity.QRequiredLiberalCategory;
+import com.hyewon.wiseowl_backend.domain.requirement.entity.RequiredLiberalCategory;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
@@ -13,15 +13,15 @@ public class RequiredLiberalCategoryQueryRepositoryImpl implements RequiredLiber
     private final JPAQueryFactory query;
 
     @Override
-    public List<RequiredLiberalCategoryByCollege> findApplicableLiberalCategories(Long collegeId, int entranceYear) {
-        QRequiredLiberalCategoryByCollege rlc = QRequiredLiberalCategoryByCollege.requiredLiberalCategoryByCollege;
-        QCollege college = QCollege.college;
+    public List<RequiredLiberalCategory> findApplicableLiberalCategories(Long majorId, int entranceYear) {
+        QRequiredLiberalCategory rlc = QRequiredLiberalCategory.requiredLiberalCategory;
+        QMajor major  = QMajor.major;
 
         return query.select(rlc)
                 .from(rlc)
-                .join(rlc.college, college)
+                .join(rlc.major, major)
                 .where(
-                        college.id.eq(collegeId),
+                        major.id.eq(majorId),
                         rlc.appliesFromYear.coalesce(0).loe(entranceYear),
                         rlc.appliesToYear.coalesce(Integer.MAX_VALUE).goe(entranceYear)
                 )

@@ -74,7 +74,7 @@ public class UserServiceTest {
     private College college;
     private LiberalCategory liberalCategory;
     private RequiredMajorCourse requiredMajorCourse;
-    private RequiredLiberalCategoryByCollege rlc;
+    private RequiredLiberalCategory rlc;
     private ProfileUpdateRequest profileUpdateRequest;
     private UserRequiredCourseStatus userRequiredCourseStatus1;
     private UserRequiredCourseStatus userRequiredCourseStatus2;
@@ -188,7 +188,7 @@ public class UserServiceTest {
                 .major(major)
                 .majorType(MajorType.PRIMARY)
                 .build();
-        rlc =RequiredLiberalCategoryByCollege.builder()
+        rlc = RequiredLiberalCategory.builder()
                 .id(20L)
                 .liberalCategory(liberalCategory)
                 .requiredCredit(6)

@@ -3,7 +3,7 @@ package com.hyewon.wiseowl_backend.domain.user.service;
 import com.hyewon.wiseowl_backend.domain.course.entity.CourseType;
 import com.hyewon.wiseowl_backend.domain.course.entity.LiberalCategory;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorType;
-import com.hyewon.wiseowl_backend.domain.requirement.entity.RequiredLiberalCategoryByCollege;
+import com.hyewon.wiseowl_backend.domain.requirement.entity.RequiredLiberalCategory;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.RequiredMajorCourse;
 import com.hyewon.wiseowl_backend.domain.requirement.service.CourseCreditTransferRuleService;
 import com.hyewon.wiseowl_backend.domain.requirement.service.RequiredLiberalCategoryQueryService;
@@ -51,7 +51,7 @@ public class UserRequiredCourseStatusService {
             if (status.isFulfilled() || status.getCourseType() != CourseType.GENERAL) continue;
 
             // 현재 갱신해야하는 required status 랑 연결된 교양필수요건 찾음
-            RequiredLiberalCategoryByCollege requiredLiberalCategory = requiredLiberalCategoryQueryService.getRequiredLiberalWithCategory(status.getRequiredCourseId());
+            RequiredLiberalCategory requiredLiberalCategory = requiredLiberalCategoryQueryService.getRequiredLiberalWithCategory(status.getRequiredCourseId());
 
             int requiredCredit = requiredLiberalCategory.getRequiredCredit();
             LiberalCategory liberalCategory = requiredLiberalCategory.getLiberalCategory();
@@ -107,7 +107,7 @@ public class UserRequiredCourseStatusService {
 
             // primary major에 해당할 때만
             if (userMajor.getMajorType().equals(MajorType.PRIMARY)) {
-                List<UserRequiredCourseStatus> requiredLiberalCourseStatuses = requiredLiberalCategoryQueryService.getApplicableLiberalCategories(userMajor.getMajor().getCollege().getId(),
+                List<UserRequiredCourseStatus> requiredLiberalCourseStatuses = requiredLiberalCategoryQueryService.getApplicableLiberalCategories(userMajor.getMajor().getId(),
                                 profile.getEntranceYear())
                         .stream()
                         .map(requiredLiberal -> UserRequiredCourseStatus.of(user, CourseType.GENERAL, requiredLiberal.getId()))

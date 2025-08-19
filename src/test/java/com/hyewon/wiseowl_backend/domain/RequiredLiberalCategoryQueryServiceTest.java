@@ -1,8 +1,8 @@
 package com.hyewon.wiseowl_backend.domain;
 
-import com.hyewon.wiseowl_backend.domain.course.entity.College;
-import com.hyewon.wiseowl_backend.domain.requirement.entity.RequiredLiberalCategoryByCollege;
-import com.hyewon.wiseowl_backend.domain.requirement.repository.RequiredLiberalCategoryByCollegeRepository;
+import com.hyewon.wiseowl_backend.domain.course.entity.Major;
+import com.hyewon.wiseowl_backend.domain.requirement.entity.RequiredLiberalCategory;
+import com.hyewon.wiseowl_backend.domain.requirement.repository.RequiredLiberalCategoryRepository;
 import com.hyewon.wiseowl_backend.domain.requirement.service.RequiredLiberalCategoryQueryService;
 import com.hyewon.wiseowl_backend.global.exception.RequiredLiberalCategoryNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,19 +23,21 @@ import static org.mockito.BDDMockito.given;
 @ExtendWith(MockitoExtension.class)
 public class RequiredLiberalCategoryQueryServiceTest {
     @InjectMocks RequiredLiberalCategoryQueryService requiredLiberalCategoryQueryService;
-    @Mock RequiredLiberalCategoryByCollegeRepository requiredLiberalCategoryByCollegeRepository;
+    @Mock
+    RequiredLiberalCategoryRepository requiredLiberalCategoryRepository;
 
-    private RequiredLiberalCategoryByCollege requiredLiberalCategoryByCollege;
-    private College college;
+    private RequiredLiberalCategory requiredLiberalCategory;
+    private Major major;
 
     @BeforeEach
     void setUp() {
-        college = College.builder()
+        major = Major.builder()
                 .id(1L)
                 .build();
-        requiredLiberalCategoryByCollege = RequiredLiberalCategoryByCollege.builder()
+
+        requiredLiberalCategory = RequiredLiberalCategory.builder()
                 .id(2L)
-                .college(college)
+                .major(major)
                 .build();
     }
 
@@ -43,37 +45,37 @@ public class RequiredLiberalCategoryQueryServiceTest {
     @DisplayName("getApplicableLiberalCategories - should return applicable required liberal category")
     void getApplicableLiberalCategories_shouldSucceed() {
         // given
-        given(requiredLiberalCategoryByCollegeRepository.findApplicableLiberalCategories(1L, 2021)).willReturn(
-                List.of(requiredLiberalCategoryByCollege)
+        given(requiredLiberalCategoryRepository.findApplicableLiberalCategories(1L, 2021)).willReturn(
+                List.of(requiredLiberalCategory)
         );
 
         // when
-        List<RequiredLiberalCategoryByCollege> applicableLiberalCategories = requiredLiberalCategoryQueryService.getApplicableLiberalCategories(1L, 2021);
+        List<RequiredLiberalCategory> applicableLiberalCategories = requiredLiberalCategoryQueryService.getApplicableLiberalCategories(1L, 2021);
 
         // then
         assertThat(applicableLiberalCategories).hasSize(1);
-        assertThat(applicableLiberalCategories.get(0)).isEqualTo(requiredLiberalCategoryByCollege);
+        assertThat(applicableLiberalCategories.get(0)).isEqualTo(requiredLiberalCategory);
     }
 
     @Test
     @DisplayName("getRequiredLiberalCategory - should return required liberal category")
     void getRequiredLiberalCategory_shouldSucceed() {
         // given
-        given(requiredLiberalCategoryByCollegeRepository.findById(2L)).willReturn(
-                Optional.of(requiredLiberalCategoryByCollege));
+        given(requiredLiberalCategoryRepository.findById(2L)).willReturn(
+                Optional.of(requiredLiberalCategory));
 
         // when
-        RequiredLiberalCategoryByCollege result = requiredLiberalCategoryQueryService.getRequiredLiberalCategory(2L);
+        RequiredLiberalCategory result = requiredLiberalCategoryQueryService.getRequiredLiberalCategory(2L);
 
         // then
-        assertThat(result).isEqualTo(requiredLiberalCategoryByCollege);
+        assertThat(result).isEqualTo(requiredLiberalCategory);
     }
 
     @Test
     @DisplayName("getRequiredLiberalCategory - should throw RequiredLiberalCategoryNotFoundException when required liberal category does not exist")
     void getRequiredLiberalCategory_shouldThrowException_whenRequiredLiberalCategoryNotFound() {
         // given
-        given(requiredLiberalCategoryByCollegeRepository.findById(999L)).willReturn(
+        given(requiredLiberalCategoryRepository.findById(999L)).willReturn(
                 Optional.empty());
 
         // when & then
