@@ -41,6 +41,7 @@ public class DataInitializer implements CommandLineRunner {
     private final CollegeRepository collegeRepository;
     private final FacilityRepository facilityRepository;
     private final OrganizationRepository organizationRepository;
+    private final CourseCreditTransferRuleRepository courseCreditTransferRuleRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -97,6 +98,9 @@ public class DataInitializer implements CommandLineRunner {
         }
         if (requiredMajorCourseRepository.count() == 0) {
             loadRequiredMajorCourses();
+        }
+        if (courseCreditTransferRuleRepository.count() == 0) {
+            loadCourseCreditTransferRules();
         }
     }
 
@@ -642,5 +646,62 @@ public class DataInitializer implements CommandLineRunner {
 
             requiredMajorCourseRepository.save(requiredMajorCourse);
         }
+    }
+
+    private void loadCourseCreditTransferRules() throws IOException {
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("data/course_credit_transfer_rule.csv");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+
+        String line;
+        boolean isFirst = true;
+
+        while ((line = reader.readLine()) != null) {
+            if (isFirst) { isFirst = false; continue; }
+
+            String[] tokens = line.split(",");
+            Long toMajorId = parseNullableLong(tokens[0]);
+            Long fromCourseId = parseNullableLong(tokens[1]);
+            Long toCourseId = parseNullableLong(tokens[2]);
+            String note =  tokens[3].trim();
+            Integer appliesFromYear = parseNullableInt(tokens[4]);
+            Integer appliesToYear = parseNullableInt(tokens[5]);
+
+            Major major = (toMajorId != null && !toMajorId.toString().isBlank())
+                    ? majorRepository.findById(toMajorId).orElseThrow(() -> new MajorNotFoundException(toMajorId))
+                    : null;
+
+            Course fromCourse = (fromCourseId != null && !fromCourseId.toString().isBlank())
+                    ? courseRepository.findById(fromCourseId).orElseThrow(() -> new CourseNotFoundException(fromCourseId))
+                    : null;
+
+            Course toCourse = (toCourseId != null && !toCourseId.toString().isBlank())
+                    ? courseRepository.findById(toCourseId).orElseThrow(() -> new CourseNotFoundException(toCourseId))
+                    : null;
+
+            CourseCreditTransferRule courseCreditTransferRule = CourseCreditTransferRule.builder()
+                    .toMajor(major)
+                    .toCourse(toCourse)
+                    .fromCourse(fromCourse)
+                    .note(note)
+                    .appliesFromYear(appliesFromYear)
+                    .appliesToYear(appliesToYear)
+                    .build();
+
+            courseCreditTransferRuleRepository.save(courseCreditTransferRule);
+        }
+    }
+
+    private Long parseNullableLong(String token) {
+        if (token == null || token.isBlank()) {
+            return null;
+        }
+        return Long.parseLong(token.trim());
+    }
+
+    private Integer parseNullableInt(String token) {
+        if (token == null || token.isBlank()) {
+            return null;
+        }
+        return Integer.parseInt(token.trim());
     }
 }
