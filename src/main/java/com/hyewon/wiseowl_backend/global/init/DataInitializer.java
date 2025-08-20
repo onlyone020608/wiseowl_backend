@@ -33,9 +33,16 @@ public class DataInitializer implements CommandLineRunner {
     private final LanguageTestRequirementRepository languageTestRequirementRepository;
     private final RequiredLiberalCategoryRepository requiredLiberalCategoryRepository;
     private final RequiredMajorCourseRepository requiredMajorCourseRepository;
+    private final CollegeRepository collegeRepository;
 
     @Override
     public void run(String... args) throws Exception {
+        if (collegeRepository.count() == 0) {
+            loadColleges();
+        }
+        if (majorRepository.count() == 0) {
+            loadMajors();
+        }
         if (buildingRepository.count() == 0) {
             loadBuildings();
         }
@@ -77,6 +84,54 @@ public class DataInitializer implements CommandLineRunner {
         }
         if (requiredMajorCourseRepository.count() == 0) {
             loadRequiredMajorCourses();
+        }
+    }
+
+    private void loadColleges() throws IOException {
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("data/college.csv");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+
+        String line;
+        boolean isFirst = true;
+
+        while ((line = reader.readLine()) != null) {
+            if (isFirst) { isFirst = false; continue; }
+
+            String[] tokens = line.split(",");
+            String name = tokens[0].trim();
+
+            College college = College.builder()
+                    .name(name)
+                    .build();
+
+            collegeRepository.save(college);
+        }
+    }
+
+    private void loadMajors() throws IOException {
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("data/major.csv");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+
+        String line;
+        boolean isFirst = true;
+
+        while ((line = reader.readLine()) != null) {
+            if (isFirst) { isFirst = false; continue; }
+
+            String[] tokens = line.split(",");
+            Long collegeId = Long.parseLong(tokens[0].trim());
+            String name = tokens[1].trim();
+            boolean onlyDbMajor = Boolean.parseBoolean(tokens[2].trim());
+
+            College college = collegeRepository.findById(collegeId).orElseThrow(() -> new CollegeNotFoundException(collegeId));
+
+            Major major = Major.builder()
+                    .college(college)
+                    .name(name)
+                    .onlyDbMajor(onlyDbMajor)
+                    .build();
+
+            majorRepository.save(major);
         }
     }
 
