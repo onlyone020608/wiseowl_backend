@@ -5,5 +5,6 @@ public enum FacilityCategory {
     READING_ROOM,
     CONVENIENCE_STORE,
     IT_EQUIPMENT,
+    CAFE,
     ETC
 }
