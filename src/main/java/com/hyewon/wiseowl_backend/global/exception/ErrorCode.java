@@ -29,7 +29,8 @@ public enum ErrorCode {
     REQUIREMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "Requirement not found."),
     MAJOR_REQUIREMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "Major requirement not found."),
     LANGUAGE_TEST_LEVEL_NOT_FOUND(HttpStatus.NOT_FOUND, "Language test level not found."),
-    COLLEGE_NOT_FOUND(HttpStatus.NOT_FOUND, "College not found.");
+    COLLEGE_NOT_FOUND(HttpStatus.NOT_FOUND, "College not found."),
+    BUILDING_NOT_FOUND(HttpStatus.NOT_FOUND, "Building not found.");
 
     private final HttpStatus status;
     private final String message;

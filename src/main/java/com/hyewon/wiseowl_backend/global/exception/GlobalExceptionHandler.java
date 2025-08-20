@@ -29,7 +29,8 @@ public class GlobalExceptionHandler {
             RequirementNotFoundException.class,
             MajorRequirementNotFoundException.class,
             LanguageTestLevelNotFoundException.class,
-            CollegeNotFoundException.class
+            CollegeNotFoundException.class,
+            BuildingNotFoundException.class
     })
     public ResponseEntity<CustomErrorResponse> handleDomainExceptions(RuntimeException ex) {
         if (ex instanceof CourseNotFoundException e) {
@@ -77,6 +78,8 @@ public class GlobalExceptionHandler {
         } else if(ex instanceof LanguageTestLevelNotFoundException e){
             return buildResponse(e.getErrorCode());
         } else if(ex instanceof CollegeNotFoundException e){
+            return buildResponse(e.getErrorCode());
+        } else if(ex instanceof BuildingNotFoundException e){
             return buildResponse(e.getErrorCode());
         }
 

@@ -2,6 +2,11 @@ package com.hyewon.wiseowl_backend.global.init;
 
 import com.hyewon.wiseowl_backend.domain.course.entity.*;
 import com.hyewon.wiseowl_backend.domain.course.repository.*;
+import com.hyewon.wiseowl_backend.domain.facility.entity.Facility;
+import com.hyewon.wiseowl_backend.domain.facility.entity.FacilityCategory;
+import com.hyewon.wiseowl_backend.domain.facility.repository.FacilityRepository;
+import com.hyewon.wiseowl_backend.domain.notice.entity.Organization;
+import com.hyewon.wiseowl_backend.domain.notice.repository.OrganizationRepository;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.*;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.*;
 import com.hyewon.wiseowl_backend.global.exception.*;
@@ -34,6 +39,8 @@ public class DataInitializer implements CommandLineRunner {
     private final RequiredLiberalCategoryRepository requiredLiberalCategoryRepository;
     private final RequiredMajorCourseRepository requiredMajorCourseRepository;
     private final CollegeRepository collegeRepository;
+    private final FacilityRepository facilityRepository;
+    private final OrganizationRepository organizationRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -45,6 +52,12 @@ public class DataInitializer implements CommandLineRunner {
         }
         if (buildingRepository.count() == 0) {
             loadBuildings();
+        }
+        if (facilityRepository.count() == 0) {
+            loadFacilities();
+        }
+        if (organizationRepository.count() == 0) {
+            loadOrganizations();
         }
         if (semesterRepository.count() == 0) {
             loadSemesters();
@@ -155,6 +168,60 @@ public class DataInitializer implements CommandLineRunner {
                     .build();
 
             buildingRepository.save(building);
+        }
+    }
+
+    private void loadFacilities() throws IOException {
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("data/facility.csv");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+
+        String line;
+        boolean isFirst = true;
+
+        while ((line = reader.readLine()) != null) {
+            if (isFirst) { isFirst = false; continue; }
+
+            String[] tokens = line.split(",");
+            Long buildingId = Long.parseLong(tokens[0].trim());
+            String name = tokens[1].trim();
+            FacilityCategory facilityCategory= FacilityCategory.valueOf(tokens[2].trim().toUpperCase());
+            Integer floor = Integer.parseInt(tokens[3].trim());
+            String description = tokens[4].trim();
+
+            Building building = buildingRepository.findById(buildingId).orElseThrow(() -> new BuildingNotFoundException(buildingId));
+
+            Facility facility = Facility.builder()
+                    .building(building)
+                    .name(name)
+                    .facilityCategory(facilityCategory)
+                    .floor(floor)
+                    .description(description)
+                    .build();
+
+            facilityRepository.save(facility);
+        }
+    }
+
+    private void loadOrganizations() throws IOException {
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("data/organization.csv");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+
+        String line;
+        boolean isFirst = true;
+
+        while ((line = reader.readLine()) != null) {
+            if (isFirst) { isFirst = false; continue; }
+
+            String[] tokens = line.split(",");
+            String name = tokens[0].trim();
+            String homepageUrl = tokens[1].trim();
+
+            Organization organization = Organization.builder()
+                    .name(name)
+                    .homepageUrl(homepageUrl)
+                    .build();
+
+            organizationRepository.save(organization);
         }
     }
 
