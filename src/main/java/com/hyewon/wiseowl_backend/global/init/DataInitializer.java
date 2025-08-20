@@ -31,6 +31,8 @@ public class DataInitializer implements CommandLineRunner {
     private final LanguageTestLevelRepository languageTestLevelRepository;
     private final MajorRequirementRepository majorRequirementRepository;
     private final LanguageTestRequirementRepository languageTestRequirementRepository;
+    private final RequiredLiberalCategoryRepository requiredLiberalCategoryRepository;
+    private final RequiredMajorCourseRepository requiredMajorCourseRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -69,6 +71,12 @@ public class DataInitializer implements CommandLineRunner {
         }
         if (languageTestRequirementRepository.count() == 0) {
             loadLanguageTestRequirements();
+        }
+        if (requiredLiberalCategoryRepository.count() == 0) {
+            loadRequiredLiberalCategories();
+        }
+        if (requiredMajorCourseRepository.count() == 0) {
+            loadRequiredMajorCourses();
         }
     }
 
@@ -447,6 +455,70 @@ public class DataInitializer implements CommandLineRunner {
                     .build();
 
             languageTestRequirementRepository.save(languageTestRequirement);
+        }
+    }
+
+    private void loadRequiredLiberalCategories() throws IOException {
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("data/required_liberal_category.csv");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+
+        String line;
+        boolean isFirst = true;
+
+        while ((line = reader.readLine()) != null) {
+            if (isFirst) { isFirst = false; continue; }
+
+            String[] tokens = line.split(",");
+            Long majorId = Long.parseLong(tokens[0].trim());
+            Long liberalCategoryId = Long.parseLong(tokens[1].trim());
+            int requiredCredit = Integer.parseInt(tokens[2].trim());
+            Integer appliesFromYear = Integer.parseInt(tokens[3].trim());
+            Integer appliesToYear = Integer.parseInt(tokens[4].trim());
+
+            Major major = majorRepository.findById(majorId).orElseThrow(() -> new MajorNotFoundException(majorId));
+            LiberalCategory liberalCategory = liberalCategoryRepository.findById(liberalCategoryId).orElseThrow(() -> new LiberalCategoryNotFoundException(liberalCategoryId));
+
+            RequiredLiberalCategory requiredLiberalCategory = RequiredLiberalCategory.builder()
+                    .major(major)
+                    .liberalCategory(liberalCategory)
+                    .requiredCredit(requiredCredit)
+                    .appliesFromYear(appliesFromYear)
+                    .appliesToYear(appliesToYear)
+                    .build();
+
+            requiredLiberalCategoryRepository.save(requiredLiberalCategory);
+        }
+    }
+
+    private void loadRequiredMajorCourses() throws IOException {
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("data/required_major_course.csv");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+
+        String line;
+        boolean isFirst = true;
+
+        while ((line = reader.readLine()) != null) {
+            if (isFirst) { isFirst = false; continue; }
+
+            String[] tokens = line.split(",");
+            Long majorId = Long.parseLong(tokens[0].trim());
+            Long courseId = Long.parseLong(tokens[1].trim());
+            MajorType majorType = MajorType.valueOf(tokens[2].trim().toUpperCase());
+            Integer appliesFromYear = Integer.parseInt(tokens[3].trim());
+            Integer appliesToYear = Integer.parseInt(tokens[4].trim());
+
+            Major major = majorRepository.findById(majorId).orElseThrow(() -> new MajorNotFoundException(majorId));
+            Course course = courseRepository.findById(courseId).orElseThrow(() -> new CourseNotFoundException(courseId));
+
+            RequiredMajorCourse requiredMajorCourse = RequiredMajorCourse.builder()
+                    .major(major)
+                    .course(course)
+                    .majorType(majorType)
+                    .appliesFromYear(appliesFromYear)
+                    .appliesToYear(appliesToYear)
+                    .build();
+
+            requiredMajorCourseRepository.save(requiredMajorCourse);
         }
     }
 }
