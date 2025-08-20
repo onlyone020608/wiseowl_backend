@@ -19,4 +19,6 @@ public class Organization {
 
     @NotBlank
     private String name;
+
+    private String homepageUrl;
 }
