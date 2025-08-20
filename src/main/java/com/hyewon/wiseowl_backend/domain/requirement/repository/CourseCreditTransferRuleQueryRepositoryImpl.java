@@ -16,8 +16,8 @@ public class CourseCreditTransferRuleQueryRepositoryImpl implements CourseCredit
                 .where(
                         cctr.fromCourse.id.eq(fromCourseId),
                         cctr.toCourse.id.eq(toCourseId),
-                        cctr.entryYearFrom.coalesce(0).loe(entryYear),
-                        cctr.entryYearTo.coalesce(Integer.MAX_VALUE).goe(entryYear)
+                        cctr.appliesFromYear.coalesce(0).loe(entryYear),
+                        cctr.appliesToYear.coalesce(Integer.MAX_VALUE).goe(entryYear)
                 )
                 .fetchFirst() != null;
     }
