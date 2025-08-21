@@ -24,7 +24,7 @@ public class Course {
     @NotBlank
     private String courseCodePrefix;
 
-    private int credit;
+    private Integer credit;
 
     @Enumerated(EnumType.STRING)
     private CourseType courseType;
