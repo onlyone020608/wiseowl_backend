@@ -17,6 +17,7 @@ public class CreditRequirementQueryRepositoryImpl implements CreditRequirementQu
         QCreditRequirement cr = QCreditRequirement.creditRequirement;
         QMajor m = QMajor.major;
         Integer credit = query.select(cr.requiredCredits)
+                .from(cr)
                 .join(cr.major, m)
                 .where(
                         m.eq(major),
