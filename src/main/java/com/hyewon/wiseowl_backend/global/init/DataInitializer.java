@@ -163,8 +163,8 @@ public class DataInitializer implements CommandLineRunner {
             if (isFirst) { isFirst = false; continue; }
 
             String[] tokens = line.split(",");
-            Integer buildingNumber = Integer.parseInt(tokens[0].trim());
-            String name = tokens[1].trim();
+            String name = tokens[0].trim();
+            Integer buildingNumber = Integer.parseInt(tokens[1].trim());
 
             Building building = Building.builder()
                     .buildingNumber(buildingNumber)
@@ -185,7 +185,7 @@ public class DataInitializer implements CommandLineRunner {
         while ((line = reader.readLine()) != null) {
             if (isFirst) { isFirst = false; continue; }
 
-            String[] tokens = line.split(",");
+            String[] tokens = line.split(",", -1);
             Long buildingId = Long.parseLong(tokens[0].trim());
             String name = tokens[1].trim();
             FacilityCategory facilityCategory= FacilityCategory.valueOf(tokens[2].trim().toUpperCase());
@@ -295,15 +295,16 @@ public class DataInitializer implements CommandLineRunner {
                     continue;
                 }
 
-                String[] tokens = line.split(",");
-                Long majorId = Long.parseLong(tokens[0].trim());
+                String[] tokens = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
+                Long majorId = parseNullableLong(tokens[0]);
                 String name  = tokens[1].trim();
                 String courseCode = tokens[2].trim();
-                int credit = Integer.parseInt(tokens[3].trim());
+                Integer credit = parseNullableInt(tokens[3]);
                 CourseType courseType = CourseType.valueOf(tokens[4].trim().toUpperCase());
 
-                Major major = majorRepository.findById(majorId).orElseThrow(() ->
-                        new MajorNotFoundException(majorId));
+                Major major = (majorId != null && !majorId.toString().isBlank())
+                        ? majorRepository.findById(majorId).orElseThrow(() -> new MajorNotFoundException(majorId))
+                        : null;
 
                 Course course = Course.builder()
                         .major(major)
@@ -338,7 +339,7 @@ public class DataInitializer implements CommandLineRunner {
                     continue;
                 }
 
-                String[] tokens = line.split(",");
+                String[] tokens = line.split(",", -1);
                 Long courseId = Long.parseLong(tokens[0].trim());
                 Long semesterId = Long.parseLong(tokens[1].trim());
                 String professor  = tokens[2].trim();
@@ -424,14 +425,14 @@ public class DataInitializer implements CommandLineRunner {
                     continue;
                 }
 
-                String[] tokens = line.split(",");
+                String[] tokens = line.split(",", -1);
                 Long majorId = Long.parseLong(tokens[0].trim());
-                MajorType majorType = MajorType.valueOf(tokens[1].trim().toUpperCase());
+                MajorType majorType = parseNullableMajorType(tokens[1]);
                 CourseType courseType = CourseType.valueOf(tokens[2].trim().toUpperCase());
                 int requiredCredit = Integer.parseInt(tokens[3].trim());
                 Track track = Track.valueOf(tokens[4].trim().toUpperCase());
-                Integer appliesFromYear = Integer.parseInt(tokens[5].trim());
-                Integer appliesToYear = Integer.parseInt(tokens[6].trim());
+                Integer appliesFromYear = parseNullableInt(tokens[5].trim());
+                Integer appliesToYear = parseNullableInt(tokens[6].trim());
 
                 Major major = majorRepository.findById(majorId).orElseThrow(() ->new MajorNotFoundException(majorId));
 
@@ -448,6 +449,13 @@ public class DataInitializer implements CommandLineRunner {
                 creditRequirementRepository.save(creditRequirement);
             }
         }
+    }
+
+    private MajorType parseNullableMajorType(String token) {
+        if (token == null || token.isBlank()) {
+            return null;
+        }
+        return MajorType.valueOf(token.trim().toUpperCase());
     }
 
     private void loadRequirements() throws IOException {
@@ -529,13 +537,13 @@ public class DataInitializer implements CommandLineRunner {
         while ((line = reader.readLine()) != null) {
             if (isFirst) { isFirst = false; continue; }
 
-            String[] tokens = line.split(",");
+            String[] tokens = line.split(",", -1);
             Long requirementId = Long.parseLong(tokens[0].trim());
             Long majorId = Long.parseLong(tokens[1].trim());
             MajorType majorType = MajorType.valueOf(tokens[2].trim().toUpperCase());
             String description = tokens[3].trim();
-            Integer appliesFromYear = Integer.parseInt(tokens[4].trim());
-            Integer appliesToYear = Integer.parseInt(tokens[5].trim());
+            Integer appliesFromYear = parseNullableInt(tokens[4]);
+            Integer appliesToYear = parseNullableInt(tokens[5]);
 
             Requirement requirement = requirementRepository.findById(requirementId).orElseThrow(() -> new RequirementNotFoundException(requirementId));
             Major major = majorRepository.findById(majorId).orElseThrow(() -> new MajorNotFoundException(majorId));
@@ -563,15 +571,19 @@ public class DataInitializer implements CommandLineRunner {
         while ((line = reader.readLine()) != null) {
             if (isFirst) { isFirst = false; continue; }
 
-            String[] tokens = line.split(",");
-            Integer minScore = Integer.parseInt(tokens[0].trim());
+            String[] tokens = line.split(",", -1);
+            Integer minScore = parseNullableInt(tokens[0]);
             Long majorRequirementId = Long.parseLong(tokens[1].trim());
-            Long languageTestId = Long.parseLong(tokens[2].trim());
-            Long languageTestLevelId = Long.parseLong(tokens[3].trim());
+            Long languageTestId = parseNullableLong(tokens[2]);
+            Long languageTestLevelId = parseNullableLong(tokens[3]);
 
             MajorRequirement majorRequirement = majorRequirementRepository.findById(majorRequirementId).orElseThrow(() -> new MajorRequirementNotFoundException(majorRequirementId));
             LanguageTest languageTest = languageTestRepository.findById(languageTestId).orElseThrow(() -> new LanguageTestNotFoundException(languageTestId));
-            LanguageTestLevel languageTestLevel = languageTestLevelRepository.findById(languageTestLevelId).orElseThrow(() -> new LanguageTestLevelNotFoundException(languageTestLevelId));
+            LanguageTestLevel languageTestLevel =
+                    (languageTestLevelId != null && !languageTestLevelId.toString().isBlank())
+                            ? languageTestLevelRepository.findById(languageTestLevelId)
+                            .orElseThrow(() -> new LanguageTestLevelNotFoundException(languageTestLevelId))
+                            : null;
 
             LanguageTestRequirement languageTestRequirement = LanguageTestRequirement.builder()
                     .minScore(minScore)
@@ -594,12 +606,12 @@ public class DataInitializer implements CommandLineRunner {
         while ((line = reader.readLine()) != null) {
             if (isFirst) { isFirst = false; continue; }
 
-            String[] tokens = line.split(",");
+            String[] tokens = line.split(",", -1);
             Long majorId = Long.parseLong(tokens[0].trim());
             Long liberalCategoryId = Long.parseLong(tokens[1].trim());
             int requiredCredit = Integer.parseInt(tokens[2].trim());
-            Integer appliesFromYear = Integer.parseInt(tokens[3].trim());
-            Integer appliesToYear = Integer.parseInt(tokens[4].trim());
+            Integer appliesFromYear = parseNullableInt(tokens[3]);
+            Integer appliesToYear = parseNullableInt(tokens[4]);
 
             Major major = majorRepository.findById(majorId).orElseThrow(() -> new MajorNotFoundException(majorId));
             LiberalCategory liberalCategory = liberalCategoryRepository.findById(liberalCategoryId).orElseThrow(() -> new LiberalCategoryNotFoundException(liberalCategoryId));
@@ -626,12 +638,12 @@ public class DataInitializer implements CommandLineRunner {
         while ((line = reader.readLine()) != null) {
             if (isFirst) { isFirst = false; continue; }
 
-            String[] tokens = line.split(",");
+            String[] tokens = line.split(",", -1);
             Long majorId = Long.parseLong(tokens[0].trim());
             Long courseId = Long.parseLong(tokens[1].trim());
             MajorType majorType = MajorType.valueOf(tokens[2].trim().toUpperCase());
-            Integer appliesFromYear = Integer.parseInt(tokens[3].trim());
-            Integer appliesToYear = Integer.parseInt(tokens[4].trim());
+            Integer appliesFromYear = parseNullableInt(tokens[3]);
+            Integer appliesToYear = parseNullableInt(tokens[4]);
 
             Major major = majorRepository.findById(majorId).orElseThrow(() -> new MajorNotFoundException(majorId));
             Course course = courseRepository.findById(courseId).orElseThrow(() -> new CourseNotFoundException(courseId));
@@ -658,7 +670,7 @@ public class DataInitializer implements CommandLineRunner {
         while ((line = reader.readLine()) != null) {
             if (isFirst) { isFirst = false; continue; }
 
-            String[] tokens = line.split(",");
+            String[] tokens = line.split(",", -1);
             Long toMajorId = parseNullableLong(tokens[0]);
             Long fromCourseId = parseNullableLong(tokens[1]);
             Long toCourseId = parseNullableLong(tokens[2]);
