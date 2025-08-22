@@ -165,7 +165,7 @@ public class UserService {
             secondMajorDetail = userMajorRepository.findUserMajorWithCollege(userId, MajorType.MINOR).orElse(null);
         }
 
-        return new UserSummaryResponse(user.getUsername(), user.getStudentId(), profile.getGpa(),
+        return new UserSummaryResponse(user.getUsername(), profile.getEntranceYear(), profile.getGpa(),
                 firstMajorDetail, secondMajorDetail);
     }
 
