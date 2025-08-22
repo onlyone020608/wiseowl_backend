@@ -368,12 +368,13 @@ public class UserControllerIT extends AbstractIntegrationTest {
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
-        List<UserMajorTypeUpdateRequest> requests = List.of(
-                new UserMajorTypeUpdateRequest(1L, MajorType.PRIMARY, MajorType.DOUBLE));
+        UserMajorTypeUpdateItem item1 = new UserMajorTypeUpdateItem(1L, MajorType.PRIMARY, MajorType.DOUBLE);
+        UserMajorTypeUpdateItem item2 = new UserMajorTypeUpdateItem(2L, MajorType.DOUBLE, MajorType.PRIMARY);
+        UserMajorTypeUpdateRequest request = new UserMajorTypeUpdateRequest(List.of(item1, item2), Track.PRIMARY_WITH_DOUBLE);
 
         mockMvc.perform(patch("/api/users/me/majors/type")
                         .header("Authorization", "Bearer " + token)
-                        .content(objectMapper.writeValueAsString(requests))
+                        .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
     }
@@ -384,12 +385,13 @@ public class UserControllerIT extends AbstractIntegrationTest {
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
-        List<UserMajorTypeUpdateRequest> requests = List.of(
-                new UserMajorTypeUpdateRequest(999L, MajorType.PRIMARY, MajorType.DOUBLE));
+        UserMajorTypeUpdateItem item1 = new UserMajorTypeUpdateItem(1L, MajorType.PRIMARY, MajorType.DOUBLE);
+        UserMajorTypeUpdateItem item2 = new UserMajorTypeUpdateItem(2L, MajorType.DOUBLE, MajorType.PRIMARY);
+        UserMajorTypeUpdateRequest request = new UserMajorTypeUpdateRequest(List.of(item1, item2), Track.PRIMARY_WITH_DOUBLE);
 
         mockMvc.perform(patch("/api/users/me/majors/type")
                         .header("Authorization", "Bearer " + token)
-                        .content(objectMapper.writeValueAsString(requests))
+                        .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value("USER_MAJOR_NOT_FOUND"))

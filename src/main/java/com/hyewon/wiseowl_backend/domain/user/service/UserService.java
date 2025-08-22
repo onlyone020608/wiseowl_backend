@@ -183,14 +183,17 @@ public class UserService {
     }
 
     @Transactional
-    public void updateUserMajorTypes(Long userId, List<UserMajorTypeUpdateRequest> requests) {
-        requests.forEach(request -> {
-            UserMajor userMajor = userMajorRepository.findById(request.userMajorId())
-                    .orElseThrow(() -> new UserMajorNotFoundException(request.userMajorId()));
-            userMajor.updateMajorType(request.newMajorType());
+    public void updateUserMajorTypes(Long userId, UserMajorTypeUpdateRequest request) {
+        request.userMajorTypeUpdateItems().forEach(item -> {
+            UserMajor userMajor = userMajorRepository.findById(item.userMajorId())
+                    .orElseThrow(() -> new UserMajorNotFoundException(item.userMajorId()));
+            userMajor.updateMajorType(item.newMajorType());
         });
 
-        eventPublisher.publishEvent(new UserMajorTypeUpdateEvent(userId, requests));
+        UserTrack userTrack = userTrackRepository.findByUserId(userId);
+        userTrack.updateTrack(request.track());
+
+        eventPublisher.publishEvent(new UserMajorTypeUpdateEvent(userId, request.userMajorTypeUpdateItems()));
     }
 
     @Transactional

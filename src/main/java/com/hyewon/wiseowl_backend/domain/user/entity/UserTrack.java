@@ -29,4 +29,8 @@ public class UserTrack {
     public static UserTrack of(User user, Track track) {
         return new UserTrack(user, track);
     }
+
+    public void updateTrack(Track track) {
+        this.track = track;
+    }
 }

@@ -1,6 +1,8 @@
 package com.hyewon.wiseowl_backend.domain.user.dto;
 
-import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorType;
+import com.hyewon.wiseowl_backend.domain.requirement.entity.Track;
 
-public record UserMajorTypeUpdateRequest(Long userMajorId, MajorType oldMajorType, MajorType newMajorType) {
+import java.util.List;
+
+public record UserMajorTypeUpdateRequest(List<UserMajorTypeUpdateItem> userMajorTypeUpdateItems, Track  track) {
 }

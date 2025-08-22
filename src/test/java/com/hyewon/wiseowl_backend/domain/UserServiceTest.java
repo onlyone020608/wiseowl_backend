@@ -514,11 +514,15 @@ public class UserServiceTest {
                 .willReturn(Optional.of(userMajor));
         given(userMajorRepository.findById(userMajor2.getId()))
                 .willReturn(Optional.of(userMajor2));
+        given(userTrackRepository.findByUserId(userId))
+                .willReturn(userTrack);
 
         // when
-        UserMajorTypeUpdateRequest rq1 = new UserMajorTypeUpdateRequest(1L, MajorType.PRIMARY, MajorType.DOUBLE);
-        UserMajorTypeUpdateRequest rq2 = new UserMajorTypeUpdateRequest(2L, MajorType.DOUBLE, MajorType.PRIMARY);
-        userService.updateUserMajorTypes(userId, List.of(rq1, rq2));
+        UserMajorTypeUpdateItem item1 = new UserMajorTypeUpdateItem(1L, MajorType.PRIMARY, MajorType.DOUBLE);
+        UserMajorTypeUpdateItem item2 = new UserMajorTypeUpdateItem(2L, MajorType.DOUBLE, MajorType.PRIMARY);
+        UserMajorTypeUpdateRequest request = new UserMajorTypeUpdateRequest(List.of(item1, item2), Track.PRIMARY_WITH_DOUBLE);
+
+        userService.updateUserMajorTypes(userId, request);
 
         // then
         assertThat(userMajor.getMajorType()).isEqualTo(MajorType.DOUBLE);
@@ -534,12 +538,13 @@ public class UserServiceTest {
         given(userMajorRepository.findById(userMajor.getId()))
                 .willReturn(Optional.empty());
 
-        UserMajorTypeUpdateRequest rq1 = new UserMajorTypeUpdateRequest(1L, MajorType.PRIMARY, MajorType.DOUBLE);
-        UserMajorTypeUpdateRequest rq2 = new UserMajorTypeUpdateRequest(2L, MajorType.DOUBLE, MajorType.PRIMARY);
+        UserMajorTypeUpdateItem item1 = new UserMajorTypeUpdateItem(1L, MajorType.PRIMARY, MajorType.DOUBLE);
+        UserMajorTypeUpdateItem item2 = new UserMajorTypeUpdateItem(2L, MajorType.DOUBLE, MajorType.PRIMARY);
+        UserMajorTypeUpdateRequest request = new UserMajorTypeUpdateRequest(List.of(item1, item2), Track.PRIMARY_WITH_DOUBLE);
 
         // when & then
         assertThrows(UserMajorNotFoundException.class,
-                () -> userService.updateUserMajorTypes(userId, List.of(rq1, rq2)));
+                () -> userService.updateUserMajorTypes(userId, request));
     }
 
     @Test
