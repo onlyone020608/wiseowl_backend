@@ -4,6 +4,7 @@ import com.hyewon.wiseowl_backend.domain.course.entity.CourseType;
 import com.hyewon.wiseowl_backend.domain.course.entity.QCourse;
 import com.hyewon.wiseowl_backend.domain.course.entity.QCourseOffering;
 import com.hyewon.wiseowl_backend.domain.course.entity.QLiberalCategoryCourse;
+import com.hyewon.wiseowl_backend.domain.requirement.entity.QCourseCreditTransferRule;
 import com.hyewon.wiseowl_backend.domain.user.dto.CreditAndGradeDto;
 import com.hyewon.wiseowl_backend.domain.user.entity.QUser;
 import com.hyewon.wiseowl_backend.domain.user.entity.QUserCompletedCourse;
@@ -35,14 +36,20 @@ public class UserCompletedCourseQueryRepositoryImpl implements UserCompletedCour
     }
 
     @Override
-    public int sumCreditsByUser(Long userId) {
+    public int sumCreditsByUserAndMajor(Long userId, Long majorId) {
+        QCourseCreditTransferRule creditTransferRule = QCourseCreditTransferRule.courseCreditTransferRule;
         Integer sum = query
                 .select(c.credit.sum())
                 .from(ucc)
                 .join(ucc.courseOffering, co)
                 .join(co.course, c)
                 .join(ucc.user, user)
-                .where(user.id.eq(userId))
+                .leftJoin(creditTransferRule).on(creditTransferRule.fromCourse.id.eq(c.id))
+                .where(
+                        user.id.eq(userId),
+                        c.major.id.eq(majorId)
+                                .or(creditTransferRule.toMajor.id.eq(majorId))
+                )
                 .fetchOne();
 
         return sum != null ? 0 : sum;

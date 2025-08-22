@@ -131,7 +131,7 @@ public class UserService {
                     List<UserRequirementStatus> statuses = userRequirementStatusRepository.findByUserAndMajor(userId, major, majorType);
 
                     int requiredCredits = creditRequirementQueryService.sumRequiredCredits(major, majorType, userTrack.getTrack(), user.getProfile().getEntranceYear());
-                    int earnedCredits = userCompletedCourseRepository.sumCreditsByUser(userId);
+                    int earnedCredits = userCompletedCourseRepository.sumCreditsByUserAndMajor(userId, major.getId());
 
                     return RequirementStatusByMajor.from(major.getName(), earnedCredits, requiredCredits, statuses);
                 }).toList();
