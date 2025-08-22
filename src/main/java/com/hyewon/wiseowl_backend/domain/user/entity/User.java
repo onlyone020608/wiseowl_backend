@@ -25,8 +25,6 @@ public class User extends BaseTimeEntity {
     @NotBlank
     private String password;
 
-    private String studentId;
-
     private boolean deleted;
 
     private LocalDateTime deletedAt;

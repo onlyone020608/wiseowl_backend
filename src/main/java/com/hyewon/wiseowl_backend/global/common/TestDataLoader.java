@@ -83,7 +83,6 @@ public class TestDataLoader {
                 .password(passwordEncoder.encode("encoded-password"))
                 .username("Tester")
                         .profile(profile)
-                .studentId("2021")
                 .build();
         refreshToken = jwtProvider.generateRefreshToken(testUser.getEmail());
         refreshTokenRepository.save(RefreshToken.builder()
