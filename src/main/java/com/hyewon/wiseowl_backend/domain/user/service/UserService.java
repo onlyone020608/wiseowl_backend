@@ -79,7 +79,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public List<GraduationRequirementGroupByMajorResponse> getGraduationRequirementsForUser(Long userId) {
-        List<UserRequirementStatus> all = userRequirementStatusRepository.findAllByUserId(userId);
+        List<UserRequirementStatus> all = userRequirementStatusRepository.findAllByUserIdWithMajor(userId);
         if (all.isEmpty()) {
             throw new UserRequirementStatusNotFoundException(userId);
         }
@@ -115,7 +115,7 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
-        List<UserMajor> userMajors = userMajorRepository.findAllByUserId(userId);
+        List<UserMajor> userMajors = userMajorRepository.findAllByUserIdWithMajor(userId);
         if (userMajors.isEmpty()) {
             throw new UserMajorNotFoundException(userId);
         }

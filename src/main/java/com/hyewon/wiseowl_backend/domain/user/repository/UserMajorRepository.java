@@ -9,7 +9,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface UserMajorRepository extends JpaRepository<UserMajor, Long>, UserMajorQueryRepository {
-    List<UserMajor> findAllByUserId(Long userId);
     @Query("select um from UserMajor um join fetch um.major where um.user.id = :userId")
     List<UserMajor> findAllByUserIdWithMajor(@Param("userId") Long userId);
     UserMajor findByUserIdAndMajorType(Long userId, MajorType majorType);

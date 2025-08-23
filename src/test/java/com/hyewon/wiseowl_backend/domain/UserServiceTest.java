@@ -313,7 +313,7 @@ public class UserServiceTest {
     void getGraduationRequirementsForUser_shouldSucceed() {
         // given
         Long userId = 1L;
-        given(userRequirementStatusRepository.findAllByUserId(userId))
+        given(userRequirementStatusRepository.findAllByUserIdWithMajor(userId))
                 .willReturn(List.of(urs1));
 
         // when
@@ -333,7 +333,7 @@ public class UserServiceTest {
     void getGraduationRequirementsForUser_shouldThrow_whenNoDataFound() {
         // given
         Long userId = 999L;
-        given(userRequirementStatusRepository.findAllByUserId(userId))
+        given(userRequirementStatusRepository.findAllByUserIdWithMajor(userId))
                 .willReturn(List.of());
 
         // when & then
@@ -377,7 +377,7 @@ public class UserServiceTest {
         //given
         Long userId = 1L;
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
-        given(userMajorRepository.findAllByUserId(userId)).willReturn(List.of(userMajor));
+        given(userMajorRepository.findAllByUserIdWithMajor(userId)).willReturn(List.of(userMajor));
         given(userTrackRepository.findByUserId(userId)).willReturn(userTrack);
         given(userRequirementStatusRepository.findByUserAndMajor(userId, major, MajorType.PRIMARY)).willReturn(List.of(urs1));
         given(creditRequirementQueryService.sumRequiredCredits(major, MajorType.PRIMARY, Track.PRIMARY_WITH_DOUBLE, 2024)).willReturn(130);
@@ -415,7 +415,7 @@ public class UserServiceTest {
         // given
         Long userId = 1L;
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
-        given(userMajorRepository.findAllByUserId(userId)).willReturn(List.of());
+        given(userMajorRepository.findAllByUserIdWithMajor(userId)).willReturn(List.of());
 
         // when & then
         assertThrows(UserMajorNotFoundException.class,

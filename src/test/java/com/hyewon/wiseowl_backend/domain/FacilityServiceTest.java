@@ -66,7 +66,7 @@ public class FacilityServiceTest {
     @DisplayName("getAllFacilities - should return all facilities")
     void getAllFacilities_success() {
         // given
-        given(facilityRepository.findAll()).willReturn(List.of(facility1, facility2, facility3));
+        given(facilityRepository.findAllWithBuilding()).willReturn(List.of(facility1, facility2, facility3));
 
         // when
         List<BuildingFacilityResponse> response = facilityService.getAllFacilities()

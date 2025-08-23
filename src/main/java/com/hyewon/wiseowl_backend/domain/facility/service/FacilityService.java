@@ -20,7 +20,7 @@ public class FacilityService {
 
     @Transactional(readOnly = true)
     public List<BuildingFacilityResponse> getAllFacilities() {
-        List<Facility> facilities = facilityRepository.findAll();
+        List<Facility> facilities = facilityRepository.findAllWithBuilding();
         if (facilities.isEmpty()) {
             throw new FacilityNotFoundException();
         }
