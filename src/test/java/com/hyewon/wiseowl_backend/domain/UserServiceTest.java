@@ -150,7 +150,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("updateUserProfile - should update user and profile and save userMajor, userRequirementStatus, userRequiredCourseStatus")
-    void updateUserProfile_shouldSucceed() {
+    void shouldUpdateUserProfile_whenProfileUpdateRequestValid() {
         // given
         Long userId = 1L;
         Profile profile = Profile.builder().user(user).build();
@@ -185,7 +185,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("updateUserProfile - should throw when user not found")
-    void updateUserProfile_shouldThrow_whenUserNotFound() {
+    void shouldThrowException_whenUserNotFoundInUpdateUserProfile() {
         // given
         Long userId = 1L;
         given(userRepository.findById(userId)).willReturn(Optional.empty());
@@ -197,7 +197,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("updateUserProfile - should throw when profile not found")
-    void updateUserProfile_shouldThrow_whenProfileNotFound() {
+    void shouldThrowException_whenProfileNotFound() {
         // given
         Long userId = 1L;
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
@@ -210,7 +210,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("insertCompletedCourses – success")
-    void insertCompletedCourses_success() {
+    void shouldSaveCompletedCourses_whenCompletedCourseInsertRequestValid() {
         // given
         Long userId = 1L;
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
@@ -235,7 +235,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("insertCompletedCourses – already exists")
-    void insertCompletedCourses_alreadyExists() {
+    void shouldThrowException_whenCompletedCourseAlreadyExists() {
         // given
         Long userId = 1L;
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
@@ -248,7 +248,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("getGraduationRequirementsForUser - should group by major and map to response")
-    void getGraduationRequirementsForUser_shouldSucceed() {
+    void shouldReturnGraduationRequirements_whenUserHasRequirements() {
         // given
         Long userId = 1L;
         given(userRequirementStatusRepository.findAllByUserIdWithMajor(userId))
@@ -268,7 +268,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("getGraduationRequirementsForUser - should throw when no data found")
-    void getGraduationRequirementsForUser_shouldThrow_whenNoDataFound() {
+    void shouldThrowException_whenUserHasNoRequirements() {
         // given
         Long userId = 999L;
         given(userRequirementStatusRepository.findAllByUserIdWithMajor(userId))
@@ -281,7 +281,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("updateUserRequirementStatus - should update userRequirementStatus")
-    void updateUserRequirementStatus() {
+    void shouldUpdateUserRequirementStatus_whenUserRequirementFulfillmentRequestValid() {
         // given
         Long userId = 1L;
         given(userRequirementStatusRepository.findById(20L)).willReturn(Optional.of(urs1));
@@ -297,7 +297,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("updateUserRequirementStatus - should throw when user requirement status not found")
-    void updateUserRequirementStatus_userRequirementStatusNotFound() {
+    void shouldThrowException_whenUserRequirementStatusNotFound() {
         // given
         Long userId = 1L;
         given(userRequirementStatusRepository.findById(urs1.getId())).willReturn(Optional.empty());
@@ -311,7 +311,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("getUserGraduationOverview - should return overview for each major")
-    void getUserGraduationOverview_success() {
+    void shouldReturnUserGraduationOverview_whenUserHasMajorsAndRequirements() {
         //given
         Long userId = 1L;
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
@@ -337,7 +337,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("getUserGraduationOverview - should throw when user not found")
-    void getUserGraduationOverview_shouldThrow_whenUserNotFound() {
+    void shouldThrowException_whenUserNotFoundInGetGraduationOverview() {
         // given
         Long userId = 1L;
         given(userRepository.findById(userId)).willReturn(Optional.empty());
@@ -349,7 +349,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("getUserGraduationOverview - should throw when user has no majors")
-    void getUserGraduationOverview_shouldThrow_whenNoMajors() {
+    void shouldThrowException_whenUserHasNoMajor() {
         // given
         Long userId = 1L;
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
@@ -362,7 +362,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("getUserRequiredCourseStatus - should return required major and liberal courses status correctly")
-    void getUserRequiredCourseStatus_success() {
+    void shouldReturnUserRequiredCourseStatus_whenUserHasMajor() {
         // given
         Long userId = 1L;
         given(userRequiredCourseStatusRepository.findMajorItems(userId, MajorType.PRIMARY))
@@ -385,7 +385,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("getUserSummary -  should return user summary including primary and second major if present")
-    void getUserSummary_success() {
+    void shouldReturnUserSummary_whenUserHasMajor() {
         // given
         Long userId = 1L;
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
@@ -410,7 +410,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("getUserSummary - should throw UserNotFoundException when user does not exist")
-    void getUserSummary_shouldThrowException_whenUserNotFound() {
+    void shouldThrowException_whenUserNotFoundInGetUserSummary() {
         // given
         Long userId = 1L;
         given(userRepository.findById(userId)).willReturn(Optional.empty());
@@ -422,7 +422,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("updateUserMajor -  should update user major")
-    void updateUserMajor_success() {
+    void shouldUpdateUserMajor_whenUserMajorUpdateRequestValid() {
         // given
         Long userId = 1L;
         given(userMajorRepository.findByUserIdAndMajorType(userId, MajorType.PRIMARY))
@@ -445,7 +445,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("updateUserMajorTypes -  should update user major types")
-    void updateUserMajorTypes_success() {
+    void shouldUpdateUserMajorTypes_whenUserMajorTypeRequestValid() {
         // given
         Long userId = 1L;
         given(userMajorRepository.findById(userMajor.getId()))
@@ -470,7 +470,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("updateUserMajorTypes - should throw UserMajorNotFoundException when user major does not exist")
-    void updateUserMajorTypes_shouldThrowException_whenUserMajorNotFound() {
+    void shouldThrowException_whenUserMajorNotFound() {
         // given
         Long userId = 1L;
         given(userMajorRepository.findById(userMajor.getId()))
@@ -487,7 +487,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("updateCompletedCourses -  should update user completed courses")
-    void updateCompletedCourses_success() {
+    void shouldUpdateCompletedCourses_whenCompletedCourseUpdateRequestValid() {
         // given
         Long userId = 1L;
         given(userCompletedCourseRepository.findById(1L))
@@ -505,7 +505,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("updateCompletedCourses -   should throw UserCompletedCourseNotFoundException when user completed course does not exist")
-    void updateCompletedCourses_shouldThrowException_whenUserCompletedCourseNotFound() {
+    void shouldThrowException_whenUserCompletedCourseNotFound() {
         // given
         Long userId = 1L;
         given(userCompletedCourseRepository.findById(2L))
@@ -519,7 +519,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("registerUserSubscriptions - should save user subscriptions for majors and organizations" )
-    void registerUserSubscriptions_success() {
+    void shouldSaveUserSubscriptions_whenUserSubscriptionRequestValid() {
         // given
         Long userId = 1L;
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
@@ -548,7 +548,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("registerUserSubscriptions - should throw UserNotFoundException when user does not exist" )
-    void registerUserSubscriptions_shouldThrowException_whenUserNotFound() {
+    void shouldThrowException_whenUserNotFoundInRegisterUserSubscriptions() {
         // given
         Long userId = 999L;
         given(userRepository.findById(userId)).willReturn(Optional.empty());
@@ -562,7 +562,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("replaceAllUserSubscriptions - should update user subscriptions for majors and organizations" )
-    void replaceAllUserSubscriptions_success() {
+    void shouldUpdateAllUserSubscriptions_whenUserSubscriptionRequestValid() {
         // given
         Long userId = 1L;
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
@@ -594,7 +594,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("replaceAllUserSubscriptions - should throw UserNotFoundException when user does not exist" )
-    void replaceAllUserSubscriptions_shouldThrowException_whenUserNotFound() {
+    void shouldThrowException_whenUserNotFoundInReplaceAllUserSubscriptions() {
         // given
         Long userId = 999L;
         given(userRepository.findById(userId)).willReturn(Optional.empty());
@@ -608,7 +608,7 @@ public class UserServiceTest {
 
     @DisplayName("deleteUser - marks user as deleted when user exists")
     @Test
-    void deleteUser_shouldMarkUserAsDeleted() {
+    void shouldMarkUserAsDeleted_whenIdExists() {
         // given
         Long userId = 1L;
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
@@ -622,7 +622,7 @@ public class UserServiceTest {
 
     @DisplayName("deleteUser - should throw UserNotFoundException when user does not exist")
     @Test
-    void deleteUser_shouldThrowException_whenUserNotFound() {
+    void shouldThrowException_whenUserNotFoundInDeleteUser() {
         // given
         Long userId = 999L;
         given(userRepository.findById(userId)).willReturn(Optional.empty());

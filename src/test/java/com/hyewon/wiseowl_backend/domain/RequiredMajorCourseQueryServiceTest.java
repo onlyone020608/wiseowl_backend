@@ -42,7 +42,7 @@ public class RequiredMajorCourseQueryServiceTest {
 
     @Test
     @DisplayName("getApplicableMajorCourses - should return applicable required major course")
-    void getApplicableMajorCourses_shouldSucceed() {
+    void shouldReturnApplicableMajorCourses_whenMajorTypeAndEntranceYearProvided() {
         // given
         given(reqMajorCourseRepository.findApplicableMajorCourses(1L, MajorType.PRIMARY, 2021)).willReturn(
                 List.of(requiredMajorCourse));
@@ -57,7 +57,7 @@ public class RequiredMajorCourseQueryServiceTest {
 
     @Test
     @DisplayName("getRequiredMajorCourse - should return required major course")
-    void getRequiredMajorCourse_shouldSucceed() {
+    void shouldReturnRequiredMajorCourse_whenIdExists() {
         // given
         given(reqMajorCourseRepository.findById(2L)).willReturn(
                 Optional.of(requiredMajorCourse));
@@ -71,7 +71,7 @@ public class RequiredMajorCourseQueryServiceTest {
 
     @Test
     @DisplayName("getRequiredMajorCourse - should throw RequiredMajorCourseNotFoundException when required major course does not exist")
-    void getRequiredMajorCourse_shouldThrowException_whenRequiredMajorCourseNotFound() {
+    void shouldThrowException_whenRequiredMajorCourseNotFound() {
         // given
         given(reqMajorCourseRepository.findById(999L)).willReturn(
                 Optional.empty());

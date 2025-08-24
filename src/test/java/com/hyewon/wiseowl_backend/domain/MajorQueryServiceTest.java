@@ -33,7 +33,7 @@ public class MajorQueryServiceTest {
 
     @Test
     @DisplayName("getMajorName - should return major name")
-    void getMajorName_shouldSucceed() {
+    void shouldReturnMajorName_whenIdExists() {
         // given
         Long majorId = 1L;
         given(majorRepository.findById(majorId)).willReturn(
@@ -48,7 +48,7 @@ public class MajorQueryServiceTest {
 
     @Test
     @DisplayName("getMajorName - should throw MajorNotFoundException when major does not exist")
-    void getMajorName_shouldThrowException_whenMajorNotFound() {
+    void shouldThrowException_whenMajorNotFoundInGetMajorName() {
         // given
         Long majorId = 999L;
         given(majorRepository.findById(majorId)).willReturn(
@@ -61,7 +61,7 @@ public class MajorQueryServiceTest {
 
     @Test
     @DisplayName("getMajor - should return major")
-    void getMajor_shouldSucceed() {
+    void shouldReturnMajor_whenIdExists() {
         // given
         Long majorId = 1L;
         given(majorRepository.findById(majorId)).willReturn(
@@ -76,7 +76,7 @@ public class MajorQueryServiceTest {
 
     @Test
     @DisplayName("getMajor - should throw MajorNotFoundException when major does not exist")
-    void getMajor_shouldThrowException_whenMajorNotFound() {
+    void shouldThrowException_whenMajorNotFoundInGetMajor() {
         // given
         Long majorId = 999L;
         given(majorRepository.findById(majorId)).willReturn(

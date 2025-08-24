@@ -52,7 +52,7 @@ public class CourseServiceTest {
 
     @Test
     @DisplayName("getCourseCategoriesBySemester - returns combined majors and liberals")
-    void getCourseCategories_success() {
+    void shouldReturnCourseCategories_whenCourseOfferingsExistForSemester() {
         // given
         Long semesterId = 1L;
         given(courseOfferingRepository.findDistinctMajorsBySemesterId(semesterId))
@@ -71,7 +71,7 @@ public class CourseServiceTest {
 
     @Test
     @DisplayName("getCourseCategoriesBySemester - throws exception when both are empty")
-    void getCourseCategories_fail_whenEmpty() {
+    void shouldThrowException_whenNoCourseOfferingExistForSemester() {
         // given
         Long semesterId = 2L;
         given(courseOfferingRepository.findDistinctMajorsBySemesterId(semesterId))
@@ -87,7 +87,7 @@ public class CourseServiceTest {
 
     @Test
     @DisplayName("getCourseOfferingsBySemester - success case")
-    void getCourseOfferings_success() {
+    void shouldReturnCourseOfferings_whenCourseOfferingsExistForSemester() {
         // given
         Long semesterId = 1L;
         CourseOfferingResponse response1 = CourseOfferingResponse.from(courseOffering, null);
@@ -105,7 +105,7 @@ public class CourseServiceTest {
 
     @Test
     @DisplayName("getCollegesWithMajors – groups majors by college")
-    void getCollegesWithMajors_success() {
+    void shouldReturnCollegesWithMajors_whenMajorExists() {
         // given
         given(majorRepository.findAllWithCollege())
                 .willReturn(List.of(major, major2));
@@ -127,7 +127,7 @@ public class CourseServiceTest {
 
     @Test
     @DisplayName("getCollegesWithMajors – returns empty list when no majors exist")
-    void getCollegesWithMajors_emptyList() {
+    void shouldReturnEmptyList_whenNoMajorExists() {
         // given
         given(majorRepository.findAllWithCollege())
                 .willReturn(List.of());

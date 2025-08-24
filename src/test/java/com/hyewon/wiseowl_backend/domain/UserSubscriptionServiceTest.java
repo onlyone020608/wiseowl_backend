@@ -39,7 +39,7 @@ public class UserSubscriptionServiceTest {
 
     @Test
     @DisplayName("getSubscriptions - should return user's subscription list")
-    void getSubscriptions_shouldSucceed() {
+    void shouldReturnUserSubscriptions_whenUserHasSubscriptions() {
         // given
         Long userId = 1L;
         given(userSubscriptionRepository.findAllByUserId(userId)).willReturn(

@@ -36,7 +36,7 @@ public class MajorRequirementQueryServiceTest {
 
     @Test
     @DisplayName("getMajorName - should return major name")
-    void getApplicableRequirements_shouldSucceed() {
+    void shouldReturnApplicableRequirements_whenMajorTypeAndEntranceYearProvided() {
         // given
         given(majorRequirementRepository.findApplicable(1L, MajorType.PRIMARY, 2021)).willReturn(
                 List.of(majorRequirement));

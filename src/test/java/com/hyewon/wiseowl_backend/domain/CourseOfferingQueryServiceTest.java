@@ -36,7 +36,7 @@ public class CourseOfferingQueryServiceTest {
 
     @Test
     @DisplayName("getCourseOffering - should return course offering")
-    void getCourseOffering_shouldSucceed() {
+    void shouldReturnCourseOffering_whenIdExists() {
         // given
         Long courseOfferingId = 1L;
         given(courseOfferingRepository.findById(courseOfferingId)).willReturn(
@@ -51,7 +51,7 @@ public class CourseOfferingQueryServiceTest {
 
     @Test
     @DisplayName("getCourseOffering - should throw CourseOfferingNotFoundException when course offering does not exist")
-    void getCourseOffering_shouldThrowException_whenCourseOfferingNotFound() {
+    void shouldThrowException_whenCourseOfferingNotFound() {
         // given
         Long courseOfferingId = 999L;
         given(courseOfferingRepository.findById(courseOfferingId)).willReturn(

@@ -63,7 +63,7 @@ public class AuthServiceTest {
 
     @Test
     @DisplayName("signup - successful registration")
-    void signup_shouldSucceed() {
+    void shouldSaveUser_whenSignUpRequestValid() {
         // given
         given(userRepository.existsByEmail(signUpRequest.getEmail())).willReturn(false);
 
@@ -76,7 +76,7 @@ public class AuthServiceTest {
 
     @Test
     @DisplayName("signup - throws exception when email is already in use")
-    void signup_shouldThrowWhenEmailAlreadyExists() {
+    void shouldThrowException_whenEmailAlreadyExists() {
         // given
         given(userRepository.existsByEmail(signUpRequest.getEmail())).willReturn(true);
 
@@ -89,7 +89,7 @@ public class AuthServiceTest {
 
     @Test
     @DisplayName("login - returns access and refresh token when credentials are valid")
-    void login_shouldReturnTokens_whenCredentialsAreValid() {
+    void shouldReturnAccessAndRefreshTokens_whenCredentialsValid() {
         // given
         given(authentication.getPrincipal()).willReturn(userPrincipal);
         given(authenticationManager.authenticate(any())).willReturn(authentication);
@@ -108,7 +108,7 @@ public class AuthServiceTest {
 
     @Test
     @DisplayName("login - should fail with bad credentials")
-    void login_shouldFail_whenCredentialsInvalid() {
+    void shouldThrowException_whenCredentialsInvalid() {
         // given
         given(authenticationManager.authenticate(any()))
                 .willThrow(new BadCredentialsException("Invalid credentials"));
@@ -120,7 +120,7 @@ public class AuthServiceTest {
 
     @Test
     @DisplayName("changePassword - successfully updates user's password")
-    void changePassword_shouldSucceed() {
+    void shouldUpdatePassword_whenChangePasswordRequestValid() {
         // given
         Long userId = 1L;
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
@@ -137,7 +137,7 @@ public class AuthServiceTest {
 
     @Test
     @DisplayName("changePassword - should throw UserNotFoundException when user does not exist")
-    void changePassword_shouldThrow_whenUserNotFound() {
+    void shouldThrowException_whenUserNotFound() {
         // given
         Long userId = 999L;
         given(userRepository.findById(userId)).willReturn(Optional.empty());
@@ -149,7 +149,7 @@ public class AuthServiceTest {
 
     @Test
     @DisplayName("changePassword - should throw InvalidCurrentPasswordException when current password is incorrect")
-    void changePassword_shouldThrow_whenCurrentPasswordIncorrect() {
+    void shouldThrowException_whenCurrentPasswordIncorrect() {
         // given
         Long userId = 1L;
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
@@ -163,7 +163,7 @@ public class AuthServiceTest {
 
     @Test
     @DisplayName("refresh - returns new access token when refresh token is valid")
-    void refresh_shouldReturnNewAccessToken_whenValid() {
+    void shouldReturnNewAccessToken_whenRefreshTokenValid() {
         // given
         String refreshToken = "validRefreshToken";
         String email = "test@test.com";
@@ -186,7 +186,7 @@ public class AuthServiceTest {
 
     @Test
     @DisplayName("refresh - throws exception when token is invalid")
-    void refresh_shouldThrowException_whenTokenInvalid() {
+    void shouldThrowException_whenTokenInvalid() {
         // given
         String refreshToken = "invalidToken";
         given(jwtProvider.validateToken(refreshToken)).willReturn(false);
@@ -198,7 +198,7 @@ public class AuthServiceTest {
 
     @Test
     @DisplayName("refresh - throws exception when token does not match stored token")
-    void refresh_shouldThrowException_whenTokenMismatch() {
+    void shouldThrowException_whenTokenMismatch() {
         // given
         String refreshToken = "validToken";
         String savedToken = "differentToken";

@@ -89,7 +89,7 @@ public class NoticeServiceTest {
 
     @Test
     @DisplayName("getAllFacilities - should return up to 6 recent notices for each subscribed target")
-    void getAllFacilities_success() {
+    void shouldReturnSubscribedNotices_whenUserHasSubscriptions() {
         // given
         Long userId = 1L;
         List<NoticeDetailResponse> responses1 = List.of(NoticeDetailResponse.from(notice), NoticeDetailResponse.from(notice2));
@@ -119,7 +119,7 @@ public class NoticeServiceTest {
 
     @Test
     @DisplayName("getAllFacilities - should throw OrganizationNotFoundException when organization does not exist")
-    void getAllFacilities_shouldThrowException_whenOrganizationNotFound() {
+    void shouldThrowException_whenOrganizationNotFound() {
         // given
         Long userId = 1L;
         given(userSubscriptionService.getSubscriptions(userId))
