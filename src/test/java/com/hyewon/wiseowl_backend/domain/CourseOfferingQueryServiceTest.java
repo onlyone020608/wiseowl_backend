@@ -2,9 +2,9 @@ package com.hyewon.wiseowl_backend.domain;
 
 import com.hyewon.wiseowl_backend.domain.course.entity.Course;
 import com.hyewon.wiseowl_backend.domain.course.entity.CourseOffering;
-import com.hyewon.wiseowl_backend.domain.course.entity.CourseType;
 import com.hyewon.wiseowl_backend.domain.course.repository.CourseOfferingRepository;
 import com.hyewon.wiseowl_backend.domain.course.service.CourseOfferingQueryService;
+import com.hyewon.wiseowl_backend.fixture.CourseFixture;
 import com.hyewon.wiseowl_backend.global.exception.CourseOfferingNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -30,17 +30,8 @@ public class CourseOfferingQueryServiceTest {
 
     @BeforeEach
     void setUp() {
-        course = Course.builder()
-                .name("자료구조")
-                .courseCodePrefix("V41006")
-                .credit(3)
-                .courseType(CourseType.MAJOR)
-                .build();
-
-        offering = CourseOffering.builder()
-                .id(1L)
-                .course(course)
-                .build();
+        course = CourseFixture.aCourse();
+        offering = CourseFixture.aMajorCourseOffering(course);
     }
 
     @Test

@@ -7,6 +7,7 @@ import com.hyewon.wiseowl_backend.domain.course.entity.*;
 import com.hyewon.wiseowl_backend.domain.course.repository.CourseOfferingRepository;
 import com.hyewon.wiseowl_backend.domain.course.repository.MajorRepository;
 import com.hyewon.wiseowl_backend.domain.course.service.CourseService;
+import com.hyewon.wiseowl_backend.fixture.CourseFixture;
 import com.hyewon.wiseowl_backend.global.exception.CourseNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -28,7 +29,7 @@ public class CourseServiceTest {
     @Mock private MajorRepository majorRepository;
     @InjectMocks private CourseService courseService;
 
-    private Major major1;
+    private Major major;
     private Major major2;
     private College college;
     private LiberalCategory liberal;
@@ -39,51 +40,14 @@ public class CourseServiceTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        college = College.builder()
-                .id(1L)
-                .name("공과대학")
-                .build();
-        major1 = Major.builder()
-                .id(10L)
-                .name("컴퓨터공학과")
-                .college(college)
-                .build();
-        major2 = Major.builder()
-                .id(11L)
-                .name("전기전자공학과")
-                .college(college)
-                .build();
-        liberal = LiberalCategory.builder()
-                .id(1L)
-                .name("언어와문학")
-                .build();
-        course = Course.builder()
-                .id(10L)
-                .courseCodePrefix("CSE")
-                .credit(3)
-                .courseType(CourseType.MAJOR)
-                .name("자료구조")
-                .major(major1)
-                .build();
-        courseOffering = CourseOffering.builder()
-                .id(100L)
-                .course(course)
-                .room("0409")
-                .courseCode("CSE101")
-                .build();
-        liberalCourse = Course.builder()
-                .id(20L)
-                .courseCodePrefix("GEN")
-                .credit(2)
-                .courseType(CourseType.GENERAL)
-                .name("글쓰기")
-                .build();
-        liberalCourseOffering = CourseOffering.builder()
-                .id(200L)
-                .course(liberalCourse)
-                .room("0409")
-                .courseCode("GEN101")
-                .build();
+        college = CourseFixture.aCollege();
+        major = CourseFixture.aMajor1(college);
+        major2 = CourseFixture.aMajor2(college);
+        liberal = CourseFixture.aLiberalCategory();
+        course = CourseFixture.aMajorCourse(major);
+        courseOffering = CourseFixture.aMajorCourseOffering(course);
+        liberalCourse = CourseFixture.aLiberalCourse();
+        liberalCourseOffering =CourseFixture.aLiberalCourseOffering(liberalCourse);
     }
 
     @Test
@@ -92,7 +56,7 @@ public class CourseServiceTest {
         // given
         Long semesterId = 1L;
         given(courseOfferingRepository.findDistinctMajorsBySemesterId(semesterId))
-                .willReturn(List.of(major1));
+                .willReturn(List.of(major));
         given(courseOfferingRepository.findDistinctLiberalCategoriesBySemester(semesterId))
                 .willReturn(List.of(liberal));
 
@@ -144,7 +108,7 @@ public class CourseServiceTest {
     void getCollegesWithMajors_success() {
         // given
         given(majorRepository.findAllWithCollege())
-                .willReturn(List.of(major1, major2));
+                .willReturn(List.of(major, major2));
 
         // when
         List<CollegeWithMajorsResponse> result =

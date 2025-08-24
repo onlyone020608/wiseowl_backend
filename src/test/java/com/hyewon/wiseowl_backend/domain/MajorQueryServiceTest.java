@@ -3,6 +3,7 @@ package com.hyewon.wiseowl_backend.domain;
 import com.hyewon.wiseowl_backend.domain.course.entity.Major;
 import com.hyewon.wiseowl_backend.domain.course.repository.MajorRepository;
 import com.hyewon.wiseowl_backend.domain.course.service.MajorQueryService;
+import com.hyewon.wiseowl_backend.fixture.CourseFixture;
 import com.hyewon.wiseowl_backend.global.exception.MajorNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -27,10 +28,7 @@ public class MajorQueryServiceTest {
 
     @BeforeEach
     void setUp() {
-        major = Major.builder()
-                .id(1L)
-                .name("컴퓨터공학과")
-                .build();
+        major = CourseFixture.aMajor();
     }
 
     @Test

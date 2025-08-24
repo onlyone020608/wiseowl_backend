@@ -1,6 +1,5 @@
 package com.hyewon.wiseowl_backend.domain;
 
-import com.hyewon.wiseowl_backend.domain.course.entity.Major;
 import com.hyewon.wiseowl_backend.domain.course.service.MajorQueryService;
 import com.hyewon.wiseowl_backend.domain.notice.dto.NoticeDetailResponse;
 import com.hyewon.wiseowl_backend.domain.notice.dto.NoticeResponse;
@@ -13,6 +12,7 @@ import com.hyewon.wiseowl_backend.domain.user.entity.SubscriptionType;
 import com.hyewon.wiseowl_backend.domain.user.entity.User;
 import com.hyewon.wiseowl_backend.domain.user.entity.UserSubscription;
 import com.hyewon.wiseowl_backend.domain.user.service.UserSubscriptionService;
+import com.hyewon.wiseowl_backend.fixture.UserFixture;
 import com.hyewon.wiseowl_backend.global.exception.OrganizationNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -40,7 +40,6 @@ public class NoticeServiceTest {
     @InjectMocks private NoticeService noticeService;
 
     private User user;
-    private Major major;
     private Notice notice;
     private Notice notice2;
     private Notice notice3;
@@ -50,13 +49,7 @@ public class NoticeServiceTest {
 
     @BeforeEach
     void setUp() {
-        user = User.builder()
-                .id(1L)
-                .build();
-        major = Major.builder()
-                .id(2L)
-                .name("컴퓨터공학과")
-                .build();
+        user = UserFixture.aDefaultUser();
         organization = Organization.builder()
                 .id(3L)
                 .name("국제교류원")

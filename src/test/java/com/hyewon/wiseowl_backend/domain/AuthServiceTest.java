@@ -11,6 +11,7 @@ import com.hyewon.wiseowl_backend.domain.auth.security.UserPrincipal;
 import com.hyewon.wiseowl_backend.domain.auth.service.AuthService;
 import com.hyewon.wiseowl_backend.domain.user.entity.User;
 import com.hyewon.wiseowl_backend.domain.user.repository.UserRepository;
+import com.hyewon.wiseowl_backend.fixture.UserFixture;
 import com.hyewon.wiseowl_backend.global.exception.EmailAlreadyExistsException;
 import com.hyewon.wiseowl_backend.global.exception.InvalidCurrentPasswordException;
 import com.hyewon.wiseowl_backend.global.exception.UserNotFoundException;
@@ -55,12 +56,7 @@ public class AuthServiceTest {
     void setUp() {
         signUpRequest = new SignUpRequest("tester@email.com", "securepass");
         loginRequest = new LoginRequest("tester@email.com", "rawPassword");
-        user = User.builder()
-                .id(1L)
-                .username("Test")
-                .email("tester@email.com")
-                .password("encodedPassword")
-                .build();
+        user = UserFixture.aDefaultUser();
         userPrincipal = new UserPrincipal(user);
     }
 

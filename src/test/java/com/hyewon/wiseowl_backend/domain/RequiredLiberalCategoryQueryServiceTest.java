@@ -4,6 +4,8 @@ import com.hyewon.wiseowl_backend.domain.course.entity.Major;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.RequiredLiberalCategory;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.RequiredLiberalCategoryRepository;
 import com.hyewon.wiseowl_backend.domain.requirement.service.RequiredLiberalCategoryQueryService;
+import com.hyewon.wiseowl_backend.fixture.CourseFixture;
+import com.hyewon.wiseowl_backend.fixture.RequirementFixture;
 import com.hyewon.wiseowl_backend.global.exception.RequiredLiberalCategoryNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -31,14 +33,8 @@ public class RequiredLiberalCategoryQueryServiceTest {
 
     @BeforeEach
     void setUp() {
-        major = Major.builder()
-                .id(1L)
-                .build();
-
-        requiredLiberalCategory = RequiredLiberalCategory.builder()
-                .id(2L)
-                .major(major)
-                .build();
+        major = CourseFixture.aDefaultMajor();
+        requiredLiberalCategory = RequirementFixture.aRequiredLiberalCategory(major);
     }
 
     @Test

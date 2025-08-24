@@ -5,6 +5,8 @@ import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorRequirement;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorType;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.MajorRequirementRepository;
 import com.hyewon.wiseowl_backend.domain.requirement.service.MajorRequirementQueryService;
+import com.hyewon.wiseowl_backend.fixture.CourseFixture;
+import com.hyewon.wiseowl_backend.fixture.RequirementFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,13 +30,8 @@ public class MajorRequirementQueryServiceTest {
 
     @BeforeEach
     void setUp() {
-        major = Major.builder()
-                .id(1L)
-                .build();
-       majorRequirement = MajorRequirement.builder()
-               .majorType(MajorType.PRIMARY)
-               .major(major)
-               .build();
+        major = CourseFixture.aDefaultMajor();
+        majorRequirement = RequirementFixture.aMajorRequirement(major);
     }
 
     @Test

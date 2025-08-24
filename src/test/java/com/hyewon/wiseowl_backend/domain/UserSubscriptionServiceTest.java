@@ -5,6 +5,7 @@ import com.hyewon.wiseowl_backend.domain.user.entity.User;
 import com.hyewon.wiseowl_backend.domain.user.entity.UserSubscription;
 import com.hyewon.wiseowl_backend.domain.user.repository.UserSubscriptionRepository;
 import com.hyewon.wiseowl_backend.domain.user.service.UserSubscriptionService;
+import com.hyewon.wiseowl_backend.fixture.UserFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,9 +29,7 @@ public class UserSubscriptionServiceTest {
 
     @BeforeEach
     void setUp() {
-        user = User.builder()
-                .id(1L)
-                .build();
+        user = UserFixture.aDefaultUser();
         userSubscription = UserSubscription.builder()
                 .user(user)
                 .targetId(2L)

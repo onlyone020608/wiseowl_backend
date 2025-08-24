@@ -1,11 +1,11 @@
 package com.hyewon.wiseowl_backend.domain;
 
 import com.hyewon.wiseowl_backend.domain.course.entity.Major;
-import com.hyewon.wiseowl_backend.domain.requirement.entity.CreditRequirement;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorType;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.Track;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.CreditRequirementRepository;
 import com.hyewon.wiseowl_backend.domain.requirement.service.CreditRequirementQueryService;
+import com.hyewon.wiseowl_backend.fixture.CourseFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,19 +24,10 @@ public class CreditRequirementQueryServiceTest {
     @Mock CreditRequirementRepository creditRequirementRepository;
 
     private Major major;
-    private CreditRequirement creditRequirement;
 
     @BeforeEach
     void setUp() {
-        major = Major.builder()
-                .id(1L)
-                .build();
-       creditRequirement = CreditRequirement.builder()
-               .major(major)
-               .majorType(MajorType.PRIMARY)
-               .track(Track.PRIMARY_WITH_DOUBLE)
-               .requiredCredits(130)
-               .build();
+        major = CourseFixture.aMajor();
     }
 
     @Test

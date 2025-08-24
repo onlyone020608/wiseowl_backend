@@ -3,13 +3,19 @@ package com.hyewon.wiseowl_backend.domain;
 import com.hyewon.wiseowl_backend.domain.course.entity.*;
 import com.hyewon.wiseowl_backend.domain.course.service.CourseOfferingQueryService;
 import com.hyewon.wiseowl_backend.domain.course.service.MajorQueryService;
-import com.hyewon.wiseowl_backend.domain.requirement.entity.*;
+import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorRequirement;
+import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorType;
+import com.hyewon.wiseowl_backend.domain.requirement.entity.RequiredLiberalCategory;
+import com.hyewon.wiseowl_backend.domain.requirement.entity.Track;
 import com.hyewon.wiseowl_backend.domain.requirement.service.CreditRequirementQueryService;
 import com.hyewon.wiseowl_backend.domain.user.dto.*;
 import com.hyewon.wiseowl_backend.domain.user.entity.*;
 import com.hyewon.wiseowl_backend.domain.user.event.*;
 import com.hyewon.wiseowl_backend.domain.user.repository.*;
 import com.hyewon.wiseowl_backend.domain.user.service.UserService;
+import com.hyewon.wiseowl_backend.fixture.CourseFixture;
+import com.hyewon.wiseowl_backend.fixture.RequirementFixture;
+import com.hyewon.wiseowl_backend.fixture.UserFixture;
 import com.hyewon.wiseowl_backend.global.exception.*;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,20 +66,15 @@ public class UserServiceTest {
     private Major major;
     private Major major2;
     private MajorRequirement mr1;
-    private MajorRequirement mr2;
     private UserRequirementStatus urs1;
-    private UserRequirementStatus urs2;
-    private Requirement requirement;
     private CourseOffering offering;
     private CompletedCourseInsertRequest completedCourseInsertRequest;
     private UserMajor userMajor;
     private UserMajor userMajor2;
-    private CreditRequirement creditRequirement;
     private UserCompletedCourse ucc;
     private Course course;
     private College college;
     private LiberalCategory liberalCategory;
-    private RequiredMajorCourse requiredMajorCourse;
     private RequiredLiberalCategory rlc;
     private ProfileUpdateRequest profileUpdateRequest;
     private UserRequiredCourseStatus userRequiredCourseStatus1;
@@ -86,50 +87,18 @@ public class UserServiceTest {
                 .gpa(3.9)
                 .entranceYear(2024)
                 .build();
-        user = User.builder()
-                .id(1L)
-                .username("Test")
-                .profile(profile2)
-                .email("test@test.com")
-                .build();
-        college = College.builder().build();
-        major = Major.builder()
-                .id(1L)
-                .name("컴퓨터공학과")
-                .college(college)
-                .build();
-        major2 = Major.builder()
-                .id(2L)
-                .name("철학과")
-                .college(college)
-                .build();
+        user = UserFixture.aUserWithProfile(profile2);
+        college = CourseFixture.aCollege();
+        major = CourseFixture.aMajor1(college);
+        major2 = CourseFixture.aMajor2(college);
         profile = Profile.builder()
                 .user(user)
                 .build();
-        requirement = Requirement.builder()
-                .name("졸업시험")
-                .build();
-        mr1 = MajorRequirement.builder()
-                .major(major)
-                .requirement(requirement)
-                .majorType(MajorType.PRIMARY)
-                .description("다른시험대체가능")
-                .build();
-        mr2 = MajorRequirement.builder()
-                .major(major)
-                .requirement(requirement)
-                .majorType(MajorType.DOUBLE)
-                .build();
+        mr1 = RequirementFixture.aMajorRequirement(major);
         urs1 = UserRequirementStatus.builder()
                 .id(20L)
                 .user(user)
                 .majorRequirement(mr1)
-                .fulfilled(false)
-                .build();
-        urs2 = UserRequirementStatus.builder()
-                .id(20L)
-                .user(user)
-                .majorRequirement(mr2)
                 .fulfilled(false)
                 .build();
         userMajor = UserMajor.builder()
@@ -144,20 +113,9 @@ public class UserServiceTest {
                 .major(major2)
                 .majorType(MajorType.DOUBLE)
                 .build();
-        creditRequirement = mock(CreditRequirement.class);
-        liberalCategory = LiberalCategory.builder()
-                .name("인간과사회")
-                .build();
-        course = Course.builder()
-                .major(major)
-                .name("자료구조")
-                .courseCodePrefix("V41006")
-                .credit(3)
-                .courseType(CourseType.MAJOR)
-                .build();
-        offering = CourseOffering.builder()
-                .course(course)
-                .build();
+        liberalCategory = CourseFixture.aLiberalCategory();
+        course = CourseFixture.aMajorCourse(major);
+        offering = CourseFixture.aMajorCourseOffering(course);
         ucc = UserCompletedCourse.builder()
                 .id(1L)
                 .user(user)
@@ -175,24 +133,7 @@ public class UserServiceTest {
                 .user(user)
                 .track(Track.PRIMARY_WITH_DOUBLE)
                 .build();
-        creditRequirement = CreditRequirement.builder()
-                .major(major)
-                .majorType(MajorType.PRIMARY)
-                .courseType(CourseType.MAJOR)
-                .requiredCredits(130)
-                .track(Track.PRIMARY_WITH_DOUBLE)
-                .build();
-        requiredMajorCourse = RequiredMajorCourse.builder()
-                .id(10L)
-                .course(course)
-                .major(major)
-                .majorType(MajorType.PRIMARY)
-                .build();
-        rlc = RequiredLiberalCategory.builder()
-                .id(20L)
-                .liberalCategory(liberalCategory)
-                .requiredCredit(6)
-                .build();
+        rlc = RequirementFixture.aRequiredLiberalCategory(major);
         userRequiredCourseStatus1 = UserRequiredCourseStatus.builder()
                 .user(user)
                 .courseType(CourseType.MAJOR)
@@ -440,7 +381,7 @@ public class UserServiceTest {
         assertThat(response.majorRequiredCourses().get(0).courseName()).isEqualTo("자료구조");
         assertThat(response.majorRequiredCourses().get(0).fulfilled()).isEqualTo(false);
 
-        assertThat(response.liberalRequiredCourses().get(0).liberalCategoryName()).isEqualTo("인간과사회");
+        assertThat(response.liberalRequiredCourses().get(0).liberalCategoryName()).isEqualTo("언어와문학");
         assertThat(response.liberalRequiredCourses().get(0).requiredCredit()).isEqualTo(6);
         assertThat(response.liberalRequiredCourses().get(0).fulfilled()).isEqualTo(false);
     }
@@ -466,7 +407,7 @@ public class UserServiceTest {
         // then
         assertThat(response.username()).isEqualTo("Test");
         assertThat(response.primaryMajor().majorName()).isEqualTo("컴퓨터공학과");
-        assertThat(response.doubleMajor().majorName()).isEqualTo("철학과");
+        assertThat(response.doubleMajor().majorName()).isEqualTo("전기전자공학과");
         assertThat(response.gpa()).isEqualTo(3.9);
     }
 

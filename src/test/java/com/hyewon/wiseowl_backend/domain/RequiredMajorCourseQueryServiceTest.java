@@ -5,6 +5,7 @@ import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorType;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.RequiredMajorCourse;
 import com.hyewon.wiseowl_backend.domain.requirement.repository.RequiredMajorCourseRepository;
 import com.hyewon.wiseowl_backend.domain.requirement.service.RequiredMajorCourseQueryService;
+import com.hyewon.wiseowl_backend.fixture.CourseFixture;
 import com.hyewon.wiseowl_backend.global.exception.RequiredMajorCourseNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -31,9 +32,7 @@ public class RequiredMajorCourseQueryServiceTest {
 
     @BeforeEach
     void setUp() {
-        major = Major.builder()
-                .id(1L)
-                .build();
+        major = CourseFixture.aDefaultMajor();
         requiredMajorCourse = RequiredMajorCourse.builder()
                 .id(2L)
                 .major(major)
