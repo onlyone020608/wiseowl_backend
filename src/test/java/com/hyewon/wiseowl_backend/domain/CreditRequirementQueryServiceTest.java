@@ -20,7 +20,6 @@ import static org.mockito.BDDMockito.given;
 @ExtendWith(MockitoExtension.class)
 public class CreditRequirementQueryServiceTest {
     @InjectMocks CreditRequirementQueryService creditRequirementQueryService;
-
     @Mock CreditRequirementRepository creditRequirementRepository;
 
     private Major major;

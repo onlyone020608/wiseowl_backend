@@ -47,5 +47,6 @@ public class MajorRequirementQueryServiceTest {
         // then
         assertThat(applicableRequirements).hasSize(1);
         assertThat(applicableRequirements.get(0)).isEqualTo(majorRequirement);
+        assertThat(applicableRequirements.get(0).getRequirement().getName()).isEqualTo("졸업시험");
     }
 }

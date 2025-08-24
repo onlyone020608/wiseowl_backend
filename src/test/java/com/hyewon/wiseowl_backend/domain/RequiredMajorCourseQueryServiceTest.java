@@ -45,8 +45,7 @@ public class RequiredMajorCourseQueryServiceTest {
     void getApplicableMajorCourses_shouldSucceed() {
         // given
         given(reqMajorCourseRepository.findApplicableMajorCourses(1L, MajorType.PRIMARY, 2021)).willReturn(
-                List.of(requiredMajorCourse)
-        );
+                List.of(requiredMajorCourse));
 
         // when
         List<RequiredMajorCourse> applicableMajorCourses = requiredMajorCourseQueryService.getApplicableMajorCourses(1L, MajorType.PRIMARY, 2021);

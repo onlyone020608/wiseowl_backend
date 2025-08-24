@@ -43,7 +43,7 @@ public class MajorQueryServiceTest {
         String majorName = majorQueryService.getMajorName(majorId);
 
         // then
-        assertThat(majorName).isEqualTo(major.getName());
+        assertThat(majorName).isEqualTo("컴퓨터공학과");
     }
 
     @Test

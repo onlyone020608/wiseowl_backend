@@ -25,8 +25,7 @@ import static org.mockito.BDDMockito.given;
 @ExtendWith(MockitoExtension.class)
 public class RequiredLiberalCategoryQueryServiceTest {
     @InjectMocks RequiredLiberalCategoryQueryService requiredLiberalCategoryQueryService;
-    @Mock
-    RequiredLiberalCategoryRepository requiredLiberalCategoryRepository;
+    @Mock RequiredLiberalCategoryRepository requiredLiberalCategoryRepository;
 
     private RequiredLiberalCategory requiredLiberalCategory;
     private Major major;
@@ -42,8 +41,7 @@ public class RequiredLiberalCategoryQueryServiceTest {
     void getApplicableLiberalCategories_shouldSucceed() {
         // given
         given(requiredLiberalCategoryRepository.findApplicableLiberalCategories(1L, 2021)).willReturn(
-                List.of(requiredLiberalCategory)
-        );
+                List.of(requiredLiberalCategory));
 
         // when
         List<RequiredLiberalCategory> applicableLiberalCategories = requiredLiberalCategoryQueryService.getApplicableLiberalCategories(1L, 2021);

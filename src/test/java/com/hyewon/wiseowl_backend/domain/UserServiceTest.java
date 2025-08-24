@@ -62,7 +62,6 @@ public class UserServiceTest {
 
     private User user;
     private Profile profile;
-    private Profile profile2;
     private Major major;
     private Major major2;
     private MajorRequirement mr1;
@@ -83,17 +82,14 @@ public class UserServiceTest {
 
     @BeforeEach
     void setUp() {
-        profile2 = Profile.builder()
+        profile = Profile.builder()
                 .gpa(3.9)
                 .entranceYear(2024)
                 .build();
-        user = UserFixture.aUserWithProfile(profile2);
+        user = UserFixture.aUserWithProfile(profile);
         college = CourseFixture.aCollege();
         major = CourseFixture.aMajor1(college);
         major2 = CourseFixture.aMajor2(college);
-        profile = Profile.builder()
-                .user(user)
-                .build();
         mr1 = RequirementFixture.aMajorRequirement(major);
         urs1 = UserRequirementStatus.builder()
                 .id(20L)
@@ -157,6 +153,7 @@ public class UserServiceTest {
     void updateUserProfile_shouldSucceed() {
         // given
         Long userId = 1L;
+        Profile profile = Profile.builder().user(user).build();
 
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
         given(profileRepository.findByUserId(userId)).willReturn(Optional.of(profile));
@@ -176,7 +173,7 @@ public class UserServiceTest {
 
         UserMajor savedUserMajor = userMajorCaptor.getValue();
         assertThat(savedUserMajor.getUser()).isEqualTo(user);
-        assertThat(savedUserMajor.getMajor()).isEqualTo(major);
+        assertThat(savedUserMajor.getMajor().getName()).isEqualTo("컴퓨터공학과");
         assertThat(savedUserMajor.getMajorType()).isEqualTo(MajorType.PRIMARY);
 
         UserTrack savedUserTrack = userTrackCaptor.getValue();
@@ -603,8 +600,6 @@ public class UserServiceTest {
         given(userRepository.findById(userId)).willReturn(Optional.empty());
         UserSubscriptionRequest request1 = new UserSubscriptionRequest(1L, SubscriptionType.MAJOR);
         UserSubscriptionRequest request2 = new UserSubscriptionRequest(2L, SubscriptionType.ORGANIZATION);
-
-        ArgumentCaptor<List<UserSubscription>> captor = ArgumentCaptor.forClass(List.class);
 
         // when & then
         assertThrows(UserNotFoundException.class, () ->

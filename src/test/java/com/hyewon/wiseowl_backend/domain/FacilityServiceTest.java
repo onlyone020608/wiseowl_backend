@@ -23,7 +23,6 @@ import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 public class FacilityServiceTest {
-
     @Mock private FacilityRepository facilityRepository;
     @InjectMocks private FacilityService facilityService;
 

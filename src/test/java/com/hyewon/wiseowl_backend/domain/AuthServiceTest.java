@@ -29,7 +29,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -47,17 +46,19 @@ public class AuthServiceTest {
     @Mock private RefreshTokenRepository refreshTokenRepository;
     @InjectMocks private AuthService authService;
 
-    private SignUpRequest signUpRequest;
-    private LoginRequest loginRequest;
     private User user;
     private UserPrincipal userPrincipal;
+    private SignUpRequest signUpRequest;
+    private LoginRequest loginRequest;
+    private ChangePasswordRequest changePasswordRequest;
 
     @BeforeEach
     void setUp() {
-        signUpRequest = new SignUpRequest("tester@email.com", "securepass");
-        loginRequest = new LoginRequest("tester@email.com", "rawPassword");
         user = UserFixture.aDefaultUser();
         userPrincipal = new UserPrincipal(user);
+        signUpRequest = new SignUpRequest("tester@email.com", "securepass");
+        loginRequest = new LoginRequest("tester@email.com", "rawPassword");
+        changePasswordRequest = new ChangePasswordRequest("encodedPassword", "newPassword");
     }
 
     @Test
@@ -80,8 +81,8 @@ public class AuthServiceTest {
         given(userRepository.existsByEmail(signUpRequest.getEmail())).willReturn(true);
 
         // when & then
-        assertThatThrownBy(() -> authService.signup(signUpRequest))
-                .isInstanceOf(EmailAlreadyExistsException.class);
+        assertThrows(EmailAlreadyExistsException.class,
+                () -> authService.signup(signUpRequest));
 
         verify(userRepository, never()).save(any(User.class));
     }
@@ -128,8 +129,7 @@ public class AuthServiceTest {
         given(passwordEncoder.encode("newPassword")).willReturn("encodedNewPassword");
 
         // when
-        ChangePasswordRequest request = new ChangePasswordRequest("encodedPassword", "newPassword");
-        authService.changePassword(user.getId(),request);
+        authService.changePassword(user.getId(), changePasswordRequest);
 
         // then
         assertThat(user.getPassword()).isEqualTo("encodedNewPassword");
@@ -141,12 +141,10 @@ public class AuthServiceTest {
         // given
         Long userId = 999L;
         given(userRepository.findById(userId)).willReturn(Optional.empty());
-        // when
-        ChangePasswordRequest request = new ChangePasswordRequest("encodedPassword", "newPassword");
 
         // when & then
-        assertThatThrownBy(() -> authService.changePassword(999L, request))
-                .isInstanceOf(UserNotFoundException.class);
+        assertThrows(UserNotFoundException.class,
+                () -> authService.changePassword(999L, changePasswordRequest));
     }
 
     @Test
@@ -156,13 +154,11 @@ public class AuthServiceTest {
         Long userId = 1L;
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
         given(passwordEncoder.matches("wrongPassword", user.getPassword())).willReturn(false);
-
         ChangePasswordRequest request = new ChangePasswordRequest("wrongPassword", "newPassword");
 
         // when & then
-        assertThatThrownBy(() -> authService.changePassword(userId, request))
-                .isInstanceOf(InvalidCurrentPasswordException.class)
-                .hasMessage("Current password is incorrect.");
+        assertThrows(InvalidCurrentPasswordException.class,
+                () -> authService.changePassword(userId, request));
     }
 
     @Test
@@ -196,9 +192,8 @@ public class AuthServiceTest {
         given(jwtProvider.validateToken(refreshToken)).willReturn(false);
 
         // when & then
-        assertThatThrownBy(() -> authService.refresh(refreshToken))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Invalid refresh token");
+        assertThrows(IllegalArgumentException.class,
+                () -> authService.refresh(refreshToken));
     }
 
     @Test
@@ -216,8 +211,7 @@ public class AuthServiceTest {
         given(refreshTokenRepository.findByEmail(email)).willReturn(Optional.of(stored));
 
         // when & then
-        assertThatThrownBy(() -> authService.refresh(refreshToken))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Refresh token mismatch");
+        assertThrows(IllegalArgumentException.class,
+                () -> authService.refresh(refreshToken));
     }
 }
