@@ -16,7 +16,7 @@ public class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
     @Override
     public List<NoticeDetailResponse> findTop6BySourceIdAndTypeOrderByPostedAtDesc(Long sourceId, SubscriptionType type) {
         QNotice notice = QNotice.notice;
-        return query.select(Projections.constructor(NoticeDetailResponse.class, notice.id, notice.title, notice.postedAt, notice.sourceId))
+        return query.select(Projections.constructor(NoticeDetailResponse.class, notice.id, notice.title, notice.url, notice.postedAt))
                 .from(notice)
                 .where(
                         notice.sourceId.eq(sourceId),
