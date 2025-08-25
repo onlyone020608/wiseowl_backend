@@ -44,8 +44,8 @@ public class GpaRecalculationServiceTest {
     }
 
     @Test
-    @DisplayName("recalculateGpa - should recalculate GPA and update profile when event is received")
-    void recalculateGpa_shouldUpdateGpa_whenEventReceived() {
+    @DisplayName("recalculates GPA and updates profile when event is received")
+    void shouldUpdateGpa_whenEventReceived() {
         // given
         Long userId = 1L;
         CreditAndGradeDto cag1 = new CreditAndGradeDto(3, Grade.A);
@@ -63,8 +63,8 @@ public class GpaRecalculationServiceTest {
     }
 
     @Test
-    @DisplayName("recalculateGpa - should throw exception when profile not found")
-    void recalculateGpa_shouldThrow_whenProfileNotFound() {
+    @DisplayName("throws ProfileNotFoundException when profile does not exist during GPA recalculation")
+    void shouldThrowException_whenProfileNotFound() {
         // given
         Long userId = 1L;
         CreditAndGradeDto cag1 = new CreditAndGradeDto(3, Grade.A);

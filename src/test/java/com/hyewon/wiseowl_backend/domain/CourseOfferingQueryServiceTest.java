@@ -35,7 +35,7 @@ public class CourseOfferingQueryServiceTest {
     }
 
     @Test
-    @DisplayName("getCourseOffering - should return course offering")
+    @DisplayName("returns course offering when id exists")
     void shouldReturnCourseOffering_whenIdExists() {
         // given
         Long courseOfferingId = 1L;
@@ -50,7 +50,7 @@ public class CourseOfferingQueryServiceTest {
     }
 
     @Test
-    @DisplayName("getCourseOffering - should throw CourseOfferingNotFoundException when course offering does not exist")
+    @DisplayName("throws CourseOfferingNotFoundException when course offering does not exist")
     void shouldThrowException_whenCourseOfferingNotFound() {
         // given
         Long courseOfferingId = 999L;

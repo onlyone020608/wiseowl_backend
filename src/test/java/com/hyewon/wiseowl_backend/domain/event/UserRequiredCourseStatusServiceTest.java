@@ -162,8 +162,8 @@ public class UserRequiredCourseStatusServiceTest {
     }
 
     @Test
-    @DisplayName("updateRequirementStatus - should fulfill both major and liberal requirements when matching")
-    void updateUserRequiredCourseStatus_whenCourseIdMatches_thenMarkFulfilled() {
+    @DisplayName("fulfills both major and liberal requirements when matching courses exist")
+    void shouldFulfillMajorAndLiberalRequirements_whenCoursesMatch() {
         // given
         Long userId = 1L;
         given(userRequiredCourseStatusRepository.findAllByUserId(userId)).willReturn(List.of(userRequiredCourseStatus1, userRequiredCourseStatus2));
@@ -181,8 +181,8 @@ public class UserRequiredCourseStatusServiceTest {
     }
 
     @Test
-    @DisplayName("updateRequirementStatus - should fulfill major requirement using transfer rule when not directly matched")
-    void updateUserRequiredCourseStatus_whenNotDirectlyMatched_thenFulfillViaTransferRule() {
+    @DisplayName("fulfills major requirement using transfer rule when not directly matched")
+    void shouldFulfillMajorRequirementViaTransferRule_whenNotDirectlyMatched() {
         // given
         Long userId = 1L;
         given(userRequiredCourseStatusRepository.findAllByUserId(userId)).willReturn(List.of(userRequiredCourseStatus1, userRequiredCourseStatus2));
@@ -200,8 +200,8 @@ public class UserRequiredCourseStatusServiceTest {
     }
 
     @Test
-    @DisplayName("updateRequirementStatus - should throw when user required course status not found")
-    void updateUserRequiredCourseStatus_shouldThrow_whenUserRequiredCourseStatusNotFound() {
+    @DisplayName("throws UserRequiredCourseStatusNotFoundException when no user required course status exists")
+    void shouldThrowException_whenUserRequiredCourseStatusNotFound() {
         // given
         Long userId = 1L;
         given(userRequiredCourseStatusRepository.findAllByUserId(userId)).willReturn(List.of());
@@ -211,8 +211,8 @@ public class UserRequiredCourseStatusServiceTest {
     }
 
     @Test
-    @DisplayName("replaceUserRequiredCourseStatus - should throw when user completed course not found")
-    void replaceUserRequiredCourseStatus_shouldSucceed() {
+    @DisplayName("replaces all user required course statuses successfully")
+    void shouldReplaceUserRequiredCourseStatus_whenValidUserAndProfileExis() {
         // given
         Long userId = 1L;
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
@@ -228,5 +228,4 @@ public class UserRequiredCourseStatusServiceTest {
         verify(userRequiredCourseStatusRepository).deleteAllByUserId(userId);
         verify(userRequiredCourseStatusRepository, times(2)).saveAll(anyList());
     }
-
 }

@@ -41,7 +41,7 @@ public class RequiredMajorCourseQueryServiceTest {
     }
 
     @Test
-    @DisplayName("getApplicableMajorCourses - should return applicable required major course")
+    @DisplayName("returns applicable required major courses when major type and entrance year are provided")
     void shouldReturnApplicableMajorCourses_whenMajorTypeAndEntranceYearProvided() {
         // given
         given(reqMajorCourseRepository.findApplicableMajorCourses(1L, MajorType.PRIMARY, 2021)).willReturn(
@@ -56,7 +56,7 @@ public class RequiredMajorCourseQueryServiceTest {
     }
 
     @Test
-    @DisplayName("getRequiredMajorCourse - should return required major course")
+    @DisplayName("returns required major course when id exists")
     void shouldReturnRequiredMajorCourse_whenIdExists() {
         // given
         given(reqMajorCourseRepository.findById(2L)).willReturn(
@@ -70,7 +70,7 @@ public class RequiredMajorCourseQueryServiceTest {
     }
 
     @Test
-    @DisplayName("getRequiredMajorCourse - should throw RequiredMajorCourseNotFoundException when required major course does not exist")
+    @DisplayName("throws RequiredMajorCourseNotFoundException when id does not exist")
     void shouldThrowException_whenRequiredMajorCourseNotFound() {
         // given
         given(reqMajorCourseRepository.findById(999L)).willReturn(

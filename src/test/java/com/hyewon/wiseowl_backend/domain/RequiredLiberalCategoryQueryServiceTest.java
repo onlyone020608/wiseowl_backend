@@ -37,8 +37,8 @@ public class RequiredLiberalCategoryQueryServiceTest {
     }
 
     @Test
-    @DisplayName("getApplicableLiberalCategories - should return applicable required liberal category")
-    void shouldReturnApplicableLiberalCategories_whenCollegeAndYearProvided() {
+    @DisplayName("returns applicable required liberal categories when major and entrance year are provided")
+    void shouldReturnApplicableLiberalCategories_whenMajorAndYearProvided() {
         // given
         given(requiredLiberalCategoryRepository.findApplicableLiberalCategories(1L, 2021)).willReturn(
                 List.of(requiredLiberalCategory));
@@ -52,7 +52,7 @@ public class RequiredLiberalCategoryQueryServiceTest {
     }
 
     @Test
-    @DisplayName("getRequiredLiberalCategory - should return required liberal category")
+    @DisplayName("returns required liberal category when id exists")
     void shouldReturnRequiredLiberalCategory_whenIdExist() {
         // given
         given(requiredLiberalCategoryRepository.findById(2L)).willReturn(
@@ -66,7 +66,7 @@ public class RequiredLiberalCategoryQueryServiceTest {
     }
 
     @Test
-    @DisplayName("getRequiredLiberalCategory - should throw RequiredLiberalCategoryNotFoundException when required liberal category does not exist")
+    @DisplayName("throws RequiredLiberalCategoryNotFoundException when id does not exist")
     void shouldThrowException_whenRequiredLiberalCategoryNotFound() {
         // given
         given(requiredLiberalCategoryRepository.findById(999L)).willReturn(

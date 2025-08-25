@@ -62,7 +62,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("signup - successful registration")
+    @DisplayName("signs up user when request is valid")
     void shouldSaveUser_whenSignUpRequestValid() {
         // given
         given(userRepository.existsByEmail(signUpRequest.getEmail())).willReturn(false);
@@ -75,7 +75,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("signup - throws exception when email is already in use")
+    @DisplayName("throws EmailAlreadyExistsException when email is already in use during signup")
     void shouldThrowException_whenEmailAlreadyExists() {
         // given
         given(userRepository.existsByEmail(signUpRequest.getEmail())).willReturn(true);
@@ -88,7 +88,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("login - returns access and refresh token when credentials are valid")
+    @DisplayName("returns access and refresh tokens when login credentials are valid")
     void shouldReturnAccessAndRefreshTokens_whenCredentialsValid() {
         // given
         given(authentication.getPrincipal()).willReturn(userPrincipal);
@@ -107,7 +107,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("login - should fail with bad credentials")
+    @DisplayName("throws BadCredentialsException when login credentials are invalid")
     void shouldThrowException_whenCredentialsInvalid() {
         // given
         given(authenticationManager.authenticate(any()))
@@ -119,7 +119,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("changePassword - successfully updates user's password")
+    @DisplayName("updates password when change password request is valid")
     void shouldUpdatePassword_whenChangePasswordRequestValid() {
         // given
         Long userId = 1L;
@@ -136,7 +136,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("changePassword - should throw UserNotFoundException when user does not exist")
+    @DisplayName("throws UserNotFoundException when user does not exist during password change")
     void shouldThrowException_whenUserNotFound() {
         // given
         Long userId = 999L;
@@ -148,7 +148,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("changePassword - should throw InvalidCurrentPasswordException when current password is incorrect")
+    @DisplayName("throws InvalidCurrentPasswordException when current password is incorrect")
     void shouldThrowException_whenCurrentPasswordIncorrect() {
         // given
         Long userId = 1L;
@@ -162,7 +162,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("refresh - returns new access token when refresh token is valid")
+    @DisplayName("returns new access token when refresh token is valid")
     void shouldReturnNewAccessToken_whenRefreshTokenValid() {
         // given
         String refreshToken = "validRefreshToken";
@@ -185,7 +185,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("refresh - throws exception when token is invalid")
+    @DisplayName("throws exception when refresh token is invalid")
     void shouldThrowException_whenTokenInvalid() {
         // given
         String refreshToken = "invalidToken";
@@ -197,7 +197,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("refresh - throws exception when token does not match stored token")
+    @DisplayName("throws exception when refresh token does not match stored token")
     void shouldThrowException_whenTokenMismatch() {
         // given
         String refreshToken = "validToken";

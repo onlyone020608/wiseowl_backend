@@ -68,8 +68,8 @@ public class UserRequirementStatusServiceTest {
     }
 
     @Test
-    @DisplayName("replaceUserRequirementStatus - should replace previous user requirement status when event is received")
-    void replaceUserRequirementStatus_shouldReplaceUserRequirementStatus_whenEventReceived() {
+    @DisplayName("replaces previous user requirement status when event is received")
+    void shouldReplaceUserRequirementStatus_whenEventReceived() {
         // given
         Long userId = 1L;
         given(userRepository.findById(userId)).willReturn(Optional.of(user));

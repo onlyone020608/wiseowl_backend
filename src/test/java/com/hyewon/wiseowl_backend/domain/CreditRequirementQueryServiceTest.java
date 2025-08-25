@@ -30,7 +30,7 @@ public class CreditRequirementQueryServiceTest {
     }
 
     @Test
-    @DisplayName("sumRequiredCredits - should return required credit")
+    @DisplayName("returns required credits when inputs are valid")
     void shouldReturnRequiredCreditsSum_whenValidInputsProvided() {
         // given
         given(creditRequirementRepository.sumRequiredCredits(major, MajorType.PRIMARY, Track.PRIMARY_WITH_DOUBLE, 2024)).willReturn(130);

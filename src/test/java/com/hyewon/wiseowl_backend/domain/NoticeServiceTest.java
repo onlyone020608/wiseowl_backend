@@ -88,7 +88,7 @@ public class NoticeServiceTest {
     }
 
     @Test
-    @DisplayName("getAllFacilities - should return up to 6 recent notices for each subscribed target")
+    @DisplayName("returns up to 6 recent notices for each subscribed target when user has subscriptions")
     void shouldReturnSubscribedNotices_whenUserHasSubscriptions() {
         // given
         Long userId = 1L;
@@ -118,7 +118,7 @@ public class NoticeServiceTest {
     }
 
     @Test
-    @DisplayName("getAllFacilities - should throw OrganizationNotFoundException when organization does not exist")
+    @DisplayName("throws OrganizationNotFoundException when subscribed organization does not exist")
     void shouldThrowException_whenOrganizationNotFound() {
         // given
         Long userId = 1L;

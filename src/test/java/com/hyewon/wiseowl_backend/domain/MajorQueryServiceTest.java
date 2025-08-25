@@ -32,7 +32,7 @@ public class MajorQueryServiceTest {
     }
 
     @Test
-    @DisplayName("getMajorName - should return major name")
+    @DisplayName("returns major name when id exists")
     void shouldReturnMajorName_whenIdExists() {
         // given
         Long majorId = 1L;
@@ -47,7 +47,7 @@ public class MajorQueryServiceTest {
     }
 
     @Test
-    @DisplayName("getMajorName - should throw MajorNotFoundException when major does not exist")
+    @DisplayName("throws MajorNotFoundException when major id does not exist")
     void shouldThrowException_whenMajorNotFoundInGetMajorName() {
         // given
         Long majorId = 999L;
@@ -60,7 +60,7 @@ public class MajorQueryServiceTest {
     }
 
     @Test
-    @DisplayName("getMajor - should return major")
+    @DisplayName("returns major when id exists")
     void shouldReturnMajor_whenIdExists() {
         // given
         Long majorId = 1L;
@@ -75,7 +75,7 @@ public class MajorQueryServiceTest {
     }
 
     @Test
-    @DisplayName("getMajor - should throw MajorNotFoundException when major does not exist")
+    @DisplayName("throws MajorNotFoundException when major id does not exist")
     void shouldThrowException_whenMajorNotFoundInGetMajor() {
         // given
         Long majorId = 999L;

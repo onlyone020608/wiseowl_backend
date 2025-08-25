@@ -62,7 +62,7 @@ public class FacilityServiceTest {
     }
 
     @Test
-    @DisplayName("getAllFacilities - should return all facilities")
+    @DisplayName("returns all facilities grouped by building when facilities exist")
     void shouldReturnAllFacilities_whenFacilitiesExist() {
         // given
         given(facilityRepository.findAllWithBuilding()).willReturn(List.of(facility1, facility2, facility3));
@@ -81,7 +81,7 @@ public class FacilityServiceTest {
     }
 
     @Test
-    @DisplayName("getAllFacilities - should throw FacilityNotFoundException when facility does not exist")
+    @DisplayName("throws FacilityNotFoundException when no facility exists")
     void shouldThrowException_whenNoFacilityExist() {
         // given
         given(facilityRepository.findAll()).willReturn(List.of());

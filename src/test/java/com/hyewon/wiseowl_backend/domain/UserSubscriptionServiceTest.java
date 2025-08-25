@@ -38,7 +38,7 @@ public class UserSubscriptionServiceTest {
     }
 
     @Test
-    @DisplayName("getSubscriptions - should return user's subscription list")
+    @DisplayName("returns user's subscription list when user has subscriptions")
     void shouldReturnUserSubscriptions_whenUserHasSubscriptions() {
         // given
         Long userId = 1L;

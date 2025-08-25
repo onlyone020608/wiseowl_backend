@@ -149,7 +149,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("updateUserProfile - should update user and profile and save userMajor, userRequirementStatus, userRequiredCourseStatus")
+    @DisplayName("updates user's profile when profile update request is valid")
     void shouldUpdateUserProfile_whenProfileUpdateRequestValid() {
         // given
         Long userId = 1L;
@@ -184,7 +184,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("updateUserProfile - should throw when user not found")
+    @DisplayName("throws UserNotFoundException when user does not exist in updateUserProfile")
     void shouldThrowException_whenUserNotFoundInUpdateUserProfile() {
         // given
         Long userId = 1L;
@@ -196,7 +196,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("updateUserProfile - should throw when profile not found")
+    @DisplayName("throws ProfileNotFoundException when profile does not exist in updateUserProfile")
     void shouldThrowException_whenProfileNotFound() {
         // given
         Long userId = 1L;
@@ -209,7 +209,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("insertCompletedCourses – success")
+    @DisplayName("saves completed courses when completed course insert request is valid")
     void shouldSaveCompletedCourses_whenCompletedCourseInsertRequestValid() {
         // given
         Long userId = 1L;
@@ -234,7 +234,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("insertCompletedCourses – already exists")
+    @DisplayName("throws CompletedCourseAlreadyExistsException when completed course already exists")
     void shouldThrowException_whenCompletedCourseAlreadyExists() {
         // given
         Long userId = 1L;
@@ -247,7 +247,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("getGraduationRequirementsForUser - should group by major and map to response")
+    @DisplayName("returns graduation requirements grouped by major when user has requirements")
     void shouldReturnGraduationRequirements_whenUserHasRequirements() {
         // given
         Long userId = 1L;
@@ -267,7 +267,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("getGraduationRequirementsForUser - should throw when no data found")
+    @DisplayName("throws UserRequirementStatusNotFoundException when user has no requirements")
     void shouldThrowException_whenUserHasNoRequirements() {
         // given
         Long userId = 999L;
@@ -280,7 +280,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("updateUserRequirementStatus - should update userRequirementStatus")
+    @DisplayName("updates userRequirementStatus when request is valid")
     void shouldUpdateUserRequirementStatus_whenUserRequirementFulfillmentRequestValid() {
         // given
         Long userId = 1L;
@@ -296,7 +296,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("updateUserRequirementStatus - should throw when user requirement status not found")
+    @DisplayName("throws UserRequirementStatusNotFoundException when user requirement status does not exist")
     void shouldThrowException_whenUserRequirementStatusNotFound() {
         // given
         Long userId = 1L;
@@ -310,7 +310,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("getUserGraduationOverview - should return overview for each major")
+    @DisplayName("returns graduation overview for each major when user has majors and requirementsr")
     void shouldReturnUserGraduationOverview_whenUserHasMajorsAndRequirements() {
         //given
         Long userId = 1L;
@@ -336,7 +336,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("getUserGraduationOverview - should throw when user not found")
+    @DisplayName("throws UserNotFoundException when user does not exist in getUserGraduationOverview")
     void shouldThrowException_whenUserNotFoundInGetGraduationOverview() {
         // given
         Long userId = 1L;
@@ -348,7 +348,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("getUserGraduationOverview - should throw when user has no majors")
+    @DisplayName("throws UserMajorNotFoundException when user has no majors in getUserGraduationOverview")
     void shouldThrowException_whenUserHasNoMajor() {
         // given
         Long userId = 1L;
@@ -361,7 +361,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("getUserRequiredCourseStatus - should return required major and liberal courses status correctly")
+    @DisplayName("returns required major and liberal course statuses when user has majors")
     void shouldReturnUserRequiredCourseStatus_whenUserHasMajor() {
         // given
         Long userId = 1L;
@@ -384,7 +384,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("getUserSummary -  should return user summary including primary and second major if present")
+    @DisplayName("returns user summary including primary and double major when user has majors")
     void shouldReturnUserSummary_whenUserHasMajor() {
         // given
         Long userId = 1L;
@@ -409,7 +409,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("getUserSummary - should throw UserNotFoundException when user does not exist")
+    @DisplayName("throws UserNotFoundException when user does not exist in getUserSummary")
     void shouldThrowException_whenUserNotFoundInGetUserSummary() {
         // given
         Long userId = 1L;
@@ -421,7 +421,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("updateUserMajor -  should update user major")
+    @DisplayName("updates user majors when request is valid")
     void shouldUpdateUserMajor_whenUserMajorUpdateRequestValid() {
         // given
         Long userId = 1L;
@@ -444,7 +444,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("updateUserMajorTypes -  should update user major types")
+    @DisplayName("updates user major types when request is valid")
     void shouldUpdateUserMajorTypes_whenUserMajorTypeRequestValid() {
         // given
         Long userId = 1L;
@@ -469,7 +469,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("updateUserMajorTypes - should throw UserMajorNotFoundException when user major does not exist")
+    @DisplayName("throws UserMajorNotFoundException when user major does not exist in updateUserMajorTypes")
     void shouldThrowException_whenUserMajorNotFound() {
         // given
         Long userId = 1L;
@@ -486,7 +486,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("updateCompletedCourses -  should update user completed courses")
+    @DisplayName("updates completed course when request is valid")
     void shouldUpdateCompletedCourses_whenCompletedCourseUpdateRequestValid() {
         // given
         Long userId = 1L;
@@ -504,7 +504,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("updateCompletedCourses -   should throw UserCompletedCourseNotFoundException when user completed course does not exist")
+    @DisplayName("throws UserCompletedCourseNotFoundException when completed course does not exist")
     void shouldThrowException_whenUserCompletedCourseNotFound() {
         // given
         Long userId = 1L;
@@ -518,7 +518,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("registerUserSubscriptions - should save user subscriptions for majors and organizations" )
+    @DisplayName("registers user subscriptions when request is valid" )
     void shouldSaveUserSubscriptions_whenUserSubscriptionRequestValid() {
         // given
         Long userId = 1L;
@@ -547,7 +547,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("registerUserSubscriptions - should throw UserNotFoundException when user does not exist" )
+    @DisplayName("throws UserNotFoundException when user does not exist in registerUserSubscriptions" )
     void shouldThrowException_whenUserNotFoundInRegisterUserSubscriptions() {
         // given
         Long userId = 999L;
@@ -561,7 +561,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("replaceAllUserSubscriptions - should update user subscriptions for majors and organizations" )
+    @DisplayName("replaces all user subscriptions when request is valid" )
     void shouldUpdateAllUserSubscriptions_whenUserSubscriptionRequestValid() {
         // given
         Long userId = 1L;
@@ -593,7 +593,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("replaceAllUserSubscriptions - should throw UserNotFoundException when user does not exist" )
+    @DisplayName("throws UserNotFoundException when user does not exist in replaceAllUserSubscriptions" )
     void shouldThrowException_whenUserNotFoundInReplaceAllUserSubscriptions() {
         // given
         Long userId = 999L;
@@ -606,7 +606,7 @@ public class UserServiceTest {
                 userService.replaceAllUserSubscriptions(userId,  List.of(request1, request2)));
     }
 
-    @DisplayName("deleteUser - marks user as deleted when user exists")
+    @DisplayName("marks user as deleted when user exists")
     @Test
     void shouldMarkUserAsDeleted_whenIdExists() {
         // given
@@ -620,7 +620,7 @@ public class UserServiceTest {
         assertThat(user.isDeleted()).isTrue();
     }
 
-    @DisplayName("deleteUser - should throw UserNotFoundException when user does not exist")
+    @DisplayName("throws UserNotFoundException when user does not exist in deleteUser")
     @Test
     void shouldThrowException_whenUserNotFoundInDeleteUser() {
         // given
