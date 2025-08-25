@@ -26,7 +26,7 @@ public class AuthControllerIT extends AbstractIntegrationTest {
     }
 
     @Test
-    @DisplayName("POST /api/auth/login - logs in user and returns access & refresh tokens")
+    @DisplayName("POST /api/auth/login - returns access & refresh tokens when credentials are valid")
     void login_withValidCredentials_returnsTokens() throws Exception {
         LoginRequest request = new LoginRequest("test@example.com", "encoded-password");
 
@@ -37,7 +37,7 @@ public class AuthControllerIT extends AbstractIntegrationTest {
     }
 
     @Test
-    @DisplayName("PATCH /api/auth/password - change password")
+    @DisplayName("PATCH /api/auth/password - updates password when current password is valid")
     void changePassword_withValidCurrentAndNewPassword_updatesPassword() throws Exception {
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
@@ -53,7 +53,7 @@ public class AuthControllerIT extends AbstractIntegrationTest {
     }
 
     @Test
-    @DisplayName("POST /api/auth/refresh - return new access token using refresh token ")
+    @DisplayName("POST /api/auth/refresh - returns new access & refresh tokens when refresh token is valid")
     void refreshAccessToken_withValidRefreshToken_returnsNewTokens() throws Exception {
         String refreshToken = testDataLoader.getRefreshToken();
 

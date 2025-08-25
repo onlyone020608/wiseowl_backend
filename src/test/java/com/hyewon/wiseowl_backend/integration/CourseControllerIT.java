@@ -11,7 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class CourseControllerIT extends AbstractIntegrationTest {
     @Test
-    @DisplayName("GET /api/courses/course-categories- returns course categories grouped by semester")
+    @DisplayName("GET /api/courses/course-categories- returns course categories for a valid semesterr")
     void getCourseCategories_withValidSemesterId_returnsCourseCategories() throws Exception {
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
@@ -27,7 +27,7 @@ public class CourseControllerIT extends AbstractIntegrationTest {
     }
 
     @Test
-    @DisplayName("GET /api/courses/course-categories - should return 404 if course does not exist")
+    @DisplayName("GET /api/courses/course-categories - returns 404 when semester does not exist")
     void getCourseCategories_withInvalidSemesterId_returns404() throws Exception {
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
@@ -41,7 +41,7 @@ public class CourseControllerIT extends AbstractIntegrationTest {
     }
 
     @Test
-    @DisplayName("GET /api/courses/offerings - returns course offerings grouped by semester")
+    @DisplayName("GET /api/courses/offerings - returns course offerings for a valid semester")
     void getCourseOfferings_withValidSemesterId_returnsOfferings() throws Exception {
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
@@ -56,7 +56,7 @@ public class CourseControllerIT extends AbstractIntegrationTest {
     }
 
     @Test
-    @DisplayName("GET /api/courses/colleges-with-majors - returns majors grouped by college ")
+    @DisplayName("GET /api/courses/colleges-with-majors - returns colleges with their majors")
     void getCollegesWithMajors_withValidRequest_returnsCollegesAndMajors() throws Exception {
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());

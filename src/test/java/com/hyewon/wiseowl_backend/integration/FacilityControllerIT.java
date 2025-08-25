@@ -26,7 +26,7 @@ public class FacilityControllerIT extends AbstractIntegrationTest {
     }
 
     @Test
-    @DisplayName("GET /api/facilities - should return 404 when no facility exists")
+    @DisplayName("GET /api/facilities - returns 404 when no facilities exist")
     @Sql(statements = "DELETE FROM facility", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
             config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.INFERRED))
     void getFacilities_withNoFacilities_returns404() throws Exception {
