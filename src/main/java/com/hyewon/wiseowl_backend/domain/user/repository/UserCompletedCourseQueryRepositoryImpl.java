@@ -52,7 +52,7 @@ public class UserCompletedCourseQueryRepositoryImpl implements UserCompletedCour
                 )
                 .fetchOne();
 
-        return sum != null ? 0 : sum;
+        return sum != null ? sum : 0;
     }
 
     @Override
