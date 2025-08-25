@@ -12,7 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class CourseControllerIT extends AbstractIntegrationTest {
     @Test
     @DisplayName("GET /api/courses/course-categories- returns course categories grouped by semester")
-    void getCourseCategories_success() throws Exception {
+    void getCourseCategories_withValidSemesterId_returnsCourseCategories() throws Exception {
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
@@ -28,7 +28,7 @@ public class CourseControllerIT extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("GET /api/courses/course-categories - should return 404 if course does not exist")
-    void getCourseCategories_courseNotFound() throws Exception {
+    void getCourseCategories_withInvalidSemesterId_returns404() throws Exception {
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
@@ -42,7 +42,7 @@ public class CourseControllerIT extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("GET /api/courses/offerings - returns course offerings grouped by semester")
-    void getOfferings_success() throws Exception {
+    void getCourseOfferings_withValidSemesterId_returnsOfferings() throws Exception {
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
         Long semesterId = 13L;
@@ -57,7 +57,7 @@ public class CourseControllerIT extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("GET /api/courses/colleges-with-majors - returns majors grouped by college ")
-    void getCollegesWithMajors_success() throws Exception {
+    void getCollegesWithMajors_withValidRequest_returnsCollegesAndMajors() throws Exception {
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 

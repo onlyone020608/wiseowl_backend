@@ -14,7 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class FacilityControllerIT extends AbstractIntegrationTest {
     @Test
     @DisplayName("GET /api/facilities - returns facilities grouped by building")
-    void getFacilities_success() throws Exception {
+    void getFacilities_withExistingFacilities_returnsFacilitiesGroupedByBuilding() throws Exception {
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
@@ -29,7 +29,7 @@ public class FacilityControllerIT extends AbstractIntegrationTest {
     @DisplayName("GET /api/facilities - should return 404 when no facility exists")
     @Sql(statements = "DELETE FROM facility", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
             config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.INFERRED))
-    void getFacilities_facilityNotFound() throws Exception {
+    void getFacilities_withNoFacilities_returns404() throws Exception {
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 

@@ -16,7 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class AuthControllerIT extends AbstractIntegrationTest {
     @Test
     @DisplayName("POST /api/auth - creates a new user account")
-    void signUp_success() throws Exception {
+    void signUp_withValidRequest_createsNewUserAccount() throws Exception {
         SignUpRequest request = new SignUpRequest("signupTest@email.com", "signupPassword");
 
         mockMvc.perform(post("/api/auth")
@@ -27,7 +27,7 @@ public class AuthControllerIT extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("POST /api/auth/login - logs in user and returns access & refresh tokens")
-    void login_success() throws Exception {
+    void login_withValidCredentials_returnsTokens() throws Exception {
         LoginRequest request = new LoginRequest("test@example.com", "encoded-password");
 
         mockMvc.perform(post("/api/auth/login")
@@ -38,7 +38,7 @@ public class AuthControllerIT extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("PATCH /api/auth/password - change password")
-    void changePassword_success() throws Exception {
+    void changePassword_withValidCurrentAndNewPassword_updatesPassword() throws Exception {
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
@@ -54,7 +54,7 @@ public class AuthControllerIT extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("POST /api/auth/refresh - return new access token using refresh token ")
-    void refreshAccessToken_success() throws Exception {
+    void refreshAccessToken_withValidRefreshToken_returnsNewTokens() throws Exception {
         String refreshToken = testDataLoader.getRefreshToken();
 
         mockMvc.perform(post("/api/auth/refresh")

@@ -33,7 +33,7 @@ public class UserControllerIT extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("POST /api/users/me/profile - should update user profile")
-    void updateProfile_success() throws Exception {
+    void updateProfile_withValidRequest_updatesUserProfile() throws Exception {
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
@@ -57,7 +57,7 @@ public class UserControllerIT extends AbstractIntegrationTest {
     @DisplayName("POST /api/users/me/profile -  should return 404 when no profile exists")
     @Sql(statements = "DELETE FROM profile", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
             config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.INFERRED))
-    void updateProfile_profileNotFound() throws Exception {
+    void updateProfile_withNoProfile_returns404() throws Exception {
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
@@ -81,7 +81,7 @@ public class UserControllerIT extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("POST /api/users/me/profile -  should return 404 when no major exists")
-    void updateProfile_majorNotFound() throws Exception {
+    void updateProfile_withInvalidMajorId_returns404() throws Exception {
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
@@ -105,7 +105,7 @@ public class UserControllerIT extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("POST /api/users/me/completed-courses - insert completed courses for the users")
-    void insertCompletedCourses_success() throws Exception {
+    void insertCompletedCourses_withValidRequest_insertsCompletedCourses() throws Exception {
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
@@ -121,7 +121,7 @@ public class UserControllerIT extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("POST /api/users/me/completed-courses - should return 409 when user completed course already exists")
-    void insertCompletedCourses_userCompletedCourseAlreadyExists() throws Exception {
+    void insertCompletedCourses_withDuplicateCompletedCourse_returns409() throws Exception {
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
         CourseOffering offering = courseOfferingRepository.findById(1L).orElseThrow(() -> new IllegalStateException("Test setup failed: courseOffering not found"));
@@ -148,7 +148,7 @@ public class UserControllerIT extends AbstractIntegrationTest {
     @DisplayName("POST /api/users/me/completed-courses - should return 404 when no course offering exists")
     @Sql(statements = "DELETE FROM user_completed_course", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
             config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.INFERRED))
-    void insertCompletedCourses_courseOfferingNotfound() throws Exception {
+    void insertCompletedCourses_withInvalidCourseOffering_returns404() throws Exception {
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
@@ -166,7 +166,7 @@ public class UserControllerIT extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("GET /api/users/me/graduation-requirements - returns graduation requirements for user")
-    void getGraduationRequirements_success() throws Exception {
+    void getGraduationRequirements_withExistingRequirements_returnsRequirements() throws Exception {
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
@@ -180,7 +180,7 @@ public class UserControllerIT extends AbstractIntegrationTest {
     @DisplayName("GET /api/users/me/graduation-requirements - should return 404 when no user requirement status exists")
     @Sql(statements = "DELETE FROM user_requirement_status", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
             config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.INFERRED))
-    void getGraduationRequirements_userRequirementStatusNotFound() throws Exception {
+    void getGraduationRequirements_withNoRequirementStatus_returns404() throws Exception {
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
@@ -193,7 +193,7 @@ public class UserControllerIT extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("PUT /api/users/me/graduation-requirements - should update user requirement status")
-    void updateRequirements_success() throws Exception {
+    void updateRequirements_withValidRequest_updatesRequirementStatus() throws Exception {
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
@@ -213,7 +213,7 @@ public class UserControllerIT extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("PUT /api/users/me/graduation-requirements - should return 404 when no user requirement status exists")
-    void updateRequirements_userRequirementStatusNotFound() throws Exception {
+    void updateRequirements_withInvalidRequirementStatusId_returns404() throws Exception {
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
@@ -232,7 +232,7 @@ public class UserControllerIT extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("GET /api/users/me/graduation-info - should returns user graduation info")
-    void getMainGraduationInfo_success() throws Exception {
+    void getMainGraduationInfo_withValidUser_returnsGraduationInfo() throws Exception {
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
@@ -246,7 +246,7 @@ public class UserControllerIT extends AbstractIntegrationTest {
     @DisplayName("GET /api/users/me/graduation-info - should return 404 when no user major exists")
     @Sql(statements = "DELETE FROM user_major", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
             config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.INFERRED))
-    void getMainGraduationInfo_userMajorNotFound() throws Exception {
+    void getMainGraduationInfo_withNoUserMajor_returns404() throws Exception {
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
@@ -259,7 +259,7 @@ public class UserControllerIT extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("GET /api/users/me/required-courses -returns user required courses")
-    void getMyRequiredCourses_success() throws Exception {
+    void getMyRequiredCourses_withValidMajorType_returnsRequiredCourses() throws Exception {
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
@@ -271,7 +271,7 @@ public class UserControllerIT extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("GET /api/users/me/summary -returns user summary")
-    void getSummary_success() throws Exception {
+    void getSummary_withValidUser_returnsUserSummary() throws Exception {
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
@@ -283,7 +283,7 @@ public class UserControllerIT extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("PATCH /api/users/me/majors - should update user major")
-    void updateUserMajor_success() throws Exception {
+    void updateUserMajor_withValidRequest_updatesUserMajor() throws Exception {
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
@@ -302,7 +302,7 @@ public class UserControllerIT extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("PATCH /api/users/me/majors - should return 404 when no major exists")
-    void updateUserMajor_majorNotFound() throws Exception {
+    void updateUserMajor_withInvalidMajorId_returns404() throws Exception {
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
@@ -320,7 +320,7 @@ public class UserControllerIT extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("PATCH /api/users/me/majors/type - should update user major's type")
-    void updateUserMajorTypes_success() throws Exception {
+    void updateUserMajorTypes_withValidRequest_updatesMajorType() throws Exception {
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
@@ -339,7 +339,7 @@ public class UserControllerIT extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("PATCH /api/users/me/majors/type - should return 404 when no user major exists")
-    void updateUserMajorTypes_userMajorNotFound() throws Exception {
+    void updateUserMajorTypes_withInvalidUserMajorId_returns404() throws Exception {
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
@@ -357,7 +357,7 @@ public class UserControllerIT extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("PATCH /api/users/me/completed-courses - should update completed course")
-    void updateCompletedCourses_success() throws Exception {
+    void updateCompletedCourses_withValidRequest_updatesCompletedCourse() throws Exception {
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
@@ -377,7 +377,7 @@ public class UserControllerIT extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("PATCH /api/users/me/completed-courses - should return 404 when no user completed course exists")
-    void updateCompletedCourses_userCompletedCourseNotFound() throws Exception {
+    void updateCompletedCourses_withInvalidCompletedCourseId_returns404() throws Exception {
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
@@ -395,7 +395,7 @@ public class UserControllerIT extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("POST /api/users/me/subscriptions - insert subscriptions for user")
-    void subscribeOrganizations_success() throws Exception {
+    void subscribeOrganizations_withValidRequest_insertsSubscriptions() throws Exception {
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
@@ -411,7 +411,7 @@ public class UserControllerIT extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("PUT /api/users/me/subscriptions - should update user subscriptions")
-    void updateUserSubscriptions_success() throws Exception {
+    void updateUserSubscriptions_withValidRequest_updatesSubscriptions() throws Exception {
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
@@ -427,7 +427,7 @@ public class UserControllerIT extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("DELETE /api/users/me/ - delete user")
-    void deleteUser_success() throws Exception {
+    void deleteUser_withValidUser_deletesUser() throws Exception {
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 

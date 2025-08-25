@@ -13,7 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class NoticeControllerIT extends AbstractIntegrationTest {
     @Test
     @DisplayName("GET /api/notices/subscribed - returns user-subscribed notices grouped by source")
-    void getUserSubscribedNotices_success() throws Exception {
+    void getUserSubscribedNotices_withValidSubscriptions_returnsNoticesGroupedBySource() throws Exception {
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
@@ -27,7 +27,7 @@ public class NoticeControllerIT extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("GET /api/notices/subscribed - should return 404 if subscribed major does not exist")
-    void getUserSubscribedNotices_majorNotFound() throws Exception {
+    void getUserSubscribedNotices_withInvalidMajorSubscription_returns404() throws Exception {
         User user = testDataLoader.getTestUser();
         userSubscriptionRepository.save(UserSubscription.builder()
                 .user(user)
@@ -45,7 +45,7 @@ public class NoticeControllerIT extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("GET /api/notices/subscribed - should return 404 if subscribed organization does not exist")
-    void getUserSubscribedNotices_organizationNotFound() throws Exception {
+    void getUserSubscribedNotices_withInvalidOrganizationSubscription_returns404() throws Exception {
         User user = testDataLoader.getTestUser();
         userSubscriptionRepository.save(UserSubscription.builder()
                 .user(user)
