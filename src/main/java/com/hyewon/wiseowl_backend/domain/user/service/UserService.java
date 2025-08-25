@@ -119,7 +119,6 @@ public class UserService {
             throw new UserMajorNotFoundException(userId);
         }
 
-        // TODO: 미정인 1학년의 경우 처리
         UserTrack userTrack = userTrackRepository.findByUserId(userId);
 
         List<RequirementStatusByMajor> requirementStatus = userMajors.stream()
