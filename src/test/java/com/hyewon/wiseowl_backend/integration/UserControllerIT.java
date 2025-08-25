@@ -105,14 +105,12 @@ public class UserControllerIT extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("POST /api/users/me/completed-courses - insert completed courses for the users")
-    @Sql(statements = "DELETE FROM user_completed_course", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
-            config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.INFERRED))
     void insertCompletedCourses_success() throws Exception {
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
         CompletedCourseInsertRequest request = new CompletedCourseInsertRequest(
-             List.of(new CompletedCourseInsertItem(1L, Grade.A, false)));
+             List.of(new CompletedCourseInsertItem(2L, Grade.A, false)));
 
         mockMvc.perform(post("/api/users/me/completed-courses")
                         .header("Authorization", "Bearer " + token)

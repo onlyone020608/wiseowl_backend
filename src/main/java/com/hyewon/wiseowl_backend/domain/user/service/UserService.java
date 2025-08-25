@@ -62,14 +62,13 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
-        boolean alreadyExists = userCompletedCourseRepository.existsByUserId(userId);
-        if (alreadyExists) {
-            throw new CompletedCourseAlreadyExistsException();
-        }
-
         List<UserCompletedCourse> toSave = request.courses().stream()
                 .map(c -> {
                     CourseOffering offering = courseOfferingQueryService.getCourseOffering(c.courseOfferingId());
+                    boolean alreadyExists = userCompletedCourseRepository.existsByUserIdAndCourseOffering_Id(userId, c.courseOfferingId());
+                    if (alreadyExists) {
+                        throw new CompletedCourseAlreadyExistsException();
+                    }
                     return UserCompletedCourse.of(user, offering, c.grade(), c.retake());
                 }).toList();
 

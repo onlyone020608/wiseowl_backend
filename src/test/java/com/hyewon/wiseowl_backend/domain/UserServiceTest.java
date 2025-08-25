@@ -214,7 +214,7 @@ public class UserServiceTest {
         // given
         Long userId = 1L;
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
-        given(userCompletedCourseRepository.existsByUserId(userId)).willReturn(false);
+        given(userCompletedCourseRepository.existsByUserIdAndCourseOffering_Id(userId, 1L)).willReturn(false);
         given(courseOfferingQueryService.getCourseOffering(1L)).willReturn(offering);
 
         // when
@@ -239,7 +239,7 @@ public class UserServiceTest {
         // given
         Long userId = 1L;
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
-        given(userCompletedCourseRepository.existsByUserId(userId)).willReturn(true);
+        given(userCompletedCourseRepository.existsByUserIdAndCourseOffering_Id(userId, 1L)).willReturn(true);
 
         // when & then
         assertThrows(CompletedCourseAlreadyExistsException.class,

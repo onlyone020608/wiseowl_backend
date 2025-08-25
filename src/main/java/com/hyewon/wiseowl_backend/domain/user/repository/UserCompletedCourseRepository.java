@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface UserCompletedCourseRepository extends JpaRepository<UserCompletedCourse, Long>, UserCompletedCourseQueryRepository {
     List<UserCompletedCourse> findByUserId(Long userId);
-    boolean existsByUserId(Long userId);
+    boolean existsByUserIdAndCourseOffering_Id(Long userId, Long courseOfferingId);
 }
