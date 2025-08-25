@@ -119,6 +119,13 @@ public class UserService {
             throw new UserMajorNotFoundException(userId);
         }
 
+        UserMajor primaryMajor = userMajors.stream()
+                .filter(um -> um.getMajorType() == MajorType.PRIMARY)
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("No PRIMARY major found"));
+
+        Major primaryMajorEntity = primaryMajor.getMajor();
+
         UserTrack userTrack = userTrackRepository.findByUserId(userId);
 
         List<RequirementStatusByMajor> requirementStatus = userMajors.stream()
@@ -128,7 +135,7 @@ public class UserService {
 
                     List<UserRequirementStatus> statuses = userRequirementStatusRepository.findByUserAndMajor(userId, major, majorType);
 
-                    int requiredCredits = creditRequirementQueryService.sumRequiredCredits(major, majorType, userTrack.getTrack(), user.getProfile().getEntranceYear());
+                    int requiredCredits = creditRequirementQueryService.sumRequiredCredits(primaryMajorEntity, majorType, userTrack.getTrack(), user.getProfile().getEntranceYear());
                     int earnedCredits = userCompletedCourseRepository.sumCreditsByUserAndMajor(userId, major.getId());
 
                     return RequirementStatusByMajor.from(major.getName(), earnedCredits, requiredCredits, statuses);
