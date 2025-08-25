@@ -28,11 +28,7 @@ public class NoticeControllerIT extends AbstractIntegrationTest {
     @Test
     @DisplayName("GET /api/notices/subscribed - should return 404 if subscribed major does not exist")
     void getUserSubscribedNotices_majorNotFound() throws Exception {
-        User user = userRepository.save(User.builder()
-                .email("test@example.com")
-                .password("encoded-password")
-                .username("Tester")
-                .build());
+        User user = testDataLoader.getTestUser();
         userSubscriptionRepository.save(UserSubscription.builder()
                 .user(user)
                 .targetId(999L)
@@ -50,11 +46,7 @@ public class NoticeControllerIT extends AbstractIntegrationTest {
     @Test
     @DisplayName("GET /api/notices/subscribed - should return 404 if subscribed organization does not exist")
     void getUserSubscribedNotices_organizationNotFound() throws Exception {
-        User user = userRepository.save(User.builder()
-                .email("test@example.com")
-                .password("encoded-password")
-                .username("Tester")
-                .build());
+        User user = testDataLoader.getTestUser();
         userSubscriptionRepository.save(UserSubscription.builder()
                 .user(user)
                 .targetId(999L)

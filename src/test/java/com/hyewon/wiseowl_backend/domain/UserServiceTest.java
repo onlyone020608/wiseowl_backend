@@ -326,7 +326,7 @@ public class UserServiceTest {
 
         // then
         RequirementStatusByMajor byMajor = response.requirementStatuses().get(0);
-        assertThat(response.userName()).isEqualTo("Test");
+        assertThat(response.username()).isEqualTo("Test");
         assertThat(response.requirementStatuses().size()).isEqualTo(1);
         assertThat(byMajor.majorName()).isEqualTo("컴퓨터공학과");
         assertThat(byMajor.requiredCredits()).isEqualTo(130);

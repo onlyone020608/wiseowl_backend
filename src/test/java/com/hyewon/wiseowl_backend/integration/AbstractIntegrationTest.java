@@ -8,7 +8,6 @@ import com.hyewon.wiseowl_backend.domain.user.repository.UserCompletedCourseRepo
 import com.hyewon.wiseowl_backend.domain.user.repository.UserRepository;
 import com.hyewon.wiseowl_backend.domain.user.repository.UserSubscriptionRepository;
 import com.hyewon.wiseowl_backend.global.common.TestDataLoader;
-import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,7 +25,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Transactional
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+//@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class AbstractIntegrationTest {
     @Container static final MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.0.32");
 
