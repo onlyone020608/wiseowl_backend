@@ -158,6 +158,8 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException(userId));
         Profile profile = user.getProfile();
 
+        UserTrack userTrack = userTrackRepository.findByUserId(userId);
+
         UserMajorDetail firstMajorDetail = userMajorRepository.findUserMajorWithCollege(userId, MajorType.PRIMARY).orElse(null);
         UserMajorDetail secondMajorDetail = null;
 
@@ -171,7 +173,7 @@ public class UserService {
         }
 
         return new UserSummaryResponse(user.getUsername(), profile.getEntranceYear(), profile.getGpa(),
-                firstMajorDetail, secondMajorDetail);
+                firstMajorDetail, secondMajorDetail, userTrack.getTrack());
     }
 
     @Transactional

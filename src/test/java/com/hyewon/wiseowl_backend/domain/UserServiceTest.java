@@ -387,12 +387,11 @@ public class UserServiceTest {
         // given
         Long userId = 1L;
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
+        given(userTrackRepository.findByUserId(userId)).willReturn(userTrack);
         given(userMajorRepository.findUserMajorWithCollege(userId, MajorType.PRIMARY)).willReturn(
-                Optional.of(new UserMajorDetail(college.getId(), college.getName(), major.getId(), major.getName()))
-        );
-        given(userMajorRepository.findUserMajorWithCollege(
-                userId, MajorType.DOUBLE)
-        ).willReturn(Optional.of(new UserMajorDetail(college.getId(), college.getName(), major2.getId(), major2.getName())));
+                Optional.of(new UserMajorDetail(userMajor.getId(), college.getId(), college.getName(), major.getId(), major.getName(), MajorType.PRIMARY)));
+        given(userMajorRepository.findUserMajorWithCollege(userId, MajorType.DOUBLE))
+                .willReturn(Optional.of(new UserMajorDetail(userMajor2.getId(), college.getId(), college.getName(), major2.getId(), major2.getName(), MajorType.DOUBLE)));
         given(userMajorRepository.existsByUserIdAndMajorType(userId, MajorType.DOUBLE)).willReturn(true);
         given(userMajorRepository.existsByUserIdAndMajorType(userId, MajorType.MINOR)).willReturn(false);
 

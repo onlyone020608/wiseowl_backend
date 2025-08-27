@@ -26,7 +26,7 @@ public class UserMajorQueryRepositoryImpl implements UserMajorQueryRepository {
     public Optional<UserMajorDetail> findUserMajorWithCollege(Long userId, MajorType majorType) {
         return Optional.ofNullable(
                 query.select(Projections.constructor(UserMajorDetail.class,
-                        college.id, college.name, major.id, major.name))
+                        userMajor.id, college.id, college.name, major.id, major.name, userMajor.majorType))
                 .from(userMajor)
                 .join(userMajor.user, user)
                 .join(userMajor.major, major)
