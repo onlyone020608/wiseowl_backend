@@ -198,12 +198,11 @@ public class UserControllerIT extends AbstractIntegrationTest {
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
         UserRequirementFulfillmentRequest request = new UserRequirementFulfillmentRequest(
-                1L,
-                List.of( new RequirementStatusUpdate(1L,true)));
+                1L,true);
 
         mockMvc.perform(put("/api/users/me/graduation-requirements")
                         .header("Authorization", "Bearer " + token)
-                        .content(objectMapper.writeValueAsString(request))
+                        .content(objectMapper.writeValueAsString(List.of(request)))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
 
@@ -218,12 +217,11 @@ public class UserControllerIT extends AbstractIntegrationTest {
         String token = jwtProvider.generateAccessToken(user.getEmail());
 
         UserRequirementFulfillmentRequest request = new UserRequirementFulfillmentRequest(
-                1L,
-                List.of( new RequirementStatusUpdate(999L,true)));
+                9999L,true);
 
         mockMvc.perform(put("/api/users/me/graduation-requirements")
                         .header("Authorization", "Bearer " + token)
-                        .content(objectMapper.writeValueAsString(request))
+                        .content(objectMapper.writeValueAsString(List.of(request)))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value("USER_REQUIREMENT_STATUS_NOT_FOUND"))

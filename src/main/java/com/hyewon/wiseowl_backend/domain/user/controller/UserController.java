@@ -46,9 +46,9 @@ public class UserController {
     @PutMapping("/me/graduation-requirements")
     public ResponseEntity<Void> updateRequirements(
             @AuthenticationPrincipal UserPrincipal principal,
-            @RequestBody @Valid UserRequirementFulfillmentRequest request
+            @RequestBody @Valid List<UserRequirementFulfillmentRequest> requests
             ) {
-        userService.updateUserRequirementStatus(principal.getId(), request);
+        userService.updateUserRequirementStatus(principal.getId(), requests);
         return ResponseEntity.noContent().build();
     }
 

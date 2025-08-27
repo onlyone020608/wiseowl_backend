@@ -100,8 +100,8 @@ public class UserService {
     }
 
     @Transactional
-    public void updateUserRequirementStatus(Long userId, UserRequirementFulfillmentRequest request) {
-        for (RequirementStatusUpdate update : request.requirements()) {
+    public void updateUserRequirementStatus(Long userId, List<UserRequirementFulfillmentRequest> requests) {
+        for (UserRequirementFulfillmentRequest update : requests) {
             UserRequirementStatus status = userRequirementStatusRepository.findById(update.userRequirementStatusId())
                     .orElseThrow(() -> new UserRequirementStatusNotFoundException(userId));
 

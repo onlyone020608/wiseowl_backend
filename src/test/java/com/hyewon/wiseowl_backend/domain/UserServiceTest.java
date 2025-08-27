@@ -287,9 +287,8 @@ public class UserServiceTest {
         given(userRequirementStatusRepository.findById(20L)).willReturn(Optional.of(urs1));
 
         // when
-        RequirementStatusUpdate update = new RequirementStatusUpdate(urs1.getId(), true);
-        UserRequirementFulfillmentRequest rfRequest = new UserRequirementFulfillmentRequest(major.getId(), List.of(update));
-        userService.updateUserRequirementStatus(userId, rfRequest);
+        UserRequirementFulfillmentRequest rfRequest = new UserRequirementFulfillmentRequest(urs1.getId(), true);
+        userService.updateUserRequirementStatus(userId, List.of(rfRequest));
 
         // then
         assertThat(urs1.isFulfilled()).isEqualTo(true);
@@ -303,10 +302,9 @@ public class UserServiceTest {
         given(userRequirementStatusRepository.findById(urs1.getId())).willReturn(Optional.empty());
 
         // when & then
-        RequirementStatusUpdate update = new RequirementStatusUpdate(urs1.getId(), true);
-        UserRequirementFulfillmentRequest rfRequest = new UserRequirementFulfillmentRequest(major.getId(), List.of(update));
+        UserRequirementFulfillmentRequest rfRequest = new UserRequirementFulfillmentRequest(urs1.getId(), true);
         assertThrows(UserRequirementStatusNotFoundException.class,
-                () -> userService.updateUserRequirementStatus(userId, rfRequest));
+                () -> userService.updateUserRequirementStatus(userId, List.of(rfRequest)));
     }
 
     @Test
