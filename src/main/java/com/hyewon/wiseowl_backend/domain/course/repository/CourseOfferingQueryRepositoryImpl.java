@@ -51,7 +51,8 @@ public class CourseOfferingQueryRepositoryImpl implements CourseOfferingQueryRep
                         co.professor,
                         co.classTime,
                         co.courseCode,
-                        co.room
+                        co.room,
+                        co.course.credit
                 ))
                 .from(co)
                 .join(co.course, c)
