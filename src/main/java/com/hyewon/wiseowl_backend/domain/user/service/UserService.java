@@ -2,6 +2,7 @@ package com.hyewon.wiseowl_backend.domain.user.service;
 
 import com.hyewon.wiseowl_backend.domain.course.entity.CourseOffering;
 import com.hyewon.wiseowl_backend.domain.course.entity.Major;
+import com.hyewon.wiseowl_backend.domain.course.entity.Semester;
 import com.hyewon.wiseowl_backend.domain.course.service.CourseOfferingQueryService;
 import com.hyewon.wiseowl_backend.domain.course.service.MajorQueryService;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorRequirement;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -201,6 +203,29 @@ public class UserService {
         userTrack.updateTrack(request.track());
 
         eventPublisher.publishEvent(new UserMajorTypeUpdateEvent(userId, request.userMajorTypeUpdateItems()));
+    }
+
+    @Transactional(readOnly = true)
+    public List<UserCompletedCourseBySemesterResponse> getUserCompletedCourses(Long userId) {
+        List<UserCompletedCourse> completedCourses = userCompletedCourseRepository.findAllByUserIdWithCourseOffering(userId);
+
+        Map<Long, List<UserCompletedCourse>> grouped =
+                completedCourses.stream()
+                        .collect(Collectors.groupingBy(c -> c.getCourseOffering().getSemester().getId()));
+
+        return grouped.entrySet().stream()
+                .map(entry -> {
+                    Semester semester = entry.getValue().get(0).getCourseOffering().getSemester();
+                    return new UserCompletedCourseBySemesterResponse(
+                            semester.getId(),
+                            semester.getYear(),
+                            semester.getTerm(),
+                            entry.getValue().stream()
+                                    .map(UserCompletedCourseItem::from)
+                                    .toList()
+                    );
+                })
+                .toList();
     }
 
     @Transactional

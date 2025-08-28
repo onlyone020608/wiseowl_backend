@@ -354,6 +354,18 @@ public class UserControllerIT extends AbstractIntegrationTest {
     }
 
     @Test
+    @DisplayName("GET /api/users/me/completed-courses - returns user completed courses")
+    void getUserCompletedCourses_withValidUser_returnsUserCompletedCourses() throws Exception {
+        User user = testDataLoader.getTestUser();
+        String token = jwtProvider.generateAccessToken(user.getEmail());
+
+        mockMvc.perform(get("/api/users/me/completed-courses")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)));
+    }
+
+    @Test
     @DisplayName("PATCH /api/users/me/completed-courses - updates completed course")
     void updateCompletedCourses_withValidRequest_updatesCompletedCourse() throws Exception {
         User user = testDataLoader.getTestUser();

@@ -84,6 +84,13 @@ public class UserController {
         userService.updateUserMajorTypes(principal.getId(), request);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/me/completed-courses")
+    public ResponseEntity<List<UserCompletedCourseBySemesterResponse>> getCompletedCourses(@AuthenticationPrincipal UserPrincipal principal) {
+        List<UserCompletedCourseBySemesterResponse> response = userService.getUserCompletedCourses(principal.getId());
+        return ResponseEntity.ok(response);
+    }
+
     @PatchMapping("/me/completed-courses")
     public ResponseEntity<Void> updateCompletedCourses(@AuthenticationPrincipal UserPrincipal principal,
                                                        @RequestBody @Valid List<CompletedCourseUpdateRequest> requests) {

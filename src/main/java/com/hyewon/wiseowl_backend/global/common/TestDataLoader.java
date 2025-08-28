@@ -3,8 +3,10 @@ package com.hyewon.wiseowl_backend.global.common;
 import com.hyewon.wiseowl_backend.domain.auth.entity.RefreshToken;
 import com.hyewon.wiseowl_backend.domain.auth.repository.RefreshTokenRepository;
 import com.hyewon.wiseowl_backend.domain.auth.security.JwtProvider;
+import com.hyewon.wiseowl_backend.domain.course.entity.CourseOffering;
 import com.hyewon.wiseowl_backend.domain.course.entity.CourseType;
 import com.hyewon.wiseowl_backend.domain.course.entity.Major;
+import com.hyewon.wiseowl_backend.domain.course.repository.CourseOfferingRepository;
 import com.hyewon.wiseowl_backend.domain.course.repository.MajorRepository;
 import com.hyewon.wiseowl_backend.domain.notice.entity.Notice;
 import com.hyewon.wiseowl_backend.domain.notice.repository.NoticeRepository;
@@ -16,6 +18,7 @@ import com.hyewon.wiseowl_backend.domain.requirement.repository.MajorRequirement
 import com.hyewon.wiseowl_backend.domain.requirement.repository.RequirementRepository;
 import com.hyewon.wiseowl_backend.domain.user.entity.*;
 import com.hyewon.wiseowl_backend.domain.user.repository.*;
+import com.hyewon.wiseowl_backend.global.exception.CourseOfferingNotFoundException;
 import com.hyewon.wiseowl_backend.global.exception.MajorNotFoundException;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +47,7 @@ public class TestDataLoader {
     private final JwtProvider jwtProvider;
     private final RefreshTokenRepository refreshTokenRepository;
     private final UserTrackRepository userTrackRepository;
+    private final CourseOfferingRepository courseOfferingRepository;
 
     private User testUser;
     private String refreshToken;
@@ -136,9 +140,11 @@ public class TestDataLoader {
                         .requiredCourseId(2L)
                         .build()
         ));
+        CourseOffering courseOffering = courseOfferingRepository.findById(22L).orElseThrow(() -> new CourseOfferingNotFoundException(22L));
         userCompletedCourseRepository.saveAll(List.of(
                 UserCompletedCourse.builder()
                         .user(testUser)
+                        .courseOffering(courseOffering)
                         .grade(Grade.B_PLUS)
                         .retake(false)
                         .build()

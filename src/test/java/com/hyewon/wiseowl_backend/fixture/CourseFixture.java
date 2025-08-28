@@ -75,12 +75,21 @@ public class CourseFixture {
                 .build();
     }
 
+    public static Semester aSemester() {
+        return Semester.builder()
+                .id(1L)
+                .year(2024)
+                .term(Term.FIRST)
+                .build();
+    }
+
     public static CourseOffering aMajorCourseOffering(Course course) {
         return CourseOffering.builder()
                 .id(100L)
                 .course(course)
                 .room("0409")
                 .courseCode("CSE101")
+                .semester(aSemester())
                 .build();
     }
 

@@ -71,6 +71,7 @@ public class UserServiceTest {
     private UserMajor userMajor;
     private UserMajor userMajor2;
     private UserCompletedCourse ucc;
+    private UserCompletedCourse ucc2;
     private Course course;
     private College college;
     private LiberalCategory liberalCategory;
@@ -114,6 +115,13 @@ public class UserServiceTest {
         offering = CourseFixture.aMajorCourseOffering(course);
         ucc = UserCompletedCourse.builder()
                 .id(1L)
+                .user(user)
+                .courseOffering(offering)
+                .grade(Grade.A)
+                .retake(true)
+                .build();
+        ucc2 = UserCompletedCourse.builder()
+                .id(2L)
                 .user(user)
                 .courseOffering(offering)
                 .grade(Grade.A)
@@ -480,6 +488,23 @@ public class UserServiceTest {
         // when & then
         assertThrows(UserMajorNotFoundException.class,
                 () -> userService.updateUserMajorTypes(userId, request));
+    }
+
+    @Test
+    @DisplayName("returns grouped completed courses when user has completed courses")
+    void shouldReturnGroupedCompletedCourses_whenUserHasCompletedCourses() {
+        // given
+        Long userId = 1L;
+        given(userCompletedCourseRepository.findAllByUserIdWithCourseOffering(userId))
+                .willReturn(List.of(ucc, ucc2));
+
+        // when
+        List<UserCompletedCourseBySemesterResponse> result = userService.getUserCompletedCourses(userId);
+
+        // then
+        assertThat(result).hasSize(1);
+        assertThat(result.getFirst().year()).isEqualTo(2024);
+        assertThat(result.getFirst().term()).isEqualTo(Term.FIRST);
     }
 
     @Test
