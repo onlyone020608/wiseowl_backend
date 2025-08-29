@@ -540,6 +540,31 @@ public class UserServiceTest {
     }
 
     @Test
+    @DisplayName("deletes completed course when request is valid")
+    void shouldDeleteCompletedCourse_whenRequestValid() {
+        // given
+        given(userCompletedCourseRepository.findById(100L)).willReturn(Optional.of(ucc));
+
+        // when
+        userService.deleteCompletedCourse(1L, 100L);
+
+        // then
+        verify(userCompletedCourseRepository).delete(ucc);
+        verify(eventPublisher).publishEvent(any(CompletedCoursesUpdateEvent.class));
+    }
+
+    @Test
+    @DisplayName("throws exception when completed course not found")
+    void shouldThrowException_whenCompletedCourseNotFound() {
+        // given
+        given(userCompletedCourseRepository.findById(999L)).willReturn(Optional.empty());
+
+        // when & then
+        assertThatThrownBy(() -> userService.deleteCompletedCourse(1L, 999L))
+                .isInstanceOf(UserCompletedCourseNotFoundException.class);
+    }
+
+    @Test
     @DisplayName("registers user subscriptions when request is valid" )
     void shouldSaveUserSubscriptions_whenUserSubscriptionRequestValid() {
         // given

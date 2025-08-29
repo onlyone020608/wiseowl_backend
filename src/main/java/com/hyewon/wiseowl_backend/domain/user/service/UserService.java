@@ -244,6 +244,17 @@ public class UserService {
     }
 
     @Transactional
+    public void deleteCompletedCourse(Long userId, Long userCompletedCourseId) {
+        UserCompletedCourse course = userCompletedCourseRepository.findById(userCompletedCourseId)
+                .orElseThrow(() -> new UserCompletedCourseNotFoundException(userCompletedCourseId));
+
+        userCompletedCourseRepository.delete(course);
+
+        eventPublisher.publishEvent(new CompletedCoursesUpdateEvent(userId));
+    }
+
+
+    @Transactional
     public void registerUserSubscriptions(Long userId, List<UserSubscriptionRequest> requests) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
         List<UserSubscription> toSave = requests.stream().map(

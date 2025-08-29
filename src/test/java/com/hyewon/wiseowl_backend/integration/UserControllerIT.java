@@ -404,6 +404,36 @@ public class UserControllerIT extends AbstractIntegrationTest {
     }
 
     @Test
+    @DisplayName("DELETE /api/users/me/completed-courses/{id} - deletes completed course")
+    void deleteCompletedCourse_withValidRequest_deletesCompletedCourse() throws Exception {
+        // given
+        User user = testDataLoader.getTestUser();
+        String token = jwtProvider.generateAccessToken(user.getEmail());
+
+        // when & then
+        mockMvc.perform(delete("/api/users/me/completed-courses/{id}", 1L)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isNoContent());
+
+        assertThat(userCompletedCourseRepository.findById(1L)).isEmpty();
+    }
+
+    @Test
+    @DisplayName("DELETE /api/users/me/completed-courses/{id} - returns 404 when completed course does not exist")
+    void deleteCompletedCourse_withInvalidId_returns404() throws Exception {
+        // given
+        User user = testDataLoader.getTestUser();
+        String token = jwtProvider.generateAccessToken(user.getEmail());
+
+        // when & then
+        mockMvc.perform(delete("/api/users/me/completed-courses/{id}", 999L)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error").value("USER_COMPLETED_COURSE_NOT_FOUND"))
+                .andExpect(jsonPath("$.message").exists());
+    }
+
+    @Test
     @DisplayName("POST /api/users/me/subscriptions - creates user subscriptions")
     void subscribeOrganizations_withValidRequest_insertsSubscriptions() throws Exception {
         User user = testDataLoader.getTestUser();

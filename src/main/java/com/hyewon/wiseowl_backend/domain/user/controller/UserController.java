@@ -97,6 +97,14 @@ public class UserController {
         userService.updateCompletedCourses(principal.getId(), requests);
         return ResponseEntity.noContent().build();
     }
+
+    @DeleteMapping("/me/completed-courses/{userCompletedCourseId}")
+    public ResponseEntity<Void> deleteCompletedCourse(@AuthenticationPrincipal UserPrincipal principal,
+                                                      @PathVariable Long userCompletedCourseId) {
+        userService.deleteCompletedCourse(principal.getId(), userCompletedCourseId);
+        return ResponseEntity.noContent().build();
+    }
+
     @PostMapping("/me/subscriptions")
     public ResponseEntity<Void> subscribeOrganizations(@AuthenticationPrincipal UserPrincipal principal,
                                                        @RequestBody @Valid List<UserSubscriptionRequest> requests) {
