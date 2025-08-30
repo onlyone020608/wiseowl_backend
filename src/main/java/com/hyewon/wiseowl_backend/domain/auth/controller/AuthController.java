@@ -2,8 +2,8 @@ package com.hyewon.wiseowl_backend.domain.auth.controller;
 
 import com.hyewon.wiseowl_backend.domain.auth.dto.ChangePasswordRequest;
 import com.hyewon.wiseowl_backend.domain.auth.dto.LoginRequest;
-import com.hyewon.wiseowl_backend.domain.auth.dto.TokenResponse;
 import com.hyewon.wiseowl_backend.domain.auth.dto.SignUpRequest;
+import com.hyewon.wiseowl_backend.domain.auth.dto.TokenResponse;
 import com.hyewon.wiseowl_backend.domain.auth.security.UserPrincipal;
 import com.hyewon.wiseowl_backend.domain.auth.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -19,9 +19,9 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping
-    public ResponseEntity<Void> signUp(@RequestBody SignUpRequest request) {
-        authService.signup(request);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<TokenResponse> signUp(@RequestBody SignUpRequest request) {
+        TokenResponse response = authService.signup(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PostMapping("/login")

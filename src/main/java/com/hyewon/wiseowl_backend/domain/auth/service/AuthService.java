@@ -1,6 +1,9 @@
 package com.hyewon.wiseowl_backend.domain.auth.service;
 
-import com.hyewon.wiseowl_backend.domain.auth.dto.*;
+import com.hyewon.wiseowl_backend.domain.auth.dto.ChangePasswordRequest;
+import com.hyewon.wiseowl_backend.domain.auth.dto.LoginRequest;
+import com.hyewon.wiseowl_backend.domain.auth.dto.SignUpRequest;
+import com.hyewon.wiseowl_backend.domain.auth.dto.TokenResponse;
 import com.hyewon.wiseowl_backend.domain.auth.entity.RefreshToken;
 import com.hyewon.wiseowl_backend.domain.auth.repository.RefreshTokenRepository;
 import com.hyewon.wiseowl_backend.domain.auth.security.JwtProvider;
@@ -44,7 +47,7 @@ public class AuthService {
     }
 
     @Transactional
-    public void signup(SignUpRequest request) {
+    public TokenResponse signup(SignUpRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new EmailAlreadyExistsException();
         }
@@ -53,6 +56,11 @@ public class AuthService {
         Profile profile = Profile.createDefault();
         user.assignProfile(profile);
         userRepository.save(user);
+
+        String accessToken = jwtProvider.generateAccessToken(request.getEmail());
+        String refreshToken = jwtProvider.generateRefreshToken(request.getEmail());
+
+        return new TokenResponse(accessToken, refreshToken);
     }
 
     @Transactional

@@ -66,12 +66,18 @@ public class AuthServiceTest {
     void shouldSaveUser_whenSignUpRequestValid() {
         // given
         given(userRepository.existsByEmail(signUpRequest.getEmail())).willReturn(false);
+        given(jwtProvider.generateAccessToken(user.getEmail()))
+                .willReturn("access-token");
+        given(jwtProvider.generateRefreshToken(user.getEmail()))
+                .willReturn("refresh-token");
 
         // when
-        authService.signup(signUpRequest);
+        TokenResponse response = authService.signup(signUpRequest);
 
         // then
         verify(userRepository).save(any(User.class));
+        assertThat(response.getAccessToken()).isEqualTo("access-token");
+        assertThat(response.getRefreshToken()).isEqualTo("refresh-token");
     }
 
     @Test
