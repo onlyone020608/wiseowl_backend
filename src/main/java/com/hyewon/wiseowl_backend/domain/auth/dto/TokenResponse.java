@@ -1,11 +1,12 @@
 package com.hyewon.wiseowl_backend.domain.auth.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class TokenResponse {
     private final String accessToken;
     private final String refreshToken;
+    boolean newUser;
 }
