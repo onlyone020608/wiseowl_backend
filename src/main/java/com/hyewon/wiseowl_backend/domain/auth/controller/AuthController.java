@@ -1,9 +1,6 @@
 package com.hyewon.wiseowl_backend.domain.auth.controller;
 
-import com.hyewon.wiseowl_backend.domain.auth.dto.ChangePasswordRequest;
-import com.hyewon.wiseowl_backend.domain.auth.dto.LoginRequest;
-import com.hyewon.wiseowl_backend.domain.auth.dto.SignUpRequest;
-import com.hyewon.wiseowl_backend.domain.auth.dto.TokenResponse;
+import com.hyewon.wiseowl_backend.domain.auth.dto.*;
 import com.hyewon.wiseowl_backend.domain.auth.security.UserPrincipal;
 import com.hyewon.wiseowl_backend.domain.auth.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +25,12 @@ public class AuthController {
     public ResponseEntity<TokenResponse> login(@RequestBody LoginRequest request) {
         TokenResponse response = authService.login(request);
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/oauth/google")
+    public ResponseEntity<TokenResponse> googleLogin(@RequestBody OAuthLoginRequest request) {
+        TokenResponse tokenResponse = authService.loginWithGoogle(request.authCode());
+        return ResponseEntity.ok(tokenResponse);
     }
 
     @PatchMapping("/password")

@@ -1,15 +1,17 @@
 package com.hyewon.wiseowl_backend.domain;
 
-import com.hyewon.wiseowl_backend.domain.auth.dto.ChangePasswordRequest;
-import com.hyewon.wiseowl_backend.domain.auth.dto.LoginRequest;
-import com.hyewon.wiseowl_backend.domain.auth.dto.SignUpRequest;
-import com.hyewon.wiseowl_backend.domain.auth.dto.TokenResponse;
+import com.hyewon.wiseowl_backend.domain.auth.client.GoogleOAuthClient;
+import com.hyewon.wiseowl_backend.domain.auth.controller.GoogleUserInfo;
+import com.hyewon.wiseowl_backend.domain.auth.dto.*;
 import com.hyewon.wiseowl_backend.domain.auth.entity.RefreshToken;
 import com.hyewon.wiseowl_backend.domain.auth.repository.RefreshTokenRepository;
 import com.hyewon.wiseowl_backend.domain.auth.security.JwtProvider;
 import com.hyewon.wiseowl_backend.domain.auth.security.UserPrincipal;
 import com.hyewon.wiseowl_backend.domain.auth.service.AuthService;
+import com.hyewon.wiseowl_backend.domain.user.entity.AuthProviderType;
+import com.hyewon.wiseowl_backend.domain.user.entity.SocialAccount;
 import com.hyewon.wiseowl_backend.domain.user.entity.User;
+import com.hyewon.wiseowl_backend.domain.user.repository.SocialAccountRepository;
 import com.hyewon.wiseowl_backend.domain.user.repository.UserRepository;
 import com.hyewon.wiseowl_backend.fixture.UserFixture;
 import com.hyewon.wiseowl_backend.global.exception.EmailAlreadyExistsException;
@@ -40,10 +42,12 @@ import static org.mockito.Mockito.verify;
 public class AuthServiceTest {
     @Mock private AuthenticationManager authenticationManager;
     @Mock private JwtProvider jwtProvider;
-    @Mock private  UserRepository userRepository;
+    @Mock private UserRepository userRepository;
     @Mock private PasswordEncoder passwordEncoder;
     @Mock private Authentication authentication;
     @Mock private RefreshTokenRepository refreshTokenRepository;
+    @Mock private SocialAccountRepository socialAccountRepository;
+    @Mock private GoogleOAuthClient googleOAuthClient;
     @InjectMocks private AuthService authService;
 
     private User user;
@@ -51,6 +55,7 @@ public class AuthServiceTest {
     private SignUpRequest signUpRequest;
     private LoginRequest loginRequest;
     private ChangePasswordRequest changePasswordRequest;
+    private GoogleTokenResponse googleTokenResponse;
 
     @BeforeEach
     void setUp() {
@@ -59,6 +64,7 @@ public class AuthServiceTest {
         signUpRequest = new SignUpRequest("tester@email.com", "securepass");
         loginRequest = new LoginRequest("tester@email.com", "rawPassword");
         changePasswordRequest = new ChangePasswordRequest("encodedPassword", "newPassword");
+        googleTokenResponse = new GoogleTokenResponse("access-token", 3600L, null, "scope", "id-token", "Bearer");
     }
 
     @Test
@@ -122,6 +128,61 @@ public class AuthServiceTest {
         // when & then
         assertThrows(BadCredentialsException.class,
                 () -> authService.login(loginRequest));
+    }
+
+    @Test
+    @DisplayName("returns existing user tokens when social account exists")
+    void shouldReturnTokens_whenSocialAccountExists() {
+        // given
+        String authCode = "auth-code";
+
+        SocialAccount existingAccount = SocialAccount.builder().id(1L).user(user).provider(AuthProviderType.GOOGLE).providerId("google-sub").build();
+        GoogleUserInfo userInfo = new GoogleUserInfo("google-sub", "test@example.com", "test-user");
+
+        given(googleOAuthClient.getToken(authCode)).willReturn(googleTokenResponse);
+        given(googleOAuthClient.getUserInfo("access-token")).willReturn(userInfo);
+        given(socialAccountRepository.findByProviderAndProviderId(AuthProviderType.GOOGLE, "google-sub"))
+                .willReturn(Optional.of(existingAccount));
+        given(jwtProvider.generateAccessToken(user.getEmail())).willReturn("jwt-access");
+        given(jwtProvider.generateRefreshToken(user.getEmail())).willReturn("jwt-refresh");
+
+        // when
+        TokenResponse response = authService.loginWithGoogle(authCode);
+
+        // then
+        assertThat(response.getAccessToken()).isEqualTo("jwt-access");
+        assertThat(response.getRefreshToken()).isEqualTo("jwt-refresh");
+        assertThat(response.isNewUser()).isFalse();
+        verify(socialAccountRepository).findByProviderAndProviderId(AuthProviderType.GOOGLE, "google-sub");
+        verify(userRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("registers new user and returns tokens when social account does not exist")
+    void shouldRegisterUser_whenSocialAccountDoesNotExist() {
+        // given
+        String authCode = "auth-code";
+
+        User newUser = User.builder().id(2L).email("new@example.com").username("new-user").build();
+        GoogleUserInfo userInfo = new GoogleUserInfo("google-sub", "new@example.com", "new-user");
+
+        given(googleOAuthClient.getToken(authCode)).willReturn(googleTokenResponse);
+        given(googleOAuthClient.getUserInfo("access-token")).willReturn(userInfo);
+        given(socialAccountRepository.findByProviderAndProviderId(AuthProviderType.GOOGLE, "google-sub"))
+                .willReturn(Optional.empty());
+        given(userRepository.save(any(User.class))).willReturn(newUser);
+        given(jwtProvider.generateAccessToken(newUser.getEmail())).willReturn("jwt-access");
+        given(jwtProvider.generateRefreshToken(newUser.getEmail())).willReturn("jwt-refresh");
+
+        // when
+        TokenResponse response = authService.loginWithGoogle(authCode);
+
+        // then
+        assertThat(response.getAccessToken()).isEqualTo("jwt-access");
+        assertThat(response.getRefreshToken()).isEqualTo("jwt-refresh");
+        assertThat(response.isNewUser()).isTrue();
+        verify(userRepository).save(any(User.class));
+        verify(socialAccountRepository).save(any(SocialAccount.class));
     }
 
     @Test

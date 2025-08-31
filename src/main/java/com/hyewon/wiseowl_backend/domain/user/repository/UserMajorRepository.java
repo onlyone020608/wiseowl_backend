@@ -13,4 +13,5 @@ public interface UserMajorRepository extends JpaRepository<UserMajor, Long>, Use
     List<UserMajor> findAllByUserIdWithMajor(@Param("userId") Long userId);
     UserMajor findByUserIdAndMajorType(Long userId, MajorType majorType);
     boolean existsByUserIdAndMajorType(Long userId, MajorType majorType);
+    boolean existsByUserId(Long userId);
 }

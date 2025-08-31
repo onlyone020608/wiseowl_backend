@@ -22,3 +22,9 @@ jwt:
   secret: "aVeryLongSecretKeyThatIsAtLeastThirtyTwoCharactersLong123456"
   access-token-expiration-ms: 3600000
   refresh-token-expiration-ms: 1209600000
+
+oauth:
+  google:
+    client-id: dummy-client-id
+    client-secret: dummy-client-secret
+    redirect-uri: http://localhost:8080/oauth2/callback/google

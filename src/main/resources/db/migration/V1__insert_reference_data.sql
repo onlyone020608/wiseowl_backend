@@ -437,7 +437,7 @@ CREATE TABLE `user` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `update_at` datetime(6) DEFAULT NULL,
   `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password` varchar(255) COLLATE utf8mb4_unicode_ci,
   `student_id` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `username` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -463,6 +463,22 @@ CREATE TABLE `user_completed_course` (
   CONSTRAINT `FK71v5q3et3log1qs8cjkq3ijmf` FOREIGN KEY (`course_offering_id`) REFERENCES `course_offering` (`id`),
   CONSTRAINT `FKmbvb4dn2xmci9gfxib0gjwted` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `social_account`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+
+CREATE TABLE `social_account` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `user_id` BIGINT NOT NULL,
+  `provider` ENUM('LOCAL','GOOGLE','KAKAO','GITHUB') NOT NULL,
+  `provider_id` VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_social_account_user`
+      FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE,
+  UNIQUE KEY `uk_social_provider` (`provider`, `provider_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --

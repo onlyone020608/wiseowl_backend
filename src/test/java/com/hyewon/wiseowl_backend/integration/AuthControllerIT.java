@@ -1,19 +1,29 @@
 package com.hyewon.wiseowl_backend.integration;
 
-import com.hyewon.wiseowl_backend.domain.auth.dto.ChangePasswordRequest;
-import com.hyewon.wiseowl_backend.domain.auth.dto.LoginRequest;
-import com.hyewon.wiseowl_backend.domain.auth.dto.SignUpRequest;
+import com.hyewon.wiseowl_backend.domain.auth.client.GoogleOAuthClient;
+import com.hyewon.wiseowl_backend.domain.auth.controller.GoogleUserInfo;
+import com.hyewon.wiseowl_backend.domain.auth.dto.*;
 import com.hyewon.wiseowl_backend.domain.user.entity.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
 
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class AuthControllerIT extends AbstractIntegrationTest {
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockitoBean
+    private GoogleOAuthClient googleOAuthClient;
+
     @Test
     @DisplayName("POST /api/auth - creates a new user account")
     void signUp_withValidRequest_createsNewUserAccount() throws Exception {
@@ -34,6 +44,50 @@ public class AuthControllerIT extends AbstractIntegrationTest {
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("POST /api/auth/oauth/google - registers new user and returns tokens when social account does not exist")
+    void loginWithGoogle_whenNewUser_registersUserAndReturnsTokens() throws Exception {
+        // given
+        String authCode = "dummy-auth-code";
+        OAuthLoginRequest request = new OAuthLoginRequest(authCode);
+
+        given(googleOAuthClient.getToken(authCode))
+                .willReturn(new GoogleTokenResponse("access-token", 3600L, null, "scope", "id-token", "Bearer"));
+        given(googleOAuthClient.getUserInfo("access-token"))
+                .willReturn(new GoogleUserInfo("google-sub-new", "new@example.com", "new-user"));
+
+        // when & then
+        mockMvc.perform(post("/api/auth/oauth/google")
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.accessToken").exists())
+                .andExpect(jsonPath("$.refreshToken").exists())
+                .andExpect(jsonPath("$.newUser").value(true));
+    }
+
+    @Test
+    @DisplayName("POST /api/auth/oauth/google - returns tokens when social account exists")
+    void loginWithGoogle_whenExistingUser_returnsTokens() throws Exception {
+        // given
+        String authCode = "dummy-auth-code";
+        OAuthLoginRequest request = new OAuthLoginRequest(authCode);
+
+        given(googleOAuthClient.getToken(authCode))
+                .willReturn(new GoogleTokenResponse("access-token", 3600L, null, "scope", "id-token", "Bearer"));
+        given(googleOAuthClient.getUserInfo("access-token"))
+                .willReturn(new GoogleUserInfo("google-sub", "test@example.com", "test-user"));
+
+        // when & then
+        mockMvc.perform(post("/api/auth/oauth/google")
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.accessToken").exists())
+                .andExpect(jsonPath("$.refreshToken").exists())
+                .andExpect(jsonPath("$.newUser").value(false));
     }
 
     @Test

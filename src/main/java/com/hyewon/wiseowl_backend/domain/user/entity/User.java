@@ -22,7 +22,6 @@ public class User extends BaseTimeEntity {
     @NotBlank
     private String email;
 
-    @NotBlank
     private String password;
 
     private boolean deleted;

@@ -48,6 +48,7 @@ public class TestDataLoader {
     private final RefreshTokenRepository refreshTokenRepository;
     private final UserTrackRepository userTrackRepository;
     private final CourseOfferingRepository courseOfferingRepository;
+    private final SocialAccountRepository socialAccountRepository;
 
     private User testUser;
     private String refreshToken;
@@ -72,6 +73,12 @@ public class TestDataLoader {
 
         profile.assignUser(testUser);
         userRepository.save(testUser);
+
+        socialAccountRepository.save(SocialAccount.builder()
+                .user(testUser)
+                .provider(AuthProviderType.GOOGLE)
+                .providerId("google-sub")
+                .build());
 
         userSubscriptionRepository.saveAll(List.of(
                 UserSubscription.builder()
