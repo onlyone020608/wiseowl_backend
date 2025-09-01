@@ -26,6 +26,7 @@ public class CourseOfferingQueryRepositoryImpl implements CourseOfferingQueryRep
                 .join(lcc).on(lcc.course.eq(c))
                 .join(lcc.liberalCategory, lc)
                 .where(co.semester.id.eq(semesterId))
+                .orderBy(lc.name.asc())
                 .fetch();
     }
 
@@ -37,6 +38,7 @@ public class CourseOfferingQueryRepositoryImpl implements CourseOfferingQueryRep
                 .join(co.course, c)
                 .join(c.major, major)
                 .where(co.semester.id.eq(semesterId))
+                .orderBy(major.name.asc())
                 .fetch();
     }
 
@@ -60,6 +62,7 @@ public class CourseOfferingQueryRepositoryImpl implements CourseOfferingQueryRep
                 .leftJoin(liberalCategoryCourse)
                 .on(liberalCategoryCourse.course.eq(c))
                 .where(co.semester.id.eq(semesterId))
+                .orderBy(co.course.name.asc())
                 .fetch();
     }
 }

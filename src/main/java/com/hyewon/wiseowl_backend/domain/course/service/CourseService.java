@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -53,9 +54,12 @@ public class CourseService {
                 .collect(Collectors.groupingBy(Major::getCollege));
 
         return grouped.entrySet().stream()
+                .sorted(Comparator.comparing(entry -> entry.getKey().getName()))
                 .map(entry -> {
                     College college = entry.getKey();
+
                     List<MajorDto> majorDtos = entry.getValue().stream()
+                            .sorted(Comparator.comparing(Major::getName))
                             .map(m -> new MajorDto(m.getId(), m.getName()))
                             .toList();
 

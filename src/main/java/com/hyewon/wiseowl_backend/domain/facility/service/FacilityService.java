@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,14 +27,17 @@ public class FacilityService {
         }
 
         return facilities.stream()
-                .collect(Collectors.groupingBy(Facility::getBuilding,
-                        Collectors.mapping(FacilityResponse::from, Collectors.toList())))
+                .collect(Collectors.groupingBy(Facility::getBuilding))
                 .entrySet().stream()
+                .sorted(Comparator.comparing(entry -> entry.getKey().getBuildingNumber()))
                 .map(entry -> new BuildingFacilityResponse(
                         entry.getKey().getBuildingNumber(),
                         entry.getKey().getName(),
-                        entry.getValue()
-                        ))
+                        entry.getValue().stream()
+                                .map(FacilityResponse::from)
+                                .sorted(Comparator.comparing(FacilityResponse::name))
+                                .toList()
+                ))
                 .toList();
     }
 }
