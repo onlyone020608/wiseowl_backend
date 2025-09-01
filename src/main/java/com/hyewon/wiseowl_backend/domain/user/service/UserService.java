@@ -142,7 +142,7 @@ public class UserService {
                     int requiredCredits = creditRequirementQueryService.sumRequiredCredits(primaryMajorEntity, majorType, userTrack.getTrack(), user.getProfile().getEntranceYear());
                     int earnedCredits = userCompletedCourseRepository.sumCreditsByUserAndMajor(userId, major.getId());
 
-                    return RequirementStatusByMajor.from(major.getName(), earnedCredits, requiredCredits, statuses);
+                    return RequirementStatusByMajor.from(major.getName(), userMajor.getMajorType(), earnedCredits, requiredCredits, statuses);
                 }).toList();
 
         return new MainPageGraduationStatusResponse(user.getUsername(), requirementStatus);
