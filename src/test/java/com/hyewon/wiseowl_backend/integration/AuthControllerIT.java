@@ -116,7 +116,7 @@ public class AuthControllerIT extends AbstractIntegrationTest {
         String refreshToken = testDataLoader.getRefreshToken();
 
         mockMvc.perform(post("/api/auth/refresh")
-                        .header("Authorization", refreshToken)
+                        .header("Refresh-Token", refreshToken)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accessToken").exists())
