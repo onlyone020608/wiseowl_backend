@@ -280,4 +280,55 @@ public class AuthServiceTest {
         assertThrows(IllegalArgumentException.class,
                 () -> authService.refresh(refreshToken));
     }
+
+    @Test
+    @DisplayName("deletes stored refresh token on logout when token is valid")
+    void shouldDeleteRefreshToken_whenLogoutCalledWithValidToken() {
+        // given
+        String email = "test@test.com";
+        String refreshToken = "validToken";
+        RefreshToken storedToken = new RefreshToken(email, refreshToken);
+
+        given(jwtProvider.validateToken(refreshToken)).willReturn(true);
+        given(refreshTokenRepository.findByEmail(email)).willReturn(Optional.of(storedToken));
+
+        // when
+        authService.logout(email, refreshToken);
+
+        // then
+        verify(refreshTokenRepository).delete(storedToken);
+    }
+
+    @Test
+    @DisplayName("throws exception when logout called with invalid token")
+    void shouldThrowException_whenLogoutCalledWithInvalidToken() {
+        // given
+        String email = "test@test.com";
+        String invalidToken = "invalid";
+
+        given(jwtProvider.validateToken(invalidToken)).willReturn(false);
+
+        // when & then
+        assertThrows(IllegalArgumentException.class,
+                () -> authService.logout(email, invalidToken));
+
+        verify(refreshTokenRepository, never()).delete(any());
+    }
+
+    @Test
+    @DisplayName("does nothing when no stored refresh token exists on logout")
+    void shouldDoNothing_whenNoStoredTokenExists() {
+        // given
+        String email = "test@test.com";
+        String refreshToken = "validToken";
+
+        given(jwtProvider.validateToken(refreshToken)).willReturn(true);
+        given(refreshTokenRepository.findByEmail(email)).willReturn(Optional.empty());
+
+        // when
+        authService.logout(email, refreshToken);
+
+        // then
+        verify(refreshTokenRepository, never()).delete(any());
+    }
 }

@@ -146,4 +146,13 @@ public class AuthService {
         String newAccessToken = jwtProvider.generateAccessToken(email);
         return new TokenResponse(newAccessToken, refreshToken, false);
     }
+
+    @Transactional
+    public void logout(String email, String refreshToken) {
+        if (!jwtProvider.validateToken(refreshToken)) {
+            throw new IllegalArgumentException("Invalid refresh token");
+        }
+
+        refreshTokenRepository.findByEmail(email).ifPresent(refreshTokenRepository::delete);
+    }
 }

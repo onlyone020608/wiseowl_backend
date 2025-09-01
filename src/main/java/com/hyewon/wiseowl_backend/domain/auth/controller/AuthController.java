@@ -45,4 +45,12 @@ public class AuthController {
         TokenResponse response = authService.refresh(refreshToken);
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(
+            @AuthenticationPrincipal UserPrincipal principal, @RequestHeader("Refresh-Token") String refreshToken) {
+
+        authService.logout(principal.getEmail(), refreshToken);
+        return ResponseEntity.noContent().build();
+    }
 }

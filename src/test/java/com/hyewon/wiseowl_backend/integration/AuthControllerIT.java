@@ -2,6 +2,8 @@ package com.hyewon.wiseowl_backend.integration;
 
 import com.hyewon.wiseowl_backend.domain.auth.client.GoogleOAuthClient;
 import com.hyewon.wiseowl_backend.domain.auth.dto.*;
+import com.hyewon.wiseowl_backend.domain.auth.entity.RefreshToken;
+import com.hyewon.wiseowl_backend.domain.auth.repository.RefreshTokenRepository;
 import com.hyewon.wiseowl_backend.domain.user.entity.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -19,6 +22,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class AuthControllerIT extends AbstractIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private RefreshTokenRepository refreshTokenRepository;
 
     @MockitoBean
     private GoogleOAuthClient googleOAuthClient;
@@ -116,5 +121,25 @@ public class AuthControllerIT extends AbstractIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accessToken").exists())
                 .andExpect(jsonPath("$.refreshToken").exists());
+    }
+
+    @Test
+    @DisplayName("POST /api/auth/logout - deletes stored refresh token and logs user out")
+    void logout_withValidRefreshToken_deletesStoredToken() throws Exception {
+        // given
+        User user = testDataLoader.getTestUser();
+        String accessToken = jwtProvider.generateAccessToken(user.getEmail());
+        String refreshToken = jwtProvider.generateRefreshToken(user.getEmail());
+
+        refreshTokenRepository.save(new RefreshToken(user.getEmail(), refreshToken));
+
+        // when & then
+        mockMvc.perform(post("/api/auth/logout")
+                        .header("Authorization", "Bearer " + accessToken)
+                        .header("Refresh-Token", refreshToken)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+
+        assertThat(refreshTokenRepository.findByEmail(user.getEmail())).isEmpty();
     }
 }
