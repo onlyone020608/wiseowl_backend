@@ -1,4 +1,4 @@
-package com.hyewon.wiseowl_backend.domain.auth.controller;
+package com.hyewon.wiseowl_backend.domain.auth.dto;
 
 public record GoogleUserInfo(
         String sub,

@@ -1,7 +1,6 @@
 package com.hyewon.wiseowl_backend.integration;
 
 import com.hyewon.wiseowl_backend.domain.auth.client.GoogleOAuthClient;
-import com.hyewon.wiseowl_backend.domain.auth.controller.GoogleUserInfo;
 import com.hyewon.wiseowl_backend.domain.auth.dto.*;
 import com.hyewon.wiseowl_backend.domain.user.entity.User;
 import org.junit.jupiter.api.DisplayName;

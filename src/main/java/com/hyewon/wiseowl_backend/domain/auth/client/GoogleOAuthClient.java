@@ -1,7 +1,7 @@
 package com.hyewon.wiseowl_backend.domain.auth.client;
 
-import com.hyewon.wiseowl_backend.domain.auth.controller.GoogleUserInfo;
 import com.hyewon.wiseowl_backend.domain.auth.dto.GoogleTokenResponse;
+import com.hyewon.wiseowl_backend.domain.auth.dto.GoogleUserInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
