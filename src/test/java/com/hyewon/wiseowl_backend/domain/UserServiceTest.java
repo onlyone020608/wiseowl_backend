@@ -1,5 +1,6 @@
 package com.hyewon.wiseowl_backend.domain;
 
+import com.hyewon.wiseowl_backend.domain.auth.repository.RefreshTokenRepository;
 import com.hyewon.wiseowl_backend.domain.course.entity.*;
 import com.hyewon.wiseowl_backend.domain.course.service.CourseOfferingQueryService;
 import com.hyewon.wiseowl_backend.domain.course.service.MajorQueryService;
@@ -57,6 +58,7 @@ public class UserServiceTest {
     @Mock private UserRequiredCourseStatusRepository userRequiredCourseStatusRepository;
     @Mock private UserSubscriptionRepository userSubscriptionRepository;
     @Mock private UserTrackRepository userTrackRepository;
+    @Mock private RefreshTokenRepository refreshTokenRepository;
     @Mock private ApplicationEventPublisher eventPublisher;
     @Mock private EntityManager entityManager;
 
@@ -653,9 +655,9 @@ public class UserServiceTest {
                 userService.replaceAllUserSubscriptions(userId,  List.of(request1, request2)));
     }
 
-    @DisplayName("marks user as deleted when user exists")
     @Test
-    void shouldMarkUserAsDeleted_whenIdExists() {
+    @DisplayName("deletes user and associated refresh tokens when user exists")
+    void shouldDeleteUserAndTokens_whenIdExists() {
         // given
         Long userId = 1L;
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
@@ -664,11 +666,12 @@ public class UserServiceTest {
         userService.deleteUser(userId);
 
         // then
-        assertThat(user.isDeleted()).isTrue();
+        verify(refreshTokenRepository).deleteByEmail(user.getEmail());
+        verify(userRepository).delete(user);
     }
 
-    @DisplayName("throws UserNotFoundException when user does not exist in deleteUser")
     @Test
+    @DisplayName("throws UserNotFoundException when user does not exist in deleteUser")
     void shouldThrowException_whenUserNotFoundInDeleteUser() {
         // given
         Long userId = 999L;
@@ -677,5 +680,7 @@ public class UserServiceTest {
         // when & then
         assertThrows(UserNotFoundException.class, () ->
                 userService.deleteUser(userId));
+        verifyNoInteractions(refreshTokenRepository);
+        verify(userRepository, never()).delete(any());
     }
 }

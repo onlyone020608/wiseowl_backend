@@ -1,5 +1,6 @@
 package com.hyewon.wiseowl_backend.domain.user.service;
 
+import com.hyewon.wiseowl_backend.domain.auth.repository.RefreshTokenRepository;
 import com.hyewon.wiseowl_backend.domain.course.entity.CourseOffering;
 import com.hyewon.wiseowl_backend.domain.course.entity.Major;
 import com.hyewon.wiseowl_backend.domain.course.entity.Semester;
@@ -38,6 +39,7 @@ public class UserService {
     private final UserRequiredCourseStatusRepository userRequiredCourseStatusRepository;
     private final UserTrackRepository userTrackRepository;
     private final UserSubscriptionRepository userSubscriptionRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final ApplicationEventPublisher eventPublisher;
     private final EntityManager entityManager;
     private final MajorQueryService majorQueryService;
@@ -282,6 +284,7 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
-        user.markAsDeleted();
+        refreshTokenRepository.deleteByEmail(user.getEmail());
+        userRepository.delete(user);
     }
 }

@@ -44,11 +44,6 @@ public class User extends BaseTimeEntity {
         profile.assignUser(this);
     }
 
-    public void markAsDeleted() {
-        this.deleted = true;
-        this.deletedAt = LocalDateTime.now();
-    }
-
     private User(String email, String password) {
         this.email = email;
         this.password = password;

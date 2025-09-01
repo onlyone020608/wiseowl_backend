@@ -461,7 +461,7 @@ CREATE TABLE `user_completed_course` (
   KEY `FK71v5q3et3log1qs8cjkq3ijmf` (`course_offering_id`),
   KEY `FKmbvb4dn2xmci9gfxib0gjwted` (`user_id`),
   CONSTRAINT `FK71v5q3et3log1qs8cjkq3ijmf` FOREIGN KEY (`course_offering_id`) REFERENCES `course_offering` (`id`),
-  CONSTRAINT `FKmbvb4dn2xmci9gfxib0gjwted` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
+  CONSTRAINT `FKmbvb4dn2xmci9gfxib0gjwted` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `social_account`;
@@ -496,7 +496,7 @@ CREATE TABLE `user_major` (
   PRIMARY KEY (`id`),
   KEY `FKf4aj8t9lutavdlbgjrwqc8jb` (`major_id`),
   KEY `FKbgp41qfkuvd3b92twa172k4dj` (`user_id`),
-  CONSTRAINT `FKbgp41qfkuvd3b92twa172k4dj` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
+  CONSTRAINT `FKbgp41qfkuvd3b92twa172k4dj` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE,
   CONSTRAINT `FKf4aj8t9lutavdlbgjrwqc8jb` FOREIGN KEY (`major_id`) REFERENCES `major` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -516,7 +516,7 @@ CREATE TABLE `user_notice_read` (
   KEY `FKbae9pbtbstjqeun7mi43culwv` (`notice_id`),
   KEY `FKjryo97a2c8xkpd6kbhrp61rxa` (`user_id`),
   CONSTRAINT `FKbae9pbtbstjqeun7mi43culwv` FOREIGN KEY (`notice_id`) REFERENCES `notice` (`id`),
-  CONSTRAINT `FKjryo97a2c8xkpd6kbhrp61rxa` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
+  CONSTRAINT `FKjryo97a2c8xkpd6kbhrp61rxa` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -535,7 +535,7 @@ CREATE TABLE `user_required_course_status` (
   `course_type` enum('GENERAL','MAJOR') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FKol8cicl4b9yst3nrda0dsr2gj` (`user_id`),
-  CONSTRAINT `FKol8cicl4b9yst3nrda0dsr2gj` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
+  CONSTRAINT `FKol8cicl4b9yst3nrda0dsr2gj` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -554,7 +554,7 @@ CREATE TABLE `user_requirement_status` (
   PRIMARY KEY (`id`),
   KEY `FKhi498ovbj3yyw2wrncyekodla` (`major_requirement_id`),
   KEY `FKe8jglgtvxbruw4dqrsteyckfk` (`user_id`),
-  CONSTRAINT `FKe8jglgtvxbruw4dqrsteyckfk` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
+  CONSTRAINT `FKe8jglgtvxbruw4dqrsteyckfk` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE,
   CONSTRAINT `FKhi498ovbj3yyw2wrncyekodla` FOREIGN KEY (`major_requirement_id`) REFERENCES `major_requirement` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -573,7 +573,7 @@ CREATE TABLE `user_subscription` (
   `type` enum('MAJOR','ORGANIZATION') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FKpsiiu2nyr0cbxeluuouw474s9` (`user_id`),
-  CONSTRAINT `FKpsiiu2nyr0cbxeluuouw474s9` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
+  CONSTRAINT `FKpsiiu2nyr0cbxeluuouw474s9` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -590,7 +590,7 @@ CREATE TABLE `user_track` (
   `track` enum('INTENSIVE_SOLO','INTENSIVE_WITH_MINOR','PRIMARY_WITH_DOUBLE','PRIMARY_WITH_MINOR') COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   KEY `FK1bop2upn8b5xlqw5hcyv9uap4` (`user_id`),
-  CONSTRAINT `FK1bop2upn8b5xlqw5hcyv9uap4` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
+  CONSTRAINT `FK1bop2upn8b5xlqw5hcyv9uap4` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

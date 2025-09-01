@@ -1,11 +1,14 @@
 package com.hyewon.wiseowl_backend.integration;
 
+import com.hyewon.wiseowl_backend.domain.auth.entity.RefreshToken;
+import com.hyewon.wiseowl_backend.domain.auth.repository.RefreshTokenRepository;
 import com.hyewon.wiseowl_backend.domain.course.entity.CourseOffering;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorType;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.Track;
 import com.hyewon.wiseowl_backend.domain.user.dto.*;
 import com.hyewon.wiseowl_backend.domain.user.entity.*;
 import com.hyewon.wiseowl_backend.domain.user.repository.UserMajorRepository;
+import com.hyewon.wiseowl_backend.domain.user.repository.UserRepository;
 import com.hyewon.wiseowl_backend.domain.user.repository.UserRequirementStatusRepository;
 import com.hyewon.wiseowl_backend.global.exception.UserCompletedCourseNotFoundException;
 import com.hyewon.wiseowl_backend.global.exception.UserMajorNotFoundException;
@@ -30,6 +33,10 @@ public class UserControllerIT extends AbstractIntegrationTest {
     private UserRequirementStatusRepository userRequirementStatusRepository;
     @Autowired
     private UserMajorRepository userMajorRepository;
+    @Autowired
+    private RefreshTokenRepository refreshTokenRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @Test
     @DisplayName("POST /api/users/me/profile - updates user profile")
@@ -466,14 +473,21 @@ public class UserControllerIT extends AbstractIntegrationTest {
     }
 
     @Test
-    @DisplayName("DELETE /api/users/me/ - deletes user")
-    void deleteUser_withValidUser_deletesUser() throws Exception {
+    @DisplayName("DELETE /api/users/me - deletes user and refresh token")
+    void deleteUser_withValidUser_deletesUserAndRefreshToken() throws Exception {
+        // given
         User user = testDataLoader.getTestUser();
         String token = jwtProvider.generateAccessToken(user.getEmail());
+        String refreshToken = jwtProvider.generateRefreshToken(user.getEmail());
+        refreshTokenRepository.save(new RefreshToken(user.getEmail(), refreshToken));
 
+        // when & then
         mockMvc.perform(delete("/api/users/me")
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
+
+        assertThat(userRepository.findById(user.getId())).isEmpty();
+        assertThat(refreshTokenRepository.findByEmail(user.getEmail())).isEmpty();
     }
 }
