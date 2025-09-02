@@ -52,6 +52,8 @@ public class AuthService {
 
         boolean isNewUser = !(userMajorRepository.existsByUserId(userDetails.getId()));
 
+        refreshTokenRepository.save(new RefreshToken(email, refreshToken));
+
         return new TokenResponse(accessToken, refreshToken, isNewUser);
     }
 
@@ -68,6 +70,8 @@ public class AuthService {
 
         String accessToken = jwtProvider.generateAccessToken(request.getEmail());
         String refreshToken = jwtProvider.generateRefreshToken(request.getEmail());
+
+        refreshTokenRepository.save(new RefreshToken(request.getEmail(), refreshToken));
 
         return new TokenResponse(accessToken, refreshToken, true);
     }
@@ -92,6 +96,8 @@ public class AuthService {
 
         String accessToken = jwtProvider.generateAccessToken(user.getEmail());
         String refreshToken = jwtProvider.generateRefreshToken(user.getEmail());
+
+        refreshTokenRepository.save(new RefreshToken(user.getEmail(), refreshToken));
 
         return new TokenResponse(accessToken, refreshToken, newUser);
     }
