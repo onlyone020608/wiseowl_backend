@@ -15,7 +15,7 @@ spring:
     type: redis
   data:
     redis:
-      host: localhost
+      host: ${REDIS_HOST:localhost}
       port: 6379
   flyway:
     enabled: true
