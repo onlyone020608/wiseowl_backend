@@ -16,6 +16,9 @@ import com.hyewon.wiseowl_backend.domain.user.repository.*;
 import com.hyewon.wiseowl_backend.global.exception.*;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,6 +64,7 @@ public class UserService {
         eventPublisher.publishEvent(new UserMajorRegisteredEvent(userId, request.majors(), entranceYear));
     }
 
+    @CacheEvict(value = "userCompletedCourses", key = "#userId")
     @Transactional
     public void insertCompletedCourses(Long userId, CompletedCourseInsertRequest request) {
         User user = userRepository.findById(userId)
@@ -80,6 +84,7 @@ public class UserService {
         eventPublisher.publishEvent(new CompletedCoursesRegisteredEvent(userId, toSave));
     }
 
+    @Cacheable(value = "graduationRequirements", key = "#userId")
     @Transactional(readOnly = true)
     public List<GraduationRequirementGroupByMajorResponse> getGraduationRequirementsForUser(Long userId) {
         List<UserRequirementStatus> all = userRequirementStatusRepository.findAllByUserIdWithMajor(userId);
@@ -103,6 +108,10 @@ public class UserService {
                 }).toList();
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "graduationRequirements", key = "#userId"),
+            @CacheEvict(value = "graduationStatus", key = "#userId")
+    })
     @Transactional
     public void updateUserRequirementStatus(Long userId, List<UserRequirementFulfillmentRequest> requests) {
         for (UserRequirementFulfillmentRequest update : requests) {
@@ -113,6 +122,7 @@ public class UserService {
         }
     }
 
+    @Cacheable(value = "graduationStatus", key = "#userId")
     @Transactional(readOnly = true)
     public MainPageGraduationStatusResponse getUserGraduationOverview(Long userId) {
         User user = userRepository.findById(userId)
@@ -148,6 +158,7 @@ public class UserService {
         return new MainPageGraduationStatusResponse(user.getUsername(), requirementStatus);
     }
 
+    @Cacheable(value = "userRequiredCourseStatus", key = "#userId + ':' + #majorType")
     @Transactional(readOnly = true)
     public UserRequiredCourseStatusResponse getUserRequiredCourseStatus(Long userId, MajorType majorType) {
         List<MajorRequiredCourseItemResponse> majorRequired = userRequiredCourseStatusRepository.findMajorItems(userId, majorType);
@@ -156,6 +167,7 @@ public class UserService {
         return new UserRequiredCourseStatusResponse(majorRequired, liberalRequired);
     }
 
+    @Cacheable(value = "userSummary", key = "#userId")
     @Transactional(readOnly = true)
     public UserSummaryResponse getUserSummary(Long userId) {
         User user = userRepository.findById(userId)
@@ -180,6 +192,12 @@ public class UserService {
                 firstMajorDetail, secondMajorDetail, userTrack.getTrack());
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "userSummary", key = "#userId"),
+            @CacheEvict(value = "userRequiredCourseStatus", key = "#userId + ':' + #majorType"),
+            @CacheEvict(value = "graduationStatus", key = "#userId"),
+            @CacheEvict(value = "graduationRequirements", key = "#userId")
+    })
     @Transactional
     public void updateUserMajor(Long userId, List<UserMajorUpdateRequest> requests) {
         requests.forEach(
@@ -193,6 +211,12 @@ public class UserService {
         eventPublisher.publishEvent(new UserMajorUpdateEvent(userId, requests));
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "userSummary", key = "#userId"),
+            @CacheEvict(value = "userRequiredCourseStatus", key = "#userId + ':' + #majorType"),
+            @CacheEvict(value = "graduationStatus", key = "#userId"),
+            @CacheEvict(value = "graduationRequirements", key = "#userId")
+    })
     @Transactional
     public void updateUserMajorTypes(Long userId, UserMajorTypeUpdateRequest request) {
         request.userMajorTypeUpdateItems().forEach(item -> {
@@ -207,6 +231,7 @@ public class UserService {
         eventPublisher.publishEvent(new UserMajorTypeUpdateEvent(userId, request.userMajorTypeUpdateItems()));
     }
 
+    @Cacheable(value = "userCompletedCourses", key = "#userId")
     @Transactional(readOnly = true)
     public List<UserCompletedCourseBySemesterResponse> getUserCompletedCourses(Long userId) {
         List<UserCompletedCourse> completedCourses = userCompletedCourseRepository.findAllByUserIdWithCourseOffering(userId);
@@ -230,6 +255,11 @@ public class UserService {
                 .toList();
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "userCompletedCourses", key = "#userId"),
+            @CacheEvict(value = "userRequiredCourseStatus", key = "#userId + ':' + #majorType"),
+            @CacheEvict(value = "graduationStatus", key = "#userId")
+    })
     @Transactional
     public void updateCompletedCourses(Long userId, List<CompletedCourseUpdateRequest> requests) {
         requests.forEach(request -> {
@@ -245,6 +275,11 @@ public class UserService {
         eventPublisher.publishEvent(new CompletedCoursesUpdateEvent(userId));
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "userCompletedCourses", key = "#userId"),
+            @CacheEvict(value = "userRequiredCourseStatus", key = "#userId + ':' + #majorType"),
+            @CacheEvict(value = "graduationStatus", key = "#userId")
+    })
     @Transactional
     public void deleteCompletedCourse(Long userId, Long userCompletedCourseId) {
         UserCompletedCourse course = userCompletedCourseRepository.findById(userCompletedCourseId)

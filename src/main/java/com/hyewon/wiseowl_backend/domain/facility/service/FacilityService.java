@@ -6,6 +6,7 @@ import com.hyewon.wiseowl_backend.domain.facility.entity.Facility;
 import com.hyewon.wiseowl_backend.domain.facility.repository.FacilityRepository;
 import com.hyewon.wiseowl_backend.global.exception.FacilityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 public class FacilityService {
     private final FacilityRepository facilityRepository;
 
+    @Cacheable(value = "facilities")
     @Transactional(readOnly = true)
     public List<BuildingFacilityResponse> getAllFacilities() {
         List<Facility> facilities = facilityRepository.findAllWithBuilding();

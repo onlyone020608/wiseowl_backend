@@ -11,6 +11,7 @@ import com.hyewon.wiseowl_backend.domain.course.repository.CourseOfferingReposit
 import com.hyewon.wiseowl_backend.domain.course.repository.MajorRepository;
 import com.hyewon.wiseowl_backend.global.exception.CourseNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +28,7 @@ public class CourseService {
     private final CourseOfferingRepository courseOfferingRepository;
     private final MajorRepository majorRepository;
 
+    @Cacheable(value = "courseCategories", key = "#semesterId")
     @Transactional(readOnly = true)
     public List<CourseCategoryResponse> getCourseCategoriesBySemester(Long semesterId) {
         List<Major> majors = courseOfferingRepository.findDistinctMajorsBySemesterId(semesterId);
@@ -42,11 +44,14 @@ public class CourseService {
         return result;
     }
 
+    @Cacheable(value = "courseOfferings", key = "#semesterId")
     @Transactional(readOnly = true)
     public List<CourseOfferingResponse> getCourseOfferingsBySemester(Long semesterId) {
         return courseOfferingRepository.findCourseOfferingsBySemester(semesterId);
     }
 
+    @Cacheable(value = "collegesWithMajors")
+    @Transactional(readOnly = true)
     public List<CollegeWithMajorsResponse> getCollegesWithMajors() {
         List<Major> majors = majorRepository.findAllWithCollege();
 
