@@ -36,10 +36,10 @@ public class UserController {
     }
 
     @GetMapping("/me/graduation-requirements")
-    public ResponseEntity<List<GraduationRequirementGroupByMajorResponse>> getGraduationRequirements(
+    public ResponseEntity<GraduationRequirementsResponse> getGraduationRequirements(
             @AuthenticationPrincipal UserPrincipal principal
     ) {
-        List<GraduationRequirementGroupByMajorResponse> graduationRequirementsForUser = userService.getGraduationRequirementsForUser(principal.getId());
+        GraduationRequirementsResponse graduationRequirementsForUser = userService.getGraduationRequirementsForUser(principal.getId());
         return ResponseEntity.ok(graduationRequirementsForUser);
     }
 
@@ -86,8 +86,8 @@ public class UserController {
     }
 
     @GetMapping("/me/completed-courses")
-    public ResponseEntity<List<UserCompletedCourseBySemesterResponse>> getCompletedCourses(@AuthenticationPrincipal UserPrincipal principal) {
-        List<UserCompletedCourseBySemesterResponse> response = userService.getUserCompletedCourses(principal.getId());
+    public ResponseEntity<UserCompletedCoursesResponse> getCompletedCourses(@AuthenticationPrincipal UserPrincipal principal) {
+        UserCompletedCoursesResponse response = userService.getUserCompletedCourses(principal.getId());
         return ResponseEntity.ok(response);
     }
 

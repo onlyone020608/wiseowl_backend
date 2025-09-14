@@ -265,10 +265,11 @@ public class UserServiceTest {
                 .willReturn(List.of(urs1));
 
         // when
-        List<GraduationRequirementGroupByMajorResponse> result =
+        GraduationRequirementsResponse response =
                 userService.getGraduationRequirementsForUser(userId);
 
         // then
+        List<GraduationRequirementGroupByMajorResponse> result = response.requirements();
         assertThat(result.get(0).majorName()).isEqualTo("컴퓨터공학과");
         assertThat(result.get(0).majorType()).isEqualTo(MajorType.PRIMARY);
         assertThat(result.get(0).requirements().get(0).userRequirementStatusId()).isEqualTo(20L);
@@ -501,9 +502,10 @@ public class UserServiceTest {
                 .willReturn(List.of(ucc, ucc2));
 
         // when
-        List<UserCompletedCourseBySemesterResponse> result = userService.getUserCompletedCourses(userId);
+        UserCompletedCoursesResponse response = userService.getUserCompletedCourses(userId);
 
         // then
+        List<UserCompletedCourseBySemesterResponse> result = response.semesters();
         assertThat(result).hasSize(1);
         assertThat(result.getFirst().year()).isEqualTo(2024);
         assertThat(result.getFirst().term()).isEqualTo(Term.FIRST);

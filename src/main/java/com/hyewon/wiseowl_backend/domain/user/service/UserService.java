@@ -86,7 +86,7 @@ public class UserService {
 
     @Cacheable(value = "graduationRequirements", key = "#userId")
     @Transactional(readOnly = true)
-    public List<GraduationRequirementGroupByMajorResponse> getGraduationRequirementsForUser(Long userId) {
+    public GraduationRequirementsResponse getGraduationRequirementsForUser(Long userId) {
         List<UserRequirementStatus> all = userRequirementStatusRepository.findAllByUserIdWithMajor(userId);
         if (all.isEmpty()) {
             throw new UserRequirementStatusNotFoundException(userId);
@@ -97,8 +97,8 @@ public class UserService {
                         urs.getMajorRequirement().getMajor().getId())
                 ).values());
 
-        return grouped.stream().map(
-                statuses -> {
+        List<GraduationRequirementGroupByMajorResponse> responses = grouped.stream()
+                .map(statuses -> {
                     MajorRequirement firstMajorRequirement = statuses.get(0).getMajorRequirement();
                     Long majorId = firstMajorRequirement.getMajor().getId();
                     String majorName = firstMajorRequirement.getMajor().getName();
@@ -106,6 +106,8 @@ public class UserService {
                             majorId, majorName, firstMajorRequirement.getMajorType(), statuses
                     );
                 }).toList();
+
+        return GraduationRequirementsResponse.from(responses);
     }
 
     @Caching(evict = {
@@ -233,14 +235,14 @@ public class UserService {
 
     @Cacheable(value = "userCompletedCourses", key = "#userId")
     @Transactional(readOnly = true)
-    public List<UserCompletedCourseBySemesterResponse> getUserCompletedCourses(Long userId) {
+    public UserCompletedCoursesResponse getUserCompletedCourses(Long userId) {
         List<UserCompletedCourse> completedCourses = userCompletedCourseRepository.findAllByUserIdWithCourseOffering(userId);
 
         Map<Long, List<UserCompletedCourse>> grouped =
                 completedCourses.stream()
                         .collect(Collectors.groupingBy(c -> c.getCourseOffering().getSemester().getId()));
 
-        return grouped.entrySet().stream()
+        List<UserCompletedCourseBySemesterResponse> responses = grouped.entrySet().stream()
                 .map(entry -> {
                     Semester semester = entry.getValue().get(0).getCourseOffering().getSemester();
                     return new UserCompletedCourseBySemesterResponse(
@@ -253,6 +255,8 @@ public class UserService {
                     );
                 })
                 .toList();
+
+        return UserCompletedCoursesResponse.from(responses);
     }
 
     @Caching(evict = {

@@ -2,6 +2,7 @@ package com.hyewon.wiseowl_backend.domain;
 
 import com.hyewon.wiseowl_backend.domain.course.entity.Building;
 import com.hyewon.wiseowl_backend.domain.facility.dto.BuildingFacilityResponse;
+import com.hyewon.wiseowl_backend.domain.facility.dto.FacilitiesResponse;
 import com.hyewon.wiseowl_backend.domain.facility.entity.Facility;
 import com.hyewon.wiseowl_backend.domain.facility.repository.FacilityRepository;
 import com.hyewon.wiseowl_backend.domain.facility.service.FacilityService;
@@ -68,7 +69,8 @@ public class FacilityServiceTest {
         given(facilityRepository.findAllWithBuilding()).willReturn(List.of(facility1, facility2, facility3));
 
         // when
-        List<BuildingFacilityResponse> response = facilityService.getAllFacilities()
+        FacilitiesResponse responseWrapper = facilityService.getAllFacilities();
+        List<BuildingFacilityResponse> response = responseWrapper.buildings()
                 .stream()
                 .sorted(Comparator.comparing(BuildingFacilityResponse::buildingNumber))
                 .toList();
@@ -84,7 +86,7 @@ public class FacilityServiceTest {
     @DisplayName("throws FacilityNotFoundException when no facility exists")
     void shouldThrowException_whenNoFacilityExist() {
         // given
-        given(facilityRepository.findAll()).willReturn(List.of());
+        given(facilityRepository.findAllWithBuilding()).willReturn(List.of());
 
         // when & then
         assertThrows(FacilityNotFoundException.class,

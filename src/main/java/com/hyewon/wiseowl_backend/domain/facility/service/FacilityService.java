@@ -1,6 +1,7 @@
 package com.hyewon.wiseowl_backend.domain.facility.service;
 
 import com.hyewon.wiseowl_backend.domain.facility.dto.BuildingFacilityResponse;
+import com.hyewon.wiseowl_backend.domain.facility.dto.FacilitiesResponse;
 import com.hyewon.wiseowl_backend.domain.facility.dto.FacilityResponse;
 import com.hyewon.wiseowl_backend.domain.facility.entity.Facility;
 import com.hyewon.wiseowl_backend.domain.facility.repository.FacilityRepository;
@@ -22,13 +23,13 @@ public class FacilityService {
 
     @Cacheable(value = "facilities")
     @Transactional(readOnly = true)
-    public List<BuildingFacilityResponse> getAllFacilities() {
+    public FacilitiesResponse getAllFacilities() {
         List<Facility> facilities = facilityRepository.findAllWithBuilding();
         if (facilities.isEmpty()) {
             throw new FacilityNotFoundException();
         }
 
-        return facilities.stream()
+        List<BuildingFacilityResponse> result = facilities.stream()
                 .collect(Collectors.groupingBy(Facility::getBuilding))
                 .entrySet().stream()
                 .sorted(Comparator.comparing(entry -> entry.getKey().getBuildingNumber()))
@@ -41,5 +42,7 @@ public class FacilityService {
                                 .toList()
                 ))
                 .toList();
+
+        return FacilitiesResponse.from(result);
     }
 }

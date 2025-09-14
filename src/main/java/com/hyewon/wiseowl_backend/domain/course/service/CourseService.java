@@ -1,9 +1,6 @@
 package com.hyewon.wiseowl_backend.domain.course.service;
 
-import com.hyewon.wiseowl_backend.domain.course.dto.CollegeWithMajorsResponse;
-import com.hyewon.wiseowl_backend.domain.course.dto.CourseCategoryResponse;
-import com.hyewon.wiseowl_backend.domain.course.dto.CourseOfferingResponse;
-import com.hyewon.wiseowl_backend.domain.course.dto.MajorDto;
+import com.hyewon.wiseowl_backend.domain.course.dto.*;
 import com.hyewon.wiseowl_backend.domain.course.entity.College;
 import com.hyewon.wiseowl_backend.domain.course.entity.LiberalCategory;
 import com.hyewon.wiseowl_backend.domain.course.entity.Major;
@@ -46,19 +43,22 @@ public class CourseService {
 
     @Cacheable(value = "courseOfferings", key = "#semesterId")
     @Transactional(readOnly = true)
-    public List<CourseOfferingResponse> getCourseOfferingsBySemester(Long semesterId) {
-        return courseOfferingRepository.findCourseOfferingsBySemester(semesterId);
+    public CourseOfferingsResponse getCourseOfferingsBySemester(Long semesterId) {
+        List<CourseOfferingResponse> offerings =
+                courseOfferingRepository.findCourseOfferingsBySemester(semesterId);
+
+        return CourseOfferingsResponse.from(offerings);
     }
 
     @Cacheable(value = "collegesWithMajors")
     @Transactional(readOnly = true)
-    public List<CollegeWithMajorsResponse> getCollegesWithMajors() {
+    public CollegesWithMajorsResponse getCollegesWithMajors() {
         List<Major> majors = majorRepository.findAllWithCollege();
 
         Map<College, List<Major>> grouped = majors.stream()
                 .collect(Collectors.groupingBy(Major::getCollege));
 
-        return grouped.entrySet().stream()
+        List<CollegeWithMajorsResponse> result = grouped.entrySet().stream()
                 .sorted(Comparator.comparing(entry -> entry.getKey().getName()))
                 .map(entry -> {
                     College college = entry.getKey();
@@ -75,5 +75,7 @@ public class CourseService {
                     );
                 })
                 .toList();
+
+        return CollegesWithMajorsResponse.from(result);
     }
 }

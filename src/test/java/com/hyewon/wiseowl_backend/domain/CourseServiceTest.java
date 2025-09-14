@@ -1,8 +1,6 @@
 package com.hyewon.wiseowl_backend.domain;
 
-import com.hyewon.wiseowl_backend.domain.course.dto.CollegeWithMajorsResponse;
-import com.hyewon.wiseowl_backend.domain.course.dto.CourseCategoryResponse;
-import com.hyewon.wiseowl_backend.domain.course.dto.CourseOfferingResponse;
+import com.hyewon.wiseowl_backend.domain.course.dto.*;
 import com.hyewon.wiseowl_backend.domain.course.entity.*;
 import com.hyewon.wiseowl_backend.domain.course.repository.CourseOfferingRepository;
 import com.hyewon.wiseowl_backend.domain.course.repository.MajorRepository;
@@ -96,11 +94,16 @@ public class CourseServiceTest {
                 .willReturn(List.of(response1, response2));
 
         // when
-        List<CourseOfferingResponse> result = courseService.getCourseOfferingsBySemester(semesterId);
+        CourseOfferingsResponse response = courseService.getCourseOfferingsBySemester(semesterId);
 
         // then
+        List<CourseOfferingResponse> result = response.offerings();
         assertThat(result).hasSize(2);
-        assertThat(result).extracting("courseName").containsExactlyInAnyOrder("자료구조", "글쓰기");
+        assertThat(result)
+                .extracting(CourseOfferingResponse::courseName)
+                .containsExactlyInAnyOrder("자료구조", "글쓰기");
+
+
     }
 
     @Test
@@ -111,8 +114,8 @@ public class CourseServiceTest {
                 .willReturn(List.of(major, major2));
 
         // when
-        List<CollegeWithMajorsResponse> result =
-                courseService.getCollegesWithMajors();
+        CollegesWithMajorsResponse response = courseService.getCollegesWithMajors();
+        List<CollegeWithMajorsResponse> result = response.colleges();
 
         // then
         CollegeWithMajorsResponse dto = result.get(0);
@@ -121,8 +124,9 @@ public class CourseServiceTest {
         assertThat(dto.collegeId()).isEqualTo(1L);
         assertThat(dto.collegeName()).isEqualTo("공과대학");
         assertThat(dto.majors())
-                .extracting("majorName")
+                .extracting(MajorDto::majorName)
                 .containsExactlyInAnyOrder("컴퓨터공학과", "전기전자공학과");
+
     }
 
     @Test
@@ -133,7 +137,8 @@ public class CourseServiceTest {
                 .willReturn(List.of());
 
         // when
-        List<CollegeWithMajorsResponse> result = courseService.getCollegesWithMajors();
+        CollegesWithMajorsResponse response = courseService.getCollegesWithMajors();
+        List<CollegeWithMajorsResponse> result = response.colleges();
 
         // then
         assertThat(result).isEmpty();

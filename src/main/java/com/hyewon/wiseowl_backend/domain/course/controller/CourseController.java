@@ -1,9 +1,9 @@
 package com.hyewon.wiseowl_backend.domain.course.controller;
 
-import com.hyewon.wiseowl_backend.domain.course.dto.CollegeWithMajorsResponse;
+import com.hyewon.wiseowl_backend.domain.course.dto.CollegesWithMajorsResponse;
 import com.hyewon.wiseowl_backend.domain.course.dto.CourseCategoryListResponse;
 import com.hyewon.wiseowl_backend.domain.course.dto.CourseCategoryResponse;
-import com.hyewon.wiseowl_backend.domain.course.dto.CourseOfferingResponse;
+import com.hyewon.wiseowl_backend.domain.course.dto.CourseOfferingsResponse;
 import com.hyewon.wiseowl_backend.domain.course.service.CourseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -27,14 +27,14 @@ public class CourseController {
     }
 
     @GetMapping("/offerings")
-    public ResponseEntity<List<CourseOfferingResponse>> getOfferings(@RequestParam Long semesterId) {
-        List<CourseOfferingResponse> offerings = courseService.getCourseOfferingsBySemester(semesterId);
+    public ResponseEntity<CourseOfferingsResponse> getOfferings(@RequestParam Long semesterId) {
+        CourseOfferingsResponse offerings = courseService.getCourseOfferingsBySemester(semesterId);
         return ResponseEntity.ok(offerings);
     }
 
     @GetMapping("/colleges-with-majors")
-    public ResponseEntity<List<CollegeWithMajorsResponse>> getCollegesWithMajors() {
-        List<CollegeWithMajorsResponse> result = courseService.getCollegesWithMajors();
+    public ResponseEntity<CollegesWithMajorsResponse> getCollegesWithMajors() {
+        CollegesWithMajorsResponse result = courseService.getCollegesWithMajors();
         return ResponseEntity.ok(result);
     }
 }
