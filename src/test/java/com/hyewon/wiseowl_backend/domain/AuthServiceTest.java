@@ -11,6 +11,7 @@ import com.hyewon.wiseowl_backend.domain.user.entity.AuthProviderType;
 import com.hyewon.wiseowl_backend.domain.user.entity.SocialAccount;
 import com.hyewon.wiseowl_backend.domain.user.entity.User;
 import com.hyewon.wiseowl_backend.domain.user.repository.SocialAccountRepository;
+import com.hyewon.wiseowl_backend.domain.user.repository.UserMajorRepository;
 import com.hyewon.wiseowl_backend.domain.user.repository.UserRepository;
 import com.hyewon.wiseowl_backend.fixture.UserFixture;
 import com.hyewon.wiseowl_backend.global.exception.EmailAlreadyExistsException;
@@ -42,6 +43,7 @@ public class AuthServiceTest {
     @Mock private AuthenticationManager authenticationManager;
     @Mock private JwtProvider jwtProvider;
     @Mock private UserRepository userRepository;
+    @Mock private UserMajorRepository userMajorRepository;
     @Mock private PasswordEncoder passwordEncoder;
     @Mock private Authentication authentication;
     @Mock private RefreshTokenRepository refreshTokenRepository;
