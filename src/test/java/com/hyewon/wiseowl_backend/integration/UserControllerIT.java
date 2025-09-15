@@ -180,7 +180,7 @@ public class UserControllerIT extends AbstractIntegrationTest {
         mockMvc.perform(get("/api/users/me/graduation-requirements")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)));
+                .andExpect(jsonPath("$.requirements", hasSize(1)));
     }
 
     @Test
@@ -369,7 +369,7 @@ public class UserControllerIT extends AbstractIntegrationTest {
         mockMvc.perform(get("/api/users/me/completed-courses")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)));
+                .andExpect(jsonPath("$.semesters", hasSize(1)));
     }
 
     @Test

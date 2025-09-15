@@ -21,8 +21,8 @@ public class FacilityControllerIT extends AbstractIntegrationTest {
         mockMvc.perform(get("/api/facilities")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$", hasSize(9)));
+                .andExpect(jsonPath("$.buildings").isArray())
+                .andExpect(jsonPath("$.buildings", hasSize(9)));
     }
 
     @Test

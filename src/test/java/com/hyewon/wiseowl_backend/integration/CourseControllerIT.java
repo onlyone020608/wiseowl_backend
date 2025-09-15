@@ -51,8 +51,8 @@ public class CourseControllerIT extends AbstractIntegrationTest {
                         .param("semesterId", String.valueOf(semesterId))
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$", hasSize(1479)));
+                .andExpect(jsonPath("$.offerings").isArray())
+                .andExpect(jsonPath("$.offerings", hasSize(1479)));
     }
 
     @Test
@@ -64,7 +64,7 @@ public class CourseControllerIT extends AbstractIntegrationTest {
         mockMvc.perform(get("/api/courses/colleges-with-majors")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$", hasSize(14)));
+                .andExpect(jsonPath("$.colleges").isArray())
+                .andExpect(jsonPath("$.colleges", hasSize(14)));
     }
 }
