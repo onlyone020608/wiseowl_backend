@@ -58,10 +58,10 @@ helping students plan and track their academic journey in a structured way.
   Full details are available in the original diagram.
 
 <p align="center">
-  <img src="../assets/wiseowl_backend_erd.png" alt="WiseOwl ERD" width="600"/>
+  <img src="../assets/wiseowl_erd.png" alt="WiseOwl ERD" width="600"/>
 </p>
 
-> [View full ERD](../assets/wiseowl_backend_erd.png)
+> [View full ERD](../assets/wiseowl_erd.png)
 
 ---
 
@@ -79,7 +79,7 @@ helping students plan and track their academic journey in a structured way.
 | GET    | `/api/courses/offerings`                | Get course offerings per semester    |
 | GET    | `/api/facilities`                       | Retrieve campus buildings & facilities|
 
-👉 Detailed request/response specs can be found in [API Specification](api-spec.en.md).
+ Detailed request/response specs can be found in [API Specification](api-spec.en.md).
 
 ---
 

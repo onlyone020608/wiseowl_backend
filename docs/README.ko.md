@@ -57,10 +57,10 @@ WiseOwl은 대학 신입생을 위한 **졸업 요건 관리 서비스**입니�
 - ERD 전체 구조는 복잡하므로, README에서는 축소 버전을 제공하고 세부 사항은 원본에서 확인 가능
 
 <p align="center">
-  <img src="../assets/wiseowl_backend_erd.png" alt="WiseOwl ERD" width="600"/>
+  <img src="../assets/wiseowl_erd.png" alt="WiseOwl ERD" width="600"/>
 </p>
 
- [ERD 원본 전체 보기](../assets/wiseowl_backend_erd.png)
+> [ERD 원본 전체 보기](../assets/wiseowl_erd.png)
 
 ---
 
