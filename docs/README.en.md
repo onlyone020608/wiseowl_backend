@@ -44,9 +44,10 @@ helping students plan and track their academic journey in a structured way.
 
 ## 4. Tech Stack
 - **Backend**: Spring Boot, Spring Security, JPA (QueryDSL), Gradle
-- **Database**: MySQL, Testcontainers
+- **Database**: MySQL, Flyway, Testcontainers
 - **Infrastructure**: AWS EC2, Docker, Redis
 - **Testing**: JUnit5, MockMvc, Testcontainers
+- **Frontend**: React
 
 ---
 
@@ -82,7 +83,11 @@ helping students plan and track their academic journey in a structured way.
 
 ---
 
-## 7. Testing
+## 7. Tests
+- Unit tests: JUnit5 + Mockito
+- Integration tests: Spring Boot + MockMvc
+- Testcontainers with MySQL, including Flyway-based DB migrations → provides an isolated environment close to production
+
 ```bash
 ./gradlew test
 ```
@@ -149,7 +154,7 @@ Each component runs as a standalone container, with environment variables passed
 
 ## 10. Demo
 
-- [Live Demo](http://wiseowl1.vercel.app)
+🔗 [Live Demo](http://wiseowl1.vercel.app)
 
 > ⚠️ Note: The demo currently includes course data only from **Spring 2021 (HUFS)**.  
 > Instead of populating every semester, a subset of data was inserted as an example  

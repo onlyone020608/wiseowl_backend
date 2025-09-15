@@ -44,9 +44,10 @@ WiseOwl은 대학 신입생을 위한 **졸업 요건 관리 서비스**입니�
 
 ## 4. 기술 스택
 - **Backend**: Spring Boot, Spring Security, JPA (QueryDSL), Gradle
-- **Database**: MySQL, Testcontainers
+- **Database**: MySQL, Flyway, Testcontainers
 - **Infra**: AWS EC2, Docker, Redis
 - **Test**: JUnit5, MockMvc, Testcontainers
+- **Frontend**: React
 
 ---
 
@@ -83,6 +84,10 @@ WiseOwl은 대학 신입생을 위한 **졸업 요건 관리 서비스**입니�
 ---
 
 ## 7. 테스트
+- 단위 테스트: JUnit5 + Mockito
+- 통합 테스트: Spring Boot + MockMvc
+- Flyway 기반 DB 마이그레이션을 포함한 Testcontainers MySQL 환경 → 운영과 유사한 격리된 환경 제공
+
 ```bash
 ./gradlew test
 ```
@@ -150,7 +155,7 @@ WiseOwl은 대학 신입생을 위한 **졸업 요건 관리 서비스**입니�
 
 ## 10. 데모
 
--  [Live Demo](http://wiseowl1.vercel.app)
+🔗 [Live Demo](http://wiseowl1.vercel.app)
 
 > ⚠️ 주의: 현재 데모에 포함된 수업 데이터는 **2021학년도 1학기(한국외국어대학교 기준)** 만 제공됩니다.  
 > 반복적인 데이터 입력 작업을 모두 진행하기보다는, 서비스 동작을 검증할 수 있도록  
