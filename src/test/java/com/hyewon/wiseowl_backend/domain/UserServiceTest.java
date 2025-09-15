@@ -18,7 +18,6 @@ import com.hyewon.wiseowl_backend.fixture.CourseFixture;
 import com.hyewon.wiseowl_backend.fixture.RequirementFixture;
 import com.hyewon.wiseowl_backend.fixture.UserFixture;
 import com.hyewon.wiseowl_backend.global.exception.*;
-import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,7 +36,6 @@ import java.util.stream.StreamSupport;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.AssertionsForClassTypes.tuple;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
@@ -56,11 +54,9 @@ public class UserServiceTest {
     @Mock private UserRequirementStatusRepository userRequirementStatusRepository;
     @Mock private CreditRequirementQueryService creditRequirementQueryService;
     @Mock private UserRequiredCourseStatusRepository userRequiredCourseStatusRepository;
-    @Mock private UserSubscriptionRepository userSubscriptionRepository;
     @Mock private UserTrackRepository userTrackRepository;
     @Mock private RefreshTokenRepository refreshTokenRepository;
     @Mock private ApplicationEventPublisher eventPublisher;
-    @Mock private EntityManager entityManager;
 
     private User user;
     private Profile profile;
@@ -566,95 +562,6 @@ public class UserServiceTest {
         // when & then
         assertThatThrownBy(() -> userService.deleteCompletedCourse(1L, 999L))
                 .isInstanceOf(UserCompletedCourseNotFoundException.class);
-    }
-
-    @Test
-    @DisplayName("registers user subscriptions when request is valid" )
-    void shouldSaveUserSubscriptions_whenUserSubscriptionRequestValid() {
-        // given
-        Long userId = 1L;
-        given(userRepository.findById(userId)).willReturn(Optional.of(user));
-        UserSubscriptionRequest request1 = new UserSubscriptionRequest(1L, SubscriptionType.MAJOR);
-        UserSubscriptionRequest request2 = new UserSubscriptionRequest(2L, SubscriptionType.ORGANIZATION);
-        ArgumentCaptor<List<UserSubscription>> captor = ArgumentCaptor.forClass(List.class);
-
-        // when
-        userService.registerUserSubscriptions(userId,  List.of(request1, request2));
-
-        // then
-        verify(userSubscriptionRepository).saveAll(captor.capture());
-        List<UserSubscription> saved = captor.getValue();
-        assertThat(saved).hasSize(2);
-        assertThat(saved)
-                .extracting("targetId", "type")
-                .containsExactlyInAnyOrder(
-                        tuple(1L, SubscriptionType.MAJOR),
-                        tuple(2L, SubscriptionType.ORGANIZATION)
-                );
-
-        assertThat(saved).allSatisfy(subscription ->
-                assertThat(subscription.getUser()).isEqualTo(user)
-        );
-    }
-
-    @Test
-    @DisplayName("throws UserNotFoundException when user does not exist in registerUserSubscriptions" )
-    void shouldThrowException_whenUserNotFoundInRegisterUserSubscriptions() {
-        // given
-        Long userId = 999L;
-        given(userRepository.findById(userId)).willReturn(Optional.empty());
-        UserSubscriptionRequest request1 = new UserSubscriptionRequest(1L, SubscriptionType.MAJOR);
-        UserSubscriptionRequest request2 = new UserSubscriptionRequest(2L, SubscriptionType.ORGANIZATION);
-
-        // when & then
-        assertThrows(UserNotFoundException.class, () ->
-                userService.registerUserSubscriptions(userId,  List.of(request1, request2)));
-    }
-
-    @Test
-    @DisplayName("replaces all user subscriptions when request is valid" )
-    void shouldUpdateAllUserSubscriptions_whenUserSubscriptionRequestValid() {
-        // given
-        Long userId = 1L;
-        given(userRepository.findById(userId)).willReturn(Optional.of(user));
-        UserSubscriptionRequest request1 = new UserSubscriptionRequest(1L, SubscriptionType.MAJOR);
-        UserSubscriptionRequest request2 = new UserSubscriptionRequest(2L, SubscriptionType.ORGANIZATION);
-
-        ArgumentCaptor<List<UserSubscription>> captor = ArgumentCaptor.forClass(List.class);
-
-        // when
-        userService.replaceAllUserSubscriptions(userId, List.of(request1, request2));
-
-        // then
-
-        verify(userSubscriptionRepository).deleteByUserId(userId);
-        verify(userSubscriptionRepository).saveAll(captor.capture());
-
-        List<UserSubscription> saved = captor.getValue();
-
-        assertThat(saved).hasSize(2);
-        assertThat(saved)
-                .extracting("targetId", "type")
-                .containsExactlyInAnyOrder(
-                        tuple(1L, SubscriptionType.MAJOR),
-                        tuple(2L, SubscriptionType.ORGANIZATION));
-        assertThat(saved).allSatisfy(subscription ->
-                assertThat(subscription.getUser()).isEqualTo(user)
-        );
-    }
-
-    @Test
-    @DisplayName("throws UserNotFoundException when user does not exist in replaceAllUserSubscriptions" )
-    void shouldThrowException_whenUserNotFoundInReplaceAllUserSubscriptions() {
-        // given
-        Long userId = 999L;
-        given(userRepository.findById(userId)).willReturn(Optional.empty());
-        UserSubscriptionRequest request1 = new UserSubscriptionRequest(1L, SubscriptionType.MAJOR);
-        UserSubscriptionRequest request2 = new UserSubscriptionRequest(2L, SubscriptionType.ORGANIZATION);
-
-        // when & then
-        assertThrows(UserNotFoundException.class, () ->
-                userService.replaceAllUserSubscriptions(userId,  List.of(request1, request2)));
     }
 
     @Test

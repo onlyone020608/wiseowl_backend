@@ -8,8 +8,6 @@ import com.hyewon.wiseowl_backend.domain.course.entity.CourseType;
 import com.hyewon.wiseowl_backend.domain.course.entity.Major;
 import com.hyewon.wiseowl_backend.domain.course.repository.CourseOfferingRepository;
 import com.hyewon.wiseowl_backend.domain.course.repository.MajorRepository;
-import com.hyewon.wiseowl_backend.domain.notice.entity.Notice;
-import com.hyewon.wiseowl_backend.domain.notice.repository.NoticeRepository;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorRequirement;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.MajorType;
 import com.hyewon.wiseowl_backend.domain.requirement.entity.Requirement;
@@ -26,7 +24,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -35,8 +32,6 @@ import java.util.List;
 public class TestDataLoader {
     private final UserRepository userRepository;
     private final MajorRepository majorRepository;
-    private final NoticeRepository noticeRepository;
-    private final UserSubscriptionRepository userSubscriptionRepository;
     private final UserRequirementStatusRepository userRequirementStatusRepository;
     private final MajorRequirementRepository majorRequirementRepository;
     private final RequirementRepository requirementRepository;
@@ -80,37 +75,11 @@ public class TestDataLoader {
                 .providerId("google-sub")
                 .build());
 
-        userSubscriptionRepository.saveAll(List.of(
-                UserSubscription.builder()
-                        .user(testUser)
-                        .targetId(1L)
-                        .type(SubscriptionType.MAJOR)
-                        .build(),
-                UserSubscription.builder()
-                        .user(testUser)
-                        .targetId(2L)
-                        .type(SubscriptionType.ORGANIZATION)
-                        .build()
-        ));
         userTrackRepository.save(UserTrack.builder()
                         .user(testUser)
                         .track(Track.PRIMARY_WITH_DOUBLE)
                 .build());
 
-        noticeRepository.saveAll(List.of(
-                Notice.builder()
-                        .title("졸업시험공지사항")
-                        .postedAt(LocalDate.of(2025, 7, 14))
-                        .url("www.example.com")
-                        .sourceId(1L)
-                        .build(),
-                Notice.builder()
-                        .title("졸업시험공지사항2")
-                        .postedAt(LocalDate.of(2025, 7, 10))
-                        .url("www.example.com")
-                        .sourceId(2L)
-                        .build()
-        ));
 
         Major major = majorRepository.findById(1L).orElseThrow(() -> new MajorNotFoundException(1L));
         userMajorRepository.save(UserMajor.builder()

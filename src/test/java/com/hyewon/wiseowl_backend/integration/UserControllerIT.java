@@ -441,38 +441,6 @@ public class UserControllerIT extends AbstractIntegrationTest {
     }
 
     @Test
-    @DisplayName("POST /api/users/me/subscriptions - creates user subscriptions")
-    void subscribeOrganizations_withValidRequest_insertsSubscriptions() throws Exception {
-        User user = testDataLoader.getTestUser();
-        String token = jwtProvider.generateAccessToken(user.getEmail());
-
-        List<UserSubscriptionRequest> requests = List.of(
-                new UserSubscriptionRequest(1L, SubscriptionType.MAJOR));
-
-        mockMvc.perform(post("/api/users/me/subscriptions")
-                        .header("Authorization", "Bearer " + token)
-                        .content(objectMapper.writeValueAsString(requests))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated());
-    }
-
-    @Test
-    @DisplayName("PUT /api/users/me/subscriptions - updates user subscriptions")
-    void updateUserSubscriptions_withValidRequest_updatesSubscriptions() throws Exception {
-        User user = testDataLoader.getTestUser();
-        String token = jwtProvider.generateAccessToken(user.getEmail());
-
-        List<UserSubscriptionRequest> requests = List.of(
-                new UserSubscriptionRequest(1L, SubscriptionType.MAJOR));
-
-        mockMvc.perform(put("/api/users/me/subscriptions")
-                        .header("Authorization", "Bearer " + token)
-                        .content(objectMapper.writeValueAsString(requests))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent());
-    }
-
-    @Test
     @DisplayName("DELETE /api/users/me - deletes user and refresh token")
     void deleteUser_withValidUser_deletesUserAndRefreshToken() throws Exception {
         // given

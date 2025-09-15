@@ -14,7 +14,6 @@ import com.hyewon.wiseowl_backend.domain.user.entity.*;
 import com.hyewon.wiseowl_backend.domain.user.event.*;
 import com.hyewon.wiseowl_backend.domain.user.repository.*;
 import com.hyewon.wiseowl_backend.global.exception.*;
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -41,10 +40,8 @@ public class UserService {
     private final CreditRequirementQueryService creditRequirementQueryService;
     private final UserRequiredCourseStatusRepository userRequiredCourseStatusRepository;
     private final UserTrackRepository userTrackRepository;
-    private final UserSubscriptionRepository userSubscriptionRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final ApplicationEventPublisher eventPublisher;
-    private final EntityManager entityManager;
     private final MajorQueryService majorQueryService;
 
     @Transactional
@@ -292,30 +289,6 @@ public class UserService {
         userCompletedCourseRepository.delete(course);
 
         eventPublisher.publishEvent(new CompletedCoursesUpdateEvent(userId));
-    }
-
-
-    @Transactional
-    public void registerUserSubscriptions(Long userId, List<UserSubscriptionRequest> requests) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
-        List<UserSubscription> toSave = requests.stream().map(
-                request -> UserSubscription.of(user, request.targetId(), request.type())
-        ).toList();
-        userSubscriptionRepository.saveAll(toSave);
-    }
-
-    @Transactional
-    public void replaceAllUserSubscriptions(Long userId,  List<UserSubscriptionRequest> requests) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
-
-        userSubscriptionRepository.deleteByUserId(userId);
-        entityManager.flush();
-
-        List<UserSubscription> toSave = requests.stream().map(
-                request -> UserSubscription.of(user, request.targetId(), request.type())
-        ).toList();
-
-        userSubscriptionRepository.saveAll(toSave);
     }
 
     @Transactional

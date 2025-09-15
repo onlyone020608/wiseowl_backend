@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hyewon.wiseowl_backend.domain.auth.security.JwtProvider;
 import com.hyewon.wiseowl_backend.domain.course.repository.CourseOfferingRepository;
 import com.hyewon.wiseowl_backend.domain.user.repository.UserCompletedCourseRepository;
-import com.hyewon.wiseowl_backend.domain.user.repository.UserSubscriptionRepository;
 import com.hyewon.wiseowl_backend.global.common.TestDataLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -41,7 +40,6 @@ public abstract class AbstractIntegrationTest {
     @Autowired protected ObjectMapper objectMapper;
     @Autowired protected JwtProvider jwtProvider;
     @Autowired protected TestDataLoader testDataLoader;
-    @Autowired protected UserSubscriptionRepository userSubscriptionRepository;
     @Autowired protected CourseOfferingRepository courseOfferingRepository;
     @Autowired protected UserCompletedCourseRepository userCompletedCourseRepository;
 }

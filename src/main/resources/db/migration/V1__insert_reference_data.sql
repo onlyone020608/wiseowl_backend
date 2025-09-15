@@ -284,40 +284,6 @@ CREATE TABLE `major_requirement` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `notice`
---
-
-DROP TABLE IF EXISTS `notice`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `notice` (
-  `posted_at` date DEFAULT NULL,
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `source_id` bigint DEFAULT NULL,
-  `content` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `url` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `type` enum('MAJOR','ORGANIZATION') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `organization`
---
-
-DROP TABLE IF EXISTS `organization`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `organization` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `homepage_url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `profile`
 --
 
@@ -499,24 +465,6 @@ CREATE TABLE `user_major` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `user_notice_read`
---
-
-DROP TABLE IF EXISTS `user_notice_read`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `user_notice_read` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `notice_id` bigint DEFAULT NULL,
-  `user_id` bigint DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FKbae9pbtbstjqeun7mi43culwv` (`notice_id`),
-  KEY `FKjryo97a2c8xkpd6kbhrp61rxa` (`user_id`),
-  CONSTRAINT `FKbae9pbtbstjqeun7mi43culwv` FOREIGN KEY (`notice_id`) REFERENCES `notice` (`id`),
-  CONSTRAINT `FKjryo97a2c8xkpd6kbhrp61rxa` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `user_required_course_status`
@@ -557,23 +505,6 @@ CREATE TABLE `user_requirement_status` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `user_subscription`
---
-
-DROP TABLE IF EXISTS `user_subscription`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `user_subscription` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `target_id` bigint DEFAULT NULL,
-  `user_id` bigint DEFAULT NULL,
-  `type` enum('MAJOR','ORGANIZATION') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FKpsiiu2nyr0cbxeluuouw474s9` (`user_id`),
-  CONSTRAINT `FKpsiiu2nyr0cbxeluuouw474s9` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `user_track`
@@ -749,12 +680,6 @@ INSERT INTO facility (building_id, name, facility_category, floor, description) 
     ('8', '문구점', 'ETC', '3', NULL),
     ('8', '안경점', 'ETC', '3', NULL);
 
-INSERT INTO organization (name, homepage_url) VALUES
-    ('국제교류팀', 'https://oia.hufs.ac.kr'),
-    ('외국인유학생종합지원센터', 'https://issc.hufs.ac.kr'),
-    ('외국어교육센터', 'https://flec.hufs.ac.kr/flec/14662/subview.do?enc=Zm5jdDF8QEB8JTJGYmJzJTJGZmxlYyUyRjI2ODAlMkZhcnRjbExpc3QuZG8lM0Y%3D'),
-    ('특수외국어교육진흥', 'https://cfl.ac.kr/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_000000000001&menuId=MNU_0000000000000024'),
-    ('FLEX 센터', 'https://flex.hufs.ac.kr/flex/14772/subview.do?enc=Zm5jdDF8QEB8JTJGYmJzJTJGZmxleCUyRjI2OTUlMkZhcnRjbExpc3QuZG8lM0Y%3D');
 
 INSERT INTO semester (year, term) VALUES
     ('2021', 'FIRST'),

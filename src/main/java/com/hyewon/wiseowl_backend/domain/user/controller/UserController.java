@@ -105,19 +105,6 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/me/subscriptions")
-    public ResponseEntity<Void> subscribeOrganizations(@AuthenticationPrincipal UserPrincipal principal,
-                                                       @RequestBody @Valid List<UserSubscriptionRequest> requests) {
-        userService.registerUserSubscriptions(principal.getId(), requests);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
-
-    @PutMapping("/me/subscriptions")
-    public ResponseEntity<Void> updateUserSubscriptions(@AuthenticationPrincipal UserPrincipal principal,
-                                                        @RequestBody List<UserSubscriptionRequest> requests) {
-        userService.replaceAllUserSubscriptions(principal.getId(), requests);
-        return ResponseEntity.noContent().build();
-    }
 
     @DeleteMapping("/me")
     public ResponseEntity<Void> deleteUser(@AuthenticationPrincipal UserPrincipal principal) {
